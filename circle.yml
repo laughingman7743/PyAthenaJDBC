@@ -1,11 +1,11 @@
 machine:
   python:
-    version: 3.5.2
+    version: '3.5.2'
   environment:
-    PY26: 2.6.9
-    PY27: 2.7.12
-    PY34: 3.4.5
-    PY35: 3.5.2
+    PY26: '2.6.9'
+    PY27: '2.7.12'
+    PY34: '3.4.5'
+    PY35: '3.5.2'
 
 dependencies:
   cache_directories:
@@ -23,6 +23,7 @@ dependencies:
   override:
     - pip install -U pip
     - pip install -U tox
+    - pip install -U awscli
 
 test:
   pre:
