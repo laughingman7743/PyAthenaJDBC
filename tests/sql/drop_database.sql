@@ -1,0 +1,1 @@
+DROP DATABASE IF EXISTS test_pyathena_jdbc CASCADE;
