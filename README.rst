@@ -1,3 +1,16 @@
+.. image:: https://img.shields.io/pypi/pyversions/PyAthenaJDBC.svg
+    :target: https://pypi.python.org/pypi/PyAthenaJDBC/
+
+.. image:: https://circleci.com/gh/laughingman7743/PyAthenaJDBC.svg?style=shield
+    :target: https://circleci.com/gh/laughingman7743/PyAthenaJDBC
+
+.. image:: https://codecov.io/gh/laughingman7743/PyAthenaJDBC/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/laughingman7743/PyAthenaJDBC
+
+.. image:: https://img.shields.io/pypi/l/PyAthenaJDBC.svg
+    :target: https://github.com/laughingman7743/PyAthenaJDBC/blob/master/LICENSE
+
+
 PyAthenaJDBC
 ============
 
