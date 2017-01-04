@@ -9,7 +9,7 @@ machine:
 
 dependencies:
   cache_directories:
-    - "~/.pyenv"
+    - "/opt/circleci/.pyenv"
   override:
     - pyenv install -sk ${PY26}
     - pyenv install -sk ${PY27}
