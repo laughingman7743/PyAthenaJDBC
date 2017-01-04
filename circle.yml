@@ -1,11 +1,21 @@
 machine:
   python:
     version: 3.5.2
-  post:
-    - pyenv local 2.6.9 2.7.12 3.4.5 3.5.2
+  environment:
+    PY26: 2.6.9
+    PY27: 2.7.12
+    PY34: 3.4.5
+    PY35: 3.5.2
 
 dependencies:
+  cache_directories:
+    - "~/.pyenv"
   pre:
+    - pyenv install -sk ${PY26}
+    - pyenv install -sk ${PY27}
+    - pyenv install -sk ${PY34}
+    - pyenv install -sk ${PY35}
+    - pyenv local ${PY26} ${PY27} ${PY34} ${PY35}
     - sudo apt-get update; sudo apt-get install openjdk-8-jdk
     - sudo update-alternatives --set java /usr/lib/jvm/jdk1.8.0/bin/java
     - sudo update-alternatives --set javac /usr/lib/jvm/java-8-openjdk-amd64/bin/javac
