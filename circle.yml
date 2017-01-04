@@ -10,7 +10,7 @@ machine:
 dependencies:
   cache_directories:
     - "~/.pyenv"
-  pre:
+  override:
     - pyenv install -sk ${PY26}
     - pyenv install -sk ${PY27}
     - pyenv install -sk ${PY34}
@@ -20,9 +20,9 @@ dependencies:
     - sudo update-alternatives --set java /usr/lib/jvm/jdk1.8.0/bin/java
     - sudo update-alternatives --set javac /usr/lib/jvm/java-8-openjdk-amd64/bin/javac
     - echo 'export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64' >> ~/.circlerc
-  override:
     - pip install -U pip
     - pip install -U tox
+    - pip install -U codecov
     - pip install -U awscli
 
 test:
@@ -32,3 +32,4 @@ test:
     - tox
   post:
     - ./scripts/delete_test_data.sh
+    - bash <(curl -s https://codecov.io/bash)
