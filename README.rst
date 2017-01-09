@@ -48,6 +48,7 @@ Quick Access via Pandas
 ~~~~~~~~~~~~~~~~
 
 .. code:: python
+
     from pyathenajdbc import connect
     import pandas as pd
 
