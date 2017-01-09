@@ -150,11 +150,10 @@ Minimal example for Pandas DataFrame:
                    secret_key=<secret key>,
                    s3_staging_dir=<staging dir>,
                    region_name=<region name>,
-                   jvm_path=<jvm path>) #optional, as used by jpype
-    df = pd.read_sql("SELECT * FROM <table name> LIMIT 10",conn)
+                   jvm_path=<jvm path>) # optional, as used by jpype
+    df = pd.read_sql("SELECT * FROM <table name> LIMIT 10", conn)
 
-
-Pandas DataFrame:
+As Pandas DataFrame:
 
 .. code:: python
 
