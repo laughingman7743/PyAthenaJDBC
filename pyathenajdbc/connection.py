@@ -72,7 +72,7 @@ class Connection(object):
 
     @classmethod
     def _start_jvm(cls, options, jvm_path):
-        if jvm_path is None :
+        if jvm_path is None:
             jvm_path = jpype.get_default_jvm_path()
         if not jpype.isJVMStarted():
             _logger.debug('JVM path: %s', jvm_path)
