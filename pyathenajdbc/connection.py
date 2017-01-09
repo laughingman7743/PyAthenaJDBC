@@ -25,7 +25,7 @@ class Connection(object):
 
     def __init__(self, s3_staging_dir=None, access_key=None, secret_key=None,
                  region_name=None, profile_name=None, credential_file=None,
-                 jvm_options=None, converter=None, formatter=None,
+                 jvm_options=None, converter=None, formatter=None, jvm_path=None,
                  **driver_args):
         if s3_staging_dir:
             self.s3_staging_dir = s3_staging_dir
@@ -60,7 +60,7 @@ class Connection(object):
             self.region_name = session.get_config_variable('region')
             assert self.region_name, 'Required argument `region_name` not found.'
 
-        self._start_jvm(jvm_options)
+        self._start_jvm(jvm_options, jvm_path)
 
         props = self._build_driver_args(**driver_args)
         jpype.JClass(ATHENA_DRIVER_CLASS_NAME)
@@ -71,9 +71,10 @@ class Connection(object):
         self._formatter = formatter if formatter else ParameterFormatter()
 
     @classmethod
-    def _start_jvm(cls, options):
-        if not jpype.isJVMStarted():
+    def _start_jvm(cls, options, jvm_path):
+        if jvm_path is None :
             jvm_path = jpype.get_default_jvm_path()
+        if not jpype.isJVMStarted():
             _logger.debug('JVM path: %s', jvm_path)
             args = ['-server', '-Djava.class.path={0}'.format(
                 os.path.join(os.path.dirname(__file__), ATHENA_JAR))]

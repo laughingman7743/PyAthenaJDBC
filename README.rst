@@ -37,6 +37,8 @@ Installation
 
     $ pip install PyAthenaJDBC
 
+
+
 Credential
 ----------
 
@@ -79,6 +81,7 @@ Additional environment variable:
 
 Usage
 -----
+
 
 Basic usage:
 
@@ -134,6 +137,22 @@ Query with parameter:
             print(cursor.fetchall())
     finally:
         conn.close()
+
+
+Minimal example for Pandas DataFrame:
+
+.. code:: python
+
+    from pyathenajdbc import connect
+    import pandas as pd
+
+    conn = connect(access_key=<access key>,
+                   secret_key=<secret key>,
+                   s3_staging_dir=<staging dir>,
+                   region_name=<region name>,
+                   jvm_path=<jvm path>) #optional, as used by jpype
+    df = pd.read_sql("SELECT * FROM <table name> LIMIT 10",conn)
+
 
 Pandas DataFrame:
 
