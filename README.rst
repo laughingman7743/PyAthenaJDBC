@@ -37,48 +37,6 @@ Installation
 
     $ pip install PyAthenaJDBC
 
-
-
-Credential
-----------
-
-Support `AWS CLI credentials
-configuration <http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html>`__.
-
-Credential Files
-~~~~~~~~~~~~~~~~
-
-~/.aws/credentials
-
-.. code:: cfg
-
-    [default]
-    aws_access_key_id=YOUR_ACCESS_KEY_ID
-    aws_secret_access_key=YOUR_SECRET_ACCESS_KEY
-
-~/.aws/config
-
-.. code:: cfg
-
-    [default]
-    region=us-west-2
-    output=json
-
-Environment variables
-~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: bash
-
-    $ export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
-    $ export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY
-    $ export AWS_DEFAULT_REGION=us-west-2
-
-Additional environment variable:
-
-.. code:: bash
-
-    $ export AWS_ATHENA_S3_STAGING_DIR=s3://YOUR_S3_BUCKET/path/to/
-
 Usage
 -----
 
@@ -169,6 +127,46 @@ As Pandas DataFrame:
             """)
             df = as_pandas(cursor)
     print(df.describe())
+
+Credential
+----------
+
+Support `AWS CLI credentials
+configuration <http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html>`__.
+
+Credential Files
+~~~~~~~~~~~~~~~~
+
+~/.aws/credentials
+
+.. code:: cfg
+
+    [default]
+    aws_access_key_id=YOUR_ACCESS_KEY_ID
+    aws_secret_access_key=YOUR_SECRET_ACCESS_KEY
+
+~/.aws/config
+
+.. code:: cfg
+
+    [default]
+    region=us-west-2
+    output=json
+
+Environment variables
+~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: bash
+
+    $ export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
+    $ export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY
+    $ export AWS_DEFAULT_REGION=us-west-2
+
+Additional environment variable:
+
+.. code:: bash
+
+    $ export AWS_ATHENA_S3_STAGING_DIR=s3://YOUR_S3_BUCKET/path/to/
 
 Testing
 -------
