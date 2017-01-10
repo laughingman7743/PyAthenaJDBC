@@ -89,14 +89,14 @@ class Connection(object):
         props = jpype.java.util.Properties()
         if self.credential_file:
             props.setProperty('aws_credentials_provider_class',
+                              'com.amazonaws.athena.jdbc.shaded.' +
                               'com.amazonaws.auth.PropertiesFileCredentialsProvider')
             props.setProperty('aws_credentials_provider_arguments',
                               self.credential_file)
-        if self.token:
+        elif self.token:
             props.setProperty('aws_credentials_provider_class',
-                              'com.amazonaws.athena.jdbc.CustomSessionCredentialsProvider')
-            props.setProperty('aws_credentials_provider_arguments',
-                              ','.join([self.access_key, self.secret_key, self.token]))
+                              'com.amazonaws.athena.jdbc.shaded.' +
+                              'com.amazonaws.auth.InstanceProfileCredentialsProvider')
         else:
             props.setProperty('user', self.access_key)
             props.setProperty('password', self.secret_key)
