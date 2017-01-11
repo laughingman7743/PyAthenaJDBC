@@ -17,11 +17,19 @@ def as_pandas(cursor):
 def reraise_dbapi_error():
     exc_info = sys.exc_info()
     import jpype
+    value = exc_info[1]
     if isinstance(exc_info[1], jpype._jexception.JavaException):
         if issubclass(exc_info[1].__javaclass__, jpype.java.sql.SQLException):
-            exc_type = DatabaseError
+            args = exc_info[1].args
+            if args:
+                cause = args[0].cause
+                if cause:
+                    value = cause.getMessage()
+                else:
+                    value = args[0].getMessage()
+            tp = DatabaseError
         else:
-            exc_type = Error
+            tp = Error
     else:
-        exc_type = exc_info[0]
-    reraise(exc_type, exc_info[1], exc_info[2])
+        tp = exc_info[0]
+    reraise(tp, value, exc_info[2])
