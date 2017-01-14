@@ -25,8 +25,8 @@ class Connection(object):
 
     def __init__(self, s3_staging_dir=None, access_key=None, secret_key=None,
                  region_name=None, profile_name=None, credential_file=None,
-                 jvm_options=None, converter=None, formatter=None, jvm_path=None,
-                 **driver_args):
+                 jvm_path=None, jvm_options=None, converter=None, formatter=None,
+                 driver_path=None, **driver_kwargs):
         if s3_staging_dir:
             self.s3_staging_dir = s3_staging_dir
         else:
@@ -60,9 +60,9 @@ class Connection(object):
             self.region_name = session.get_config_variable('region')
             assert self.region_name, 'Required argument `region_name` not found.'
 
-        self._start_jvm(jvm_options, jvm_path)
+        self._start_jvm(jvm_path, jvm_options, driver_path)
 
-        props = self._build_driver_args(**driver_args)
+        props = self._build_driver_args(**driver_kwargs)
         jpype.JClass(ATHENA_DRIVER_CLASS_NAME)
         self._jdbc_conn = jpype.java.sql.DriverManager.getConnection(
             ATHENA_CONNECTION_STRING.format(region=self.region_name), props)
@@ -71,15 +71,16 @@ class Connection(object):
         self._formatter = formatter if formatter else ParameterFormatter()
 
     @classmethod
-    def _start_jvm(cls, options, jvm_path):
+    def _start_jvm(cls, jvm_path, jvm_options, driver_path):
         if jvm_path is None:
             jvm_path = jpype.get_default_jvm_path()
+        if driver_path is None:
+            driver_path = os.path.join(os.path.dirname(__file__), ATHENA_JAR)
         if not jpype.isJVMStarted():
             _logger.debug('JVM path: %s', jvm_path)
-            args = ['-server', '-Djava.class.path={0}'.format(
-                os.path.join(os.path.dirname(__file__), ATHENA_JAR))]
-            if options:
-                args.extend(options)
+            args = ['-server', '-Djava.class.path={0}'.format(driver_path)]
+            if jvm_options:
+                args.extend(jvm_options)
             _logger.debug('JVM args: %s', args)
             jpype.startJVM(jvm_path, *args)
         if not jpype.isThreadAttachedToJVM():
