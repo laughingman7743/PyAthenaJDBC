@@ -184,13 +184,17 @@ Run test:
 
 .. code:: bash
 
-    $ pip install pytest
+    $ pip install pytest awscli
+    $ scripts/upload_test_data.sh
     $ py.test
+    $ scripts/delete_test_data.sh
 
 Run test multiple Python versions:
 
 .. code:: bash
 
-    $ pip install tox
+    $ pip install tox awscli
+    $ scripts/upload_test_data.sh
     $ pyenv local 2.6.9 2.7.12 3.4.5 3.5.2
     $ tox
+    $ scripts/delete_test_data.sh
