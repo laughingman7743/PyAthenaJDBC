@@ -51,7 +51,7 @@ Basic usage:
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
-            SELECT * FROM test_pyathena_jdbc.one_row
+            SELECT * FROM one_row
             """)
             print(cursor.description)
             print(cursor.fetchall())
@@ -68,7 +68,7 @@ Cursor iteration:
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
-            SELECT * FROM test_pyathena_jdbc.many_rows LIMIT 10
+            SELECT * FROM many_rows LIMIT 10
             """)
             for row in cursor:
                 print(row)
@@ -85,12 +85,12 @@ Query with parameter:
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
-            SELECT col_int FROM test_pyathena_jdbc.one_row_complex where col_int = {0}
+            SELECT col_int FROM one_row_complex where col_int = {0}
             """, 2147483647)
             print(cursor.fetchall())
 
             cursor.execute("""
-            SELECT col_string FROM test_pyathena_jdbc.one_row_complex where col_string = {param}
+            SELECT col_string FROM one_row_complex where col_string = {param}
             """, param='a string')
             print(cursor.fetchall())
     finally:
@@ -123,7 +123,7 @@ As Pandas DataFrame:
             connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/')) as conn:
         with conn.cursor() as cursor:
             cursor.execute("""
-            SELECT * FROM test_pyathena_jdbc.many_rows
+            SELECT * FROM many_rows
             """)
             df = as_pandas(cursor)
     print(df.describe())
