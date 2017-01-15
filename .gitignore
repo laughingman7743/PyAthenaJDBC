@@ -12,7 +12,7 @@
 /dist/
 /build/
 cover/
-.coverage
+.coverage*
 /htmlcov/
 .cache/
 .tox
