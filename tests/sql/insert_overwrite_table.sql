@@ -1,4 +1,4 @@
-INSERT OVERWRITE TABLE test_pyathena_jdbc.one_row_complex
+INSERT OVERWRITE TABLE {schema}.one_row_complex
 SELECT
     true,
     127,

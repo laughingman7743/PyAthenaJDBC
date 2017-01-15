@@ -1,17 +1,17 @@
-DROP TABLE IF EXISTS test_pyathena_jdbc.one_row;
-CREATE EXTERNAL TABLE test_pyathena_jdbc.one_row (number_of_rows INT)
+DROP TABLE IF EXISTS {schema}.one_row;
+CREATE EXTERNAL TABLE IF NOT EXISTS {schema}.one_row (number_of_rows INT)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE
-LOCATION {location_one_row};
+LOCATION '{location_one_row}';
 
-DROP TABLE IF EXISTS test_pyathena_jdbc.many_rows;
-CREATE EXTERNAL TABLE test_pyathena_jdbc.many_rows (
+DROP TABLE IF EXISTS {schema}.many_rows;
+CREATE EXTERNAL TABLE IF NOT EXISTS {schema}.many_rows (
     a INT
 )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE
-LOCATION {location_many_rows};
+LOCATION '{location_many_rows}';
 
-DROP TABLE IF EXISTS test_pyathena_jdbc.one_row_complex;
-CREATE EXTERNAL TABLE test_pyathena_jdbc.one_row_complex (
+DROP TABLE IF EXISTS {schema}.one_row_complex;
+CREATE EXTERNAL TABLE IF NOT EXISTS {schema}.one_row_complex (
     col_boolean BOOLEAN,
     col_tinyint TINYINT,
     col_smallint SMALLINT,
@@ -29,4 +29,4 @@ CREATE EXTERNAL TABLE test_pyathena_jdbc.one_row_complex (
     col_decimal DECIMAL(10,1)
 )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE
-LOCATION {location_one_row_complex};
+LOCATION '{location_one_row_complex}';

@@ -3,6 +3,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import contextlib
 import os
+import random
+import string
 import unittest
 from datetime import datetime, date
 
@@ -16,6 +18,8 @@ from tests.util import with_cursor, Env, read_query
 
 _ENV = Env()
 _BASE_PATH = os.path.dirname(os.path.abspath(__file__))
+_SCHEMA = 'test_pyathena_jdbc_' + \
+          ''.join([random.choice(string.ascii_lowercase + string.digits) for i in range(10)])
 
 
 def setup_module(module):
@@ -33,12 +37,12 @@ def teardown_module(module):
 
 def _create_database(cursor):
     for q in read_query(os.path.join(_BASE_PATH, 'sql', 'create_database.sql')):
-        cursor.execute(q)
+        cursor.execute(q.format(schema=_SCHEMA))
 
 
 def _drop_database(cursor):
     for q in read_query(os.path.join(_BASE_PATH, 'sql', 'drop_database.sql')):
-        cursor.execute(q)
+        cursor.execute(q.format(schema=_SCHEMA))
 
 
 def _create_table(cursor):
@@ -50,9 +54,10 @@ def _create_table(cursor):
         _ENV.s3_staging_dir, 'test_pyathena_jdbc', 'one_row_complex')
     for q in read_query(
             os.path.join(_BASE_PATH, 'sql', 'create_table.sql')):
-        cursor.execute(q, location_one_row=location_one_row,
-                       location_many_rows=location_many_rows,
-                       location_one_row_complex=location_one_row_complex)
+        cursor.execute(q.format(schema=_SCHEMA,
+                                location_one_row=location_one_row,
+                                location_many_rows=location_many_rows,
+                                location_one_row_complex=location_one_row_complex))
 
 
 class TestPyAthenaJDBC(unittest.TestCase):
@@ -64,11 +69,11 @@ class TestPyAthenaJDBC(unittest.TestCase):
     """
 
     def connect(self):
-        return connect()
+        return connect(schema_name=_SCHEMA)
 
     @with_cursor
     def test_fetchone(self, cursor):
-        cursor.execute('SELECT * FROM test_pyathena_jdbc.one_row')
+        cursor.execute('SELECT * FROM one_row')
         self.assertEqual(cursor.rownumber, 0)
         self.assertEqual(cursor.fetchone(), (1,))
         self.assertEqual(cursor.rownumber, 1)
@@ -76,19 +81,19 @@ class TestPyAthenaJDBC(unittest.TestCase):
 
     @with_cursor
     def test_fetchall(self, cursor):
-        cursor.execute('SELECT * FROM test_pyathena_jdbc.one_row')
+        cursor.execute('SELECT * FROM one_row')
         self.assertEqual(cursor.fetchall(), [(1,)])
-        cursor.execute('SELECT a FROM test_pyathena_jdbc.many_rows ORDER BY a')
+        cursor.execute('SELECT a FROM many_rows ORDER BY a')
         self.assertEqual(cursor.fetchall(), [(i,) for i in xrange(10000)])
 
     @with_cursor
     def test_null_param(self, cursor):
-        cursor.execute('SELECT {0:s} FROM test_pyathena_jdbc.one_row', None)
+        cursor.execute('SELECT {0:s} FROM one_row', None)
         self.assertEqual(cursor.fetchall(), [(None,)])
 
     @with_cursor
     def test_iterator(self, cursor):
-        cursor.execute('SELECT * FROM test_pyathena_jdbc.one_row')
+        cursor.execute('SELECT * FROM one_row')
         self.assertEqual(list(cursor), [(1,)])
         self.assertRaises(StopIteration, cursor.__next__)
 
@@ -117,14 +122,14 @@ class TestPyAthenaJDBC(unittest.TestCase):
 
     @with_cursor
     def test_fetchmany(self, cursor):
-        cursor.execute('SELECT * FROM test_pyathena_jdbc.many_rows LIMIT 15')
+        cursor.execute('SELECT * FROM many_rows LIMIT 15')
         self.assertEqual(len(cursor.fetchmany(10)), 10)
         self.assertEqual(len(cursor.fetchmany(10)), 5)
 
     @with_cursor
     def test_arraysize(self, cursor):
         cursor.arraysize = 5
-        cursor.execute('SELECT * FROM test_pyathena_jdbc.many_rows LIMIT 20')
+        cursor.execute('SELECT * FROM many_rows LIMIT 20')
         self.assertEqual(len(cursor.fetchmany()), 5)
 
     @with_cursor
@@ -146,9 +151,9 @@ class TestPyAthenaJDBC(unittest.TestCase):
         #   + [(1, u'`~!@#$%^&*()_+-={}[]|\\;:\'",./<>?\n\r\t ')]
         #   ?                             ++              ^
         expected = '''`~!@#$%^&*()_+-={}[]|;:'",./<>?\n\n\t '''
-        cursor.execute('SELECT {0:d}, {1:s} FROM test_pyathena_jdbc.one_row', 1, bad_str)
+        cursor.execute('SELECT {0:d}, {1:s} FROM one_row', 1, bad_str)
         self.assertEqual(cursor.fetchall(), [(1, expected,)])
-        cursor.execute('SELECT {a:d}, {b:s} FROM test_pyathena_jdbc.one_row', a=1, b=bad_str)
+        cursor.execute('SELECT {a:d}, {b:s} FROM one_row', a=1, b=bad_str)
         self.assertEqual(cursor.fetchall(), [(1, expected,)])
 
     @with_cursor
@@ -159,7 +164,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
     @with_cursor
     def test_invalid_params(self, cursor):
         self.assertRaises(TypeError, lambda: cursor.execute(
-            'SELECT * FROM test_pyathena_jdbc.one_row', {}))
+            'SELECT * FROM one_row', {}))
 
     def test_open_close(self):
         with contextlib.closing(self.connect()):
@@ -171,19 +176,19 @@ class TestPyAthenaJDBC(unittest.TestCase):
     @with_cursor
     def test_unicode(self, cursor):
         unicode_str = "王兢"
-        cursor.execute('SELECT {0:s} FROM test_pyathena_jdbc.one_row', unicode_str)
+        cursor.execute('SELECT {0:s} FROM one_row', unicode_str)
         self.assertEqual(cursor.fetchall(), [(unicode_str,)])
 
     @with_cursor
     def test_null(self, cursor):
-        cursor.execute('SELECT null FROM test_pyathena_jdbc.many_rows')
+        cursor.execute('SELECT null FROM many_rows')
         self.assertEqual(cursor.fetchall(), [(None,)] * 10000)
-        cursor.execute('SELECT IF(a % 11 = 0, null, a) FROM test_pyathena_jdbc.many_rows')
+        cursor.execute('SELECT IF(a % 11 = 0, null, a) FROM many_rows')
         self.assertEqual(cursor.fetchall(), [(None if a % 11 == 0 else a,) for a in xrange(10000)])
 
     @with_cursor
     def test_description(self, cursor):
-        cursor.execute('SELECT 1 AS foobar FROM test_pyathena_jdbc.one_row')
+        cursor.execute('SELECT 1 AS foobar FROM one_row')
         self.assertEqual(cursor.description, [('foobar', 4, 11, None, 10, 0, 2)])
 
     @with_cursor
@@ -207,7 +212,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
           ,col_map
           ,col_struct
           --,col_decimal
-        FROM test_pyathena_jdbc.one_row_complex
+        FROM one_row_complex
         """)
         self.assertEqual(cursor.description, [
             ('col_boolean', 16, 5, None, 0, 0, 2),
@@ -266,8 +271,8 @@ class TestPyAthenaJDBC(unittest.TestCase):
     #         self.assertRaises(DatabaseError, lambda:
     #         cursor.execute("""
     #         SELECT a.a * rand(), b.a * rand()
-    #         FROM test_pyathena_jdbc.many_rows a
-    #         CROSS JOIN test_pyathena_jdbc.many_rows b
+    #         FROM many_rows a
+    #         CROSS JOIN many_rows b
     #         """))
 
     def test_connection_is_closed(self):
@@ -284,7 +289,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
             cursor.close()
             self.assertEqual(cursor.is_closed, True)
             self.assertRaises(ProgrammingError, lambda: cursor.execute(
-                'SELECT * FROM test_pyathena_jdbc.one_row'))
+                'SELECT * FROM one_row'))
             self.assertRaises(ProgrammingError, lambda: cursor.fetchone())
             self.assertRaises(ProgrammingError, lambda: cursor.fetchmany())
             self.assertRaises(ProgrammingError, lambda: cursor.fetchall())
@@ -297,7 +302,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
         cursor.setinputsizes([])
         cursor.setoutputsize(1, 'blah')
         self.assertRaises(NotSupportedError, lambda: cursor.executemany(
-            'SELECT * FROM test_pyathena_jdbc.one_row', []))
+            'SELECT * FROM one_row', []))
         conn.commit()
         self.assertRaises(NotSupportedError, lambda: conn.rollback())
         cursor.close()
