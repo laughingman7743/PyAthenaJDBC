@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 import datetime
 
 
-__version__ = '1.0.5'
+__version__ = '1.0.6'
 __athena_driver_version__ = '1.0.0'
 
 
