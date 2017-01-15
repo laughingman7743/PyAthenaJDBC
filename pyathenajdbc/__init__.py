@@ -19,7 +19,7 @@ ATHENA_JAR = 'AthenaJDBC41-{0}.jar'.format(__athena_driver_version__)
 ATHENA_DRIVER_DOWNLOAD_URL = 'https://s3.amazonaws.com/athena-downloads/drivers/{0}'.format(
     ATHENA_JAR)
 ATHENA_DRIVER_CLASS_NAME = 'com.amazonaws.athena.jdbc.AthenaDriver'
-ATHENA_CONNECTION_STRING = 'jdbc:awsathena://athena.{region}.amazonaws.com:443/'
+ATHENA_CONNECTION_STRING = 'jdbc:awsathena://athena.{region}.amazonaws.com:443/hive/{schema}/'
 
 
 class DBAPITypeObject:
@@ -55,11 +55,11 @@ Timestamp = datetime.datetime
 
 
 def connect(s3_staging_dir=None, access_key=None, secret_key=None,
-            region_name=None, profile_name=None, credential_file=None,
+            region_name=None, schema_name='default', profile_name=None, credential_file=None,
             jvm_path=None, jvm_options=None, converter=None, formatter=None,
             driver_path=None, **kwargs):
     from pyathenajdbc.connection import Connection
     return Connection(s3_staging_dir, access_key, secret_key,
-                      region_name, profile_name, credential_file,
+                      region_name, schema_name, profile_name, credential_file,
                       jvm_path, jvm_options, converter, formatter,
                       driver_path, **kwargs)

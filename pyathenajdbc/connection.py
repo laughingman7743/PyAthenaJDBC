@@ -24,7 +24,7 @@ class Connection(object):
     _ENV_S3_STAGING_DIR = 'AWS_ATHENA_S3_STAGING_DIR'
 
     def __init__(self, s3_staging_dir=None, access_key=None, secret_key=None,
-                 region_name=None, profile_name=None, credential_file=None,
+                 region_name=None, schema_name='default', profile_name=None, credential_file=None,
                  jvm_path=None, jvm_options=None, converter=None, formatter=None,
                  driver_path=None, **driver_kwargs):
         if s3_staging_dir:
@@ -32,6 +32,7 @@ class Connection(object):
         else:
             self.s3_staging_dir = os.getenv(self._ENV_S3_STAGING_DIR, None)
         assert self.s3_staging_dir, 'Required argument `s3_staging_dir` not found.'
+        assert schema_name, 'Required argument `schema_name` not found.'
 
         if credential_file:
             self.access_key = None
@@ -65,7 +66,7 @@ class Connection(object):
         props = self._build_driver_args(**driver_kwargs)
         jpype.JClass(ATHENA_DRIVER_CLASS_NAME)
         self._jdbc_conn = jpype.java.sql.DriverManager.getConnection(
-            ATHENA_CONNECTION_STRING.format(region=self.region_name), props)
+            ATHENA_CONNECTION_STRING.format(region=self.region_name, schema=schema_name), props)
 
         self._converter = converter if converter else JDBCTypeConverter()
         self._formatter = formatter if formatter else ParameterFormatter()
