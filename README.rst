@@ -22,11 +22,11 @@ driver <http://docs.aws.amazon.com/athena/latest/ug/connect-with-jdbc.html>`__.
 Requirements
 ------------
 
-*  Python
+* Python
 
   - CPython 2.6, 2,7, 3,4, 3.5
 
-*  Java
+* Java
 
   - Java >= 7
 
