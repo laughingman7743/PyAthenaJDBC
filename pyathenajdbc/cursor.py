@@ -108,7 +108,7 @@ class Cursor(object):
                 self._result_set = None
                 self._meta_data = None
                 self._update_count = self._statement.getUpdatecount()
-        except Exception as e:
+        except Exception:
             _logger.exception('Failed to execute query.')
             reraise_dbapi_error()
 
