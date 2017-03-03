@@ -24,11 +24,11 @@ Requirements
 
 *  Python
 
-    -  CPython 2.6, 2,7, 3,4, 3.5
+  -  CPython 2.6, 2,7, 3,4, 3.5
 
 *  Java
 
-    -  Java >= 7
+  -  Java >= 7
 
 Installation
 ------------
