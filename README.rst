@@ -106,11 +106,11 @@ Minimal example for Pandas DataFrame
     from pyathenajdbc import connect
     import pandas as pd
 
-    conn = connect(access_key=YOUR_ACCESS_KEY_ID,
-                   secret_key=YOUR_SECRET_ACCESS_KEY,
-                   s3_staging_dir=YOUR_STAGING_DIR,
-                   region_name=YOUR_REGION_NAME,
-                   jvm_path=YOUR_JVM_PATH)  # optional, as used by JPype
+    conn = connect(access_key='YOUR_ACCESS_KEY_ID',
+                   secret_key='YOUR_SECRET_ACCESS_KEY',
+                   s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
+                   region_name='us-west-2',
+                   jvm_path='/path/to/jvm')  # optional, as used by JPype
     df = pd.read_sql("SELECT * FROM many_rows LIMIT 10", conn)
 
 As Pandas DataFrame
