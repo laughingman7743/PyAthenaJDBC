@@ -22,13 +22,13 @@ driver <http://docs.aws.amazon.com/athena/latest/ug/connect-with-jdbc.html>`__.
 Requirements
 ------------
 
--  Python
+*  Python
 
     -  CPython 2.6, 2,7, 3,4, 3.5
 
--  Java
+*  Java
 
-    -  Java 7+
+    -  Java >= 7
 
 Installation
 ------------
@@ -183,6 +183,8 @@ Depends on the AWS CLI credentials and the following environment variables:
     [default]
     aws_access_key_id=YOUR_ACCESS_KEY_ID
     aws_secret_access_key=YOUR_SECRET_ACCESS_KEY
+
+Environment variables
 
 .. code:: bash
 
