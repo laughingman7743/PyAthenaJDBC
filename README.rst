@@ -40,8 +40,8 @@ Installation
 Usage
 -----
 
-
-Basic usage:
+Basic usage
+~~~~~~~~~~~
 
 .. code:: python
 
@@ -58,7 +58,8 @@ Basic usage:
     finally:
         conn.close()
 
-Cursor iteration:
+Cursor iteration
+~~~~~~~~~~~~~~~~
 
 .. code:: python
 
@@ -75,7 +76,8 @@ Cursor iteration:
     finally:
         conn.close()
 
-Query with parameter:
+Query with parameter
+~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
@@ -96,22 +98,23 @@ Query with parameter:
     finally:
         conn.close()
 
-
-Minimal example for Pandas DataFrame:
+Minimal example for Pandas DataFrame
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
     from pyathenajdbc import connect
     import pandas as pd
 
-    conn = connect(access_key=<access key>,
-                   secret_key=<secret key>,
-                   s3_staging_dir=<staging dir>,
-                   region_name=<region name>,
-                   jvm_path=<jvm path>) # optional, as used by jpype
-    df = pd.read_sql("SELECT * FROM <table name> LIMIT 10", conn)
+    conn = connect(access_key=YOUR_ACCESS_KEY_ID,
+                   secret_key=YOUR_SECRET_ACCESS_KEY,
+                   s3_staging_dir=YOUR_STAGING_DIR,
+                   region_name=YOUR_REGION_NAME,
+                   jvm_path=YOUR_JVM_PATH)  # optional, as used by JPype
+    df = pd.read_sql("SELECT * FROM many_rows LIMIT 10", conn)
 
-As Pandas DataFrame:
+As Pandas DataFrame
+~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
@@ -171,16 +174,23 @@ Additional environment variable:
 Testing
 -------
 
-Depends on the following environment variables:
+Depends on the AWS CLI credentials and the following environment variables:
+
+~/.aws/credentials
+
+.. code:: cfg
+
+    [default]
+    aws_access_key_id=YOUR_ACCESS_KEY_ID
+    aws_secret_access_key=YOUR_SECRET_ACCESS_KEY
 
 .. code:: bash
 
-    $ export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
-    $ export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY
     $ export AWS_DEFAULT_REGION=us-west-2
     $ export AWS_ATHENA_S3_STAGING_DIR=s3://YOUR_S3_BUCKET/path/to/
 
-Run test:
+Run test
+~~~~~~~~
 
 .. code:: bash
 
@@ -189,7 +199,8 @@ Run test:
     $ py.test
     $ scripts/delete_test_data.sh
 
-Run test multiple Python versions:
+Run test multiple Python versions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: bash
 
