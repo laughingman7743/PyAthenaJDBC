@@ -148,7 +148,7 @@ class Cursor(object):
         self._rownumber += 1
         return tuple([
             self._converter.convert(self._meta_data.getColumnType(i), self._result_set, i)
-            for i in range(1, self._meta_data.getColumnCount() + 1)
+            for i in xrange(1, self._meta_data.getColumnCount() + 1)
         ])
 
     def fetchone(self):
@@ -158,7 +158,7 @@ class Cursor(object):
         if not size or size <= 0:
             size = self._arraysize
         rows = []
-        for i in range(size):
+        for i in xrange(size):
             row = self._fetch(size)
             if row:
                 rows.append(row)

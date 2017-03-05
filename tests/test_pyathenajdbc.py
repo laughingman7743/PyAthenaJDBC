@@ -19,7 +19,7 @@ from tests.util import with_cursor, Env, read_query
 _ENV = Env()
 _BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 _SCHEMA = 'test_pyathena_jdbc_' + \
-          ''.join([random.choice(string.ascii_lowercase + string.digits) for i in range(10)])
+          ''.join([random.choice(string.ascii_lowercase + string.digits) for i in xrange(10)])
 
 
 def setup_module(module):
