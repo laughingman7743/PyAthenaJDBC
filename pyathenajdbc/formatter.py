@@ -97,7 +97,7 @@ class ParameterFormatter(object):
             raise ProgrammingError('Query is none or empty.')
         operation = operation.strip()
 
-        if operation.startswith('SELECT'):
+        if operation.upper().startswith('SELECT'):
             escaper = _escape_presto
         else:
             escaper = _escape_hive
