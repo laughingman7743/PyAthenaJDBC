@@ -14,10 +14,10 @@
 PyAthenaJDBC
 ============
 
-PyAthenaJDBC is a python `DB API 2.0 (PEP
-249) <https://www.python.org/dev/peps/pep-0249/>`__ compliant wrapper
-for `Amazon Athena JDBC
-driver <http://docs.aws.amazon.com/athena/latest/ug/connect-with-jdbc.html>`__.
+PyAthenaJDBC is a Python `DB API 2.0 (PEP 249)`_ compliant wrapper for `Amazon Athena JDBC driver`_.
+
+.. _`DB API 2.0 (PEP 249)`: https://www.python.org/dev/peps/pep-0249/
+.. _`Amazon Athena JDBC driver`: http://docs.aws.amazon.com/athena/latest/ug/connect-with-jdbc.html
 
 Requirements
 ------------
@@ -47,7 +47,8 @@ Basic usage
 
     from pyathenajdbc import connect
 
-    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/')
+    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
+                   region_name='us-west-2')
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
@@ -65,7 +66,8 @@ Cursor iteration
 
     from pyathenajdbc import connect
 
-    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/')
+    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
+                   region_name='us-west-2')
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
@@ -83,7 +85,8 @@ Query with parameter
 
     from pyathenajdbc import connect
 
-    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/')
+    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
+                   region_name='us-west-2')
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
@@ -123,7 +126,8 @@ As Pandas DataFrame
     from pyathenajdbc.util import as_pandas
 
     with contextlib.closing(
-            connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/')) as conn:
+            connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/'
+                    region_name='us-west-2'))) as conn:
         with conn.cursor() as cursor:
             cursor.execute("""
             SELECT * FROM many_rows
@@ -131,11 +135,23 @@ As Pandas DataFrame
             df = as_pandas(cursor)
     print(df.describe())
 
+Examples
+--------
+
+Redash_ query runner example
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+See `examples/redash/athena.py`_
+
+.. _Redash: https://github.com/getredash/redash
+.. _`examples/redash/athena.py`: examples/redash/athena.py
+
 Credential
 ----------
 
-Support `AWS CLI credentials
-configuration <http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html>`__.
+Support `AWS CLI credentials configuration`_.
+
+.. _`AWS CLI credentials configuration`: http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
 
 Credential Files
 ~~~~~~~~~~~~~~~~
