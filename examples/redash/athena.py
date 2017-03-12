@@ -107,9 +107,11 @@ class Athena(BaseQueryRunner):
         try:
             with conn.cursor() as cursor:
                 cursor.execute(query)
-                column_tuples = [(i[0], _ATHENA_TYPES_MAPPING.get(i[1], None)) for i in cursor.description]
+                column_tuples = [(i[0], _ATHENA_TYPES_MAPPING.get(i[1], None))
+                                 for i in cursor.description]
                 columns = self.fetch_columns(column_tuples)
-                rows = [dict(zip(([c['name'] for c in columns]), r)) for i, r in enumerate(cursor.fetchall())]
+                rows = [dict(zip(([c['name'] for c in columns]), r))
+                        for i, r in enumerate(cursor.fetchall())]
                 data = {'columns': columns, 'rows': rows}
                 json_data = json.dumps(data, cls=JSONEncoder)
                 error = None
@@ -121,5 +123,6 @@ class Athena(BaseQueryRunner):
                 conn.close()
 
         return json_data, error
+
 
 register(Athena)
