@@ -5,9 +5,12 @@ import contextlib
 import os
 import random
 import string
+import time
 import unittest
 from datetime import datetime, date
 
+from concurrent import futures
+from concurrent.futures.thread import ThreadPoolExecutor
 from past.builtins.misc import xrange
 
 from pyathenajdbc import connect
@@ -274,6 +277,19 @@ class TestPyAthenaJDBC(unittest.TestCase):
     #         FROM many_rows a
     #         CROSS JOIN many_rows b
     #         """))
+
+    def test_multiple_connection(self):
+        def execute_other_thread():
+            time.sleep(random.random())
+            with contextlib.closing(connect(schema_name=_SCHEMA)) as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute('SELECT * FROM one_row')
+                    return cursor.fetchall()
+
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            fs = [executor.submit(execute_other_thread) for _ in range(2)]
+            for f in futures.as_completed(fs):
+                self.assertEqual(f.result(), [(1,)])
 
     def test_connection_is_closed(self):
         conn = self.connect()

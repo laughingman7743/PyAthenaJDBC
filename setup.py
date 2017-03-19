@@ -116,6 +116,7 @@ setup(
         'Pandas': ['pandas>=0.19.0']
     },
     tests_require=[
+        'futures',
         'pytest',
         'pytest-cov',
         'pytest-flake8',
