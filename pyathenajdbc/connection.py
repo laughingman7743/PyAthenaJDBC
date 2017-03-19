@@ -16,6 +16,7 @@ from pyathenajdbc.error import ProgrammingError, NotSupportedError
 from pyathenajdbc.formatter import ParameterFormatter
 from pyathenajdbc.util import synchronized
 
+
 _logger = logging.getLogger(__name__)
 
 
