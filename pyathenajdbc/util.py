@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from __future__ import unicode_literals
+import functools
 import sys
+import threading
 
 from future.utils import reraise
 
@@ -33,3 +35,16 @@ def reraise_dbapi_error():
     else:
         tp = exc_info[0]
     reraise(tp, value, exc_info[2])
+
+
+def synchronized(wrapped):
+    """The missing @synchronized decorator
+
+    https://git.io/vydTA"""
+    _lock = threading.RLock()
+
+    @functools.wraps(wrapped)
+    def _wrapper(*args, **kwargs):
+        with _lock:
+            return wrapped(*args, **kwargs)
+    return _wrapper

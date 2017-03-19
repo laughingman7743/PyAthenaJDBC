@@ -5,7 +5,6 @@ import contextlib
 import os
 import random
 import string
-import time
 import unittest
 from datetime import datetime, date
 
@@ -280,7 +279,6 @@ class TestPyAthenaJDBC(unittest.TestCase):
 
     def test_multiple_connection(self):
         def execute_other_thread():
-            time.sleep(random.random())
             with contextlib.closing(connect(schema_name=_SCHEMA)) as conn:
                 with conn.cursor() as cursor:
                     cursor.execute('SELECT * FROM one_row')

@@ -14,7 +14,7 @@ from pyathenajdbc.converter import JDBCTypeConverter
 from pyathenajdbc.cursor import Cursor
 from pyathenajdbc.error import ProgrammingError, NotSupportedError
 from pyathenajdbc.formatter import ParameterFormatter
-
+from pyathenajdbc.util import synchronized
 
 _logger = logging.getLogger(__name__)
 
@@ -72,6 +72,7 @@ class Connection(object):
         self._formatter = formatter if formatter else ParameterFormatter()
 
     @classmethod
+    @synchronized
     def _start_jvm(cls, jvm_path, jvm_options, driver_path):
         if jvm_path is None:
             jvm_path = jpype.get_default_jvm_path()
