@@ -14,6 +14,7 @@ from pyathenajdbc.converter import JDBCTypeConverter
 from pyathenajdbc.cursor import Cursor
 from pyathenajdbc.error import ProgrammingError, NotSupportedError
 from pyathenajdbc.formatter import ParameterFormatter
+from pyathenajdbc.util import synchronized
 
 
 _logger = logging.getLogger(__name__)
@@ -72,11 +73,12 @@ class Connection(object):
         self._formatter = formatter if formatter else ParameterFormatter()
 
     @classmethod
+    @synchronized
     def _start_jvm(cls, jvm_path, jvm_options, driver_path):
         if jvm_path is None:
             jvm_path = jpype.get_default_jvm_path()
         if driver_path is None:
-            driver_path = os.path.join(os.path.dirname(__file__), ATHENA_JAR)
+            driver_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ATHENA_JAR)
         if not jpype.isJVMStarted():
             _logger.debug('JVM path: %s', jvm_path)
             args = ['-server', '-Djava.class.path={0}'.format(driver_path)]
@@ -84,8 +86,15 @@ class Connection(object):
                 args.extend(jvm_options)
             _logger.debug('JVM args: %s', args)
             jpype.startJVM(jvm_path, *args)
+            cls.class_loader = jpype.java.lang.Thread.currentThread().getContextClassLoader()
         if not jpype.isThreadAttachedToJVM():
             jpype.attachThreadToJVM()
+            if not cls.class_loader:
+                cls.class_loader = jpype.java.lang.Thread.currentThread().getContextClassLoader()
+            class_loader = jpype.java.net.URLClassLoader.newInstance(
+                [jpype.java.net.URL('jar:file:{0}!/'.format(driver_path))],
+                cls.class_loader)
+            jpype.java.lang.Thread.currentThread().setContextClassLoader(class_loader)
 
     def _build_driver_args(self, **kwargs):
         props = jpype.java.util.Properties()
