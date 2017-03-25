@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import contextlib
 import os
 import random
+import re
 import string
 import unittest
 from datetime import datetime, date
@@ -197,6 +198,14 @@ class TestPyAthenaJDBC(unittest.TestCase):
         self.assertEqual(cursor.description, [('foobar', 4, 11, None, 10, 0, 2)])
 
     @with_cursor
+    def test_query_id(self, cursor):
+        cursor.execute('SELECT * from one_row')
+        # query_id is UUID v4
+        expected_pattern = \
+            r'^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+        self.assertTrue(re.match(cursor.query_id, expected_pattern))
+
+    @with_cursor
     def test_complex(self, cursor):
         # TODO DECIMAL type failed to fetch with java.lang.IndexOutOfBoundsException
         # https://forums.aws.amazon.com/thread.jspa?threadID=245004
@@ -311,6 +320,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
             self.assertRaises(ProgrammingError, lambda: cursor.fetchmany())
             self.assertRaises(ProgrammingError, lambda: cursor.fetchall())
             self.assertRaises(ProgrammingError, lambda: cursor.cancel())
+            self.assertRaises(ProgrammingError, lambda: cursor.query_id)
 
     def test_no_ops(self):
         conn = self.connect()
