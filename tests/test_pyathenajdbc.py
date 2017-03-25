@@ -203,7 +203,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
         # query_id is UUID v4
         expected_pattern = \
             r'^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
-        self.assertTrue(re.match(cursor.query_id, expected_pattern))
+        self.assertTrue(re.match(expected_pattern, cursor.query_id))
 
     @with_cursor
     def test_complex(self, cursor):
