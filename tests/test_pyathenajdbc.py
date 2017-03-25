@@ -13,15 +13,17 @@ from concurrent.futures.thread import ThreadPoolExecutor
 from past.builtins.misc import xrange
 
 from pyathenajdbc import connect
-from pyathenajdbc.error import DatabaseError, ProgrammingError, NotSupportedError
+from pyathenajdbc.error import (DatabaseError,
+                                ProgrammingError,
+                                NotSupportedError)
 
 from tests.util import with_cursor, Env, read_query
 
 
 _ENV = Env()
 _BASE_PATH = os.path.dirname(os.path.abspath(__file__))
-_SCHEMA = 'test_pyathena_jdbc_' + \
-          ''.join([random.choice(string.ascii_lowercase + string.digits) for i in xrange(10)])
+_SCHEMA = 'test_pyathena_jdbc_' + ''.join([random.choice(
+    string.ascii_lowercase + string.digits) for i in xrange(10)])
 
 
 def setup_module(module):
@@ -186,7 +188,8 @@ class TestPyAthenaJDBC(unittest.TestCase):
         cursor.execute('SELECT null FROM many_rows')
         self.assertEqual(cursor.fetchall(), [(None,)] * 10000)
         cursor.execute('SELECT IF(a % 11 = 0, null, a) FROM many_rows')
-        self.assertEqual(cursor.fetchall(), [(None if a % 11 == 0 else a,) for a in xrange(10000)])
+        self.assertEqual(cursor.fetchall(),
+                         [(None if a % 11 == 0 else a,) for a in xrange(10000)])
 
     @with_cursor
     def test_description(self, cursor):
