@@ -1,29 +1,26 @@
 machine:
   python:
-    version: '2.7.12'
+    version: '2.7.13'
   environment:
     PY26: '2.6.9'
-    PY27: '2.7.12'
-    PY34: '3.4.5'
-    PY35: '3.5.2'
+    PY27: '2.7.13'
+    PY34: '3.4.6'
+    PY35: '3.5.3'
 
 dependencies:
   cache_directories:
-    - "/opt/circleci/.pyenv"
+    - '/opt/circleci/.pyenv'
   override:
     - pyenv install -sk ${PY26}
     - pyenv install -sk ${PY27}
     - pyenv install -sk ${PY34}
     - pyenv install -sk ${PY35}
-    - pyenv local ${PY26} ${PY27} ${PY34} ${PY35}
+    - pyenv local ${PY27} ${PY26} ${PY34} ${PY35}
     - sudo apt-get update; sudo apt-get install openjdk-8-jdk
     - sudo update-alternatives --set java /usr/lib/jvm/jdk1.8.0/bin/java
     - sudo update-alternatives --set javac /usr/lib/jvm/java-8-openjdk-amd64/bin/javac
     - echo 'export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64' >> ~/.circlerc
-    - pip install -U pip
-    - pip install -U detox
-    - pip install -U codecov
-    - pip install -U awscli
+    - pip install -U pip detox codecov awscli
 
 test:
   pre:
@@ -31,5 +28,5 @@ test:
   override:
     - detox
   post:
-    - ./scripts/delete_test_data.sh
+    # - ./scripts/delete_test_data.sh
     - bash <(curl -s https://codecov.io/bash)
