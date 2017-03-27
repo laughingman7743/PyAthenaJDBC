@@ -75,6 +75,12 @@ class Cursor(object):
         ]
         return self._description
 
+    @property
+    def query_id(self):
+        if not self.has_result_set:
+            raise ProgrammingError('No result set.')
+        return self._result_set.getClient().getQueryExecutionId()
+
     def close(self):
         self._meta_data = None
         if self._result_set and not self._result_set.isClosed():
