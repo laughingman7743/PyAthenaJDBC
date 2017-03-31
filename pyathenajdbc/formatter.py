@@ -131,4 +131,5 @@ _DEFAULT_FORMATTERS = {
     list: _format_seq,
     set: _format_seq,
     tuple: _format_seq,
+    dict: lambda formatter, escaper, val: '',
 }
