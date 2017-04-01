@@ -121,7 +121,7 @@ class AthenaDialect(DefaultDialect):
         return [
             {
                 'name': row.column_name,
-                'type': _TYPE_MAPPINGS.get(re.sub(r'^([A-Z]+)($|\([A-Z0-9,\s]+\)$)', r'\1',
+                'type': _TYPE_MAPPINGS.get(re.sub(r'^([A-Z]+)($|\(.+\)$)', r'\1',
                                                   row.data_type.upper()), NULLTYPE),
                 'nullable': True if row.is_nullable == 'YES' else False,
                 'default': row.column_default,
