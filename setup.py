@@ -113,7 +113,8 @@ setup(
         'botocore>=1.0.0'
     ],
     extras_require={
-        'Pandas': ['pandas>=0.19.0']
+        'Pandas': ['pandas>=0.19.0'],
+        'SQLAlchemy': ['sqlalchemy>=1.0.0'],
     },
     tests_require=[
         'futures',
@@ -138,4 +139,14 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
     ],
+    entry_points={
+        # New versions
+        'sqlalchemy.dialects': [
+            'athena = pyathenajdbc.sqlalchemy_athena:AthenaDialect',
+        ],
+        # Version 0.5
+        'sqlalchemy.databases': [
+            'athena = pyathenajdbc.sqlalchemy_athena:AthenaDialect',
+        ],
+    }
 )
