@@ -169,7 +169,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
     @with_cursor
     def test_invalid_params(self, cursor):
         self.assertRaises(TypeError, lambda: cursor.execute(
-            'SELECT * FROM one_row', {}))
+            'SELECT * FROM one_row', {'foo': {'bar': 1}}))
 
     def test_open_close(self):
         with contextlib.closing(self.connect()):

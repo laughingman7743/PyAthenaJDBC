@@ -92,7 +92,7 @@ class ParameterFormatter(object):
             raise TypeError('{0} is not defined formatter.'.format(val))
         return func
 
-    def format(self, operation, *parameter_args, **parameters_kwargs):
+    def format(self, operation, *parameter_args, **parameter_kwargs):
         if not operation or not operation.strip():
             raise ProgrammingError('Query is none or empty.')
         operation = operation.strip()
@@ -104,11 +104,14 @@ class ParameterFormatter(object):
 
         args = []
         for v in parameter_args:
-            func = self.get_formatter(v)
-            args.append(func(self, escaper, v))
+            if isinstance(v, dict):
+                parameter_kwargs.update(v)
+            else:
+                func = self.get_formatter(v)
+                args.append(func(self, escaper, v))
 
         kwargs = dict()
-        for k, v in iteritems(parameters_kwargs):
+        for k, v in iteritems(parameter_kwargs):
             func = self.get_formatter(v)
             kwargs.update({k: func(self, escaper, v)})
 

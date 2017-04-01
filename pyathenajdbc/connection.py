@@ -34,6 +34,7 @@ class Connection(object):
             self.s3_staging_dir = os.getenv(self._ENV_S3_STAGING_DIR, None)
         assert self.s3_staging_dir, 'Required argument `s3_staging_dir` not found.'
         assert schema_name, 'Required argument `schema_name` not found.'
+        self.schema_name = schema_name
 
         if credential_file:
             self.access_key = None
