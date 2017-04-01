@@ -2,10 +2,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 import contextlib
-import os
-import random
 import re
-import string
 import unittest
 from datetime import datetime, date
 
@@ -18,51 +15,8 @@ from pyathenajdbc.error import (DatabaseError,
                                 ProgrammingError,
                                 NotSupportedError)
 
-from tests.util import with_cursor, Env, read_query
-
-
-_ENV = Env()
-_BASE_PATH = os.path.dirname(os.path.abspath(__file__))
-_SCHEMA = 'test_pyathena_jdbc_' + ''.join([random.choice(
-    string.ascii_lowercase + string.digits) for i in xrange(10)])
-
-
-def setup_module(module):
-    with contextlib.closing(connect()) as conn:
-        with conn.cursor() as cursor:
-            _create_database(cursor)
-            _create_table(cursor)
-
-
-def teardown_module(module):
-    with contextlib.closing(connect()) as conn:
-        with conn.cursor() as cursor:
-            _drop_database(cursor)
-
-
-def _create_database(cursor):
-    for q in read_query(os.path.join(_BASE_PATH, 'sql', 'create_database.sql')):
-        cursor.execute(q.format(schema=_SCHEMA))
-
-
-def _drop_database(cursor):
-    for q in read_query(os.path.join(_BASE_PATH, 'sql', 'drop_database.sql')):
-        cursor.execute(q.format(schema=_SCHEMA))
-
-
-def _create_table(cursor):
-    location_one_row = '{0}{1}/{2}/'.format(
-        _ENV.s3_staging_dir, 'test_pyathena_jdbc', 'one_row')
-    location_many_rows = '{0}{1}/{2}/'.format(
-        _ENV.s3_staging_dir, 'test_pyathena_jdbc', 'many_rows')
-    location_one_row_complex = '{0}{1}/{2}/'.format(
-        _ENV.s3_staging_dir, 'test_pyathena_jdbc', 'one_row_complex')
-    for q in read_query(
-            os.path.join(_BASE_PATH, 'sql', 'create_table.sql')):
-        cursor.execute(q.format(schema=_SCHEMA,
-                                location_one_row=location_one_row,
-                                location_many_rows=location_many_rows,
-                                location_one_row_complex=location_one_row_complex))
+from tests.conftest import SCHEMA
+from tests.util import with_cursor
 
 
 class TestPyAthenaJDBC(unittest.TestCase):
@@ -74,7 +28,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
     """
 
     def connect(self):
-        return connect(schema_name=_SCHEMA)
+        return connect(schema_name=SCHEMA)
 
     @with_cursor
     def test_fetchone(self, cursor):
@@ -291,7 +245,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
 
     def test_multiple_connection(self):
         def execute_other_thread():
-            with contextlib.closing(connect(schema_name=_SCHEMA)) as conn:
+            with contextlib.closing(connect(schema_name=SCHEMA)) as conn:
                 with conn.cursor() as cursor:
                     cursor.execute('SELECT * FROM one_row')
                     return cursor.fetchall()
