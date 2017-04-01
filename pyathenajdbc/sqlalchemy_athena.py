@@ -8,21 +8,12 @@ which is released under the MIT license.
 from __future__ import absolute_import
 from __future__ import unicode_literals
 import re
-#from distutils.version import StrictVersion
-#from pyhive import presto
-#from pyhive.common import UniversalSet
 from sqlalchemy import exc
 from sqlalchemy import types
-#from sqlalchemy import util
 from sqlalchemy.engine.default import DefaultDialect
 from sqlalchemy.sql.compiler import IdentifierPreparer
 from pyathenajdbc import error
 from pyathenajdbc.converter import JDBCTypeConverter
-
-# try:
-#     from sqlalchemy.sql.compiler import SQLCompiler
-# except ImportError:
-#     from sqlalchemy.sql.compiler import DefaultCompiler as SQLCompiler
 
 
 class UniversalSet(object):
@@ -66,7 +57,7 @@ _type_map = {
     'BLOB': types.BLOB,
     # 'NCLOB': ???,
     # 'STRUCT': ???,
-     'JAVA_OBJECT': types.BLOB,
+    'JAVA_OBJECT': types.BLOB,
     # 'REF_CURSOR': ???,
     # 'REF': ???,
     # 'DISTINCT': ???,
@@ -75,11 +66,6 @@ _type_map = {
     # 'OTHER': ???,
     # 'ROWID': ???,
 }
-
-
-# class AthenaCompiler(SQLCompiler):
-#     def visit_char_length_func(self, fn, **kw):
-#         return 'length{}'.format(self.function_argspec(fn, **kw))
 
 
 class AthenaDialect(DefaultDialect):
