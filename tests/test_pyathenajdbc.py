@@ -8,6 +8,7 @@ from datetime import datetime, date
 from concurrent import futures
 from concurrent.futures.thread import ThreadPoolExecutor
 from past.builtins.misc import xrange
+from pyathenajdbc.cursor import Cursor
 
 from pyathenajdbc import connect
 from pyathenajdbc.error import (DatabaseError,
@@ -92,6 +93,10 @@ class TestPyAthenaJDBC(unittest.TestCase):
         self.assertEqual(len(cursor.fetchmany()), 5)
 
     @with_cursor
+    def test_arraysize_default(self, cursor):
+        self.assertEqual(cursor.arraysize, Cursor.DEFAULT_FETCH_SIZE)
+
+    @with_cursor
     def test_no_params(self, cursor):
         self.assertRaises(KeyError, lambda: cursor.execute("SELECT %(param)s FROM one_row"))
 
@@ -146,7 +151,10 @@ class TestPyAthenaJDBC(unittest.TestCase):
     @with_cursor
     def test_description(self, cursor):
         cursor.execute('SELECT 1 AS foobar FROM one_row')
-        self.assertEqual(cursor.description, [('foobar', 4, 11, None, 10, 0, 2)])
+        expected = [('foobar', 4, 11, None, 10, 0, 2)]
+        self.assertEqual(cursor.description, expected)
+        # description cache
+        self.assertEqual(cursor.description, expected)
 
     @with_cursor
     def test_query_id(self, cursor):
