@@ -5,8 +5,8 @@ import re
 
 from sqlalchemy.engine.default import DefaultDialect
 from sqlalchemy.sql.compiler import IdentifierPreparer, SQLCompiler
-from sqlalchemy.sql.sqltypes import (ARRAY, BIGINT, BINARY, BOOLEAN, DATE, DECIMAL,
-                                     FLOAT, INTEGER, NULLTYPE, STRINGTYPE, TIMESTAMP)
+from sqlalchemy.sql.sqltypes import (BIGINT, BINARY, BOOLEAN, DATE, DECIMAL, FLOAT,
+                                     INTEGER, NULLTYPE, STRINGTYPE, TIMESTAMP)
 
 
 class UniversalSet(object):
@@ -40,7 +40,7 @@ _TYPE_MAPPINGS = {
     'VARCHAR': STRINGTYPE,
     'TINYINT': INTEGER,
     'DECIMAL': DECIMAL,
-    'ARRAY': ARRAY,
+    'ARRAY': STRINGTYPE,
     'ROW': STRINGTYPE,  # StructType
     'VARBINARY': BINARY,
     'MAP': STRINGTYPE,
