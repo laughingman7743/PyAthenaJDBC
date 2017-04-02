@@ -116,8 +116,8 @@ class AthenaDialect(DefaultDialect):
 
     @reflection.cache
     def get_columns(self, connection, table_name, schema=None, **kw):
-        # information_schema.columns fails when filtering with table_schema or table_name
-        # when specifying a name that does not exist in table_schema or table_name.
+        # information_schema.columns fails when filtering with table_schema or table_name,
+        # if specifying a name that does not exist in table_schema or table_name.
         schema = schema if schema else connection.connection.schema_name
         query = """
                 SELECT
