@@ -90,7 +90,8 @@ class AthenaDialect(DefaultDialect):
 
     def get_schema_names(self, connection, **kw):
         query = """
-                SELECT schema_name FROM information_schema.schemata
+                SELECT schema_name
+                FROM information_schema.schemata
                 WHERE schema_name NOT IN ('information_schema')
                 """
         return [row.schema_name for row in connection.execute(query).fetchall()]
