@@ -96,7 +96,7 @@ class AthenaDialect(DefaultDialect):
         query = """
                 SELECT table_name
                 FROM information_schema.tables
-                WHERE table_schema = {0}
+                WHERE table_schema = '{0}'
                 """.format(schema if schema else connection.connection.schema_name)
         return [row.table_name for row in connection.execute(query).fetchall()]
 
@@ -116,7 +116,7 @@ class AthenaDialect(DefaultDialect):
                   ordinal_position,
                   comment
                 FROM information_schema.columns
-                WHERE table_schema = {0}
+                WHERE table_schema = '{0}'
                 """.format(schema if schema else connection.connection.schema_name)
         return [
             {
