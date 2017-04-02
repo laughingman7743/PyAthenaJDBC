@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from datetime import date, datetime
 from decimal import Decimal
 
+from pyathenajdbc.error import ProgrammingError
 from pyathenajdbc.formatter import ParameterFormatter
 
 from tests import unittest
@@ -298,3 +299,22 @@ class TestParameterFormatter(unittest.TestCase):
         WHERE col_string IN %(param)s
         """, {'param': ['密林', '女神']})
         self.assertEqual(actual, expected)
+
+    def test_format_bad_parameter(self):
+        self.assertRaises(ProgrammingError, lambda: self.format("""
+        SELECT *
+        FROM test_table
+        where col_int = $(param)d
+        """.strip(), 1))
+
+        self.assertRaises(ProgrammingError, lambda: self.format("""
+        SELECT *
+        FROM test_table
+        where col_string = $(param)s
+        """.strip(), 'a string'))
+
+        self.assertRaises(ProgrammingError, lambda: self.format("""
+        SELECT *
+        FROM test_table
+        where col_string in $(param)s
+        """.strip(), ['a string']))
