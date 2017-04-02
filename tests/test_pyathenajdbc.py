@@ -47,7 +47,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
 
     @with_cursor
     def test_null_param(self, cursor):
-        cursor.execute('SELECT {0:s} FROM one_row', None)
+        cursor.execute('SELECT %(param)s FROM one_row', {'param': None})
         self.assertEqual(cursor.fetchall(), [(None,)])
 
     @with_cursor
@@ -93,8 +93,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
 
     @with_cursor
     def test_no_params(self, cursor):
-        self.assertRaises(IndexError, lambda: cursor.execute("SELECT '{0:s}' FROM one_row"))
-        self.assertRaises(KeyError, lambda: cursor.execute("SELECT '{x:s}' FROM one_row"))
+        self.assertRaises(KeyError, lambda: cursor.execute("SELECT %(param)s FROM one_row"))
 
     def test_escape(self):
         bad_str = '''`~!@#$%^&*()_+-={}[]|\\;:'",./<>?\n\r\t '''
@@ -110,9 +109,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
         #   + [(1, u'`~!@#$%^&*()_+-={}[]|\\;:\'",./<>?\n\r\t ')]
         #   ?                                             ^
         expected = '''`~!@#$%^&*()_+-={}[]|\\;:'",./<>?\n\n\t '''
-        cursor.execute('SELECT {0:d}, {1:s} FROM one_row', 1, bad_str)
-        self.assertEqual(cursor.fetchall(), [(1, expected,)])
-        cursor.execute('SELECT {a:d}, {b:s} FROM one_row', a=1, b=bad_str)
+        cursor.execute('SELECT %(a)d, %(b)s FROM one_row', {'a': 1, 'b': bad_str})
         self.assertEqual(cursor.fetchall(), [(1, expected,)])
 
     @with_cursor
@@ -135,14 +132,14 @@ class TestPyAthenaJDBC(unittest.TestCase):
     @with_cursor
     def test_unicode(self, cursor):
         unicode_str = "王兢"
-        cursor.execute('SELECT {0:s} FROM one_row', unicode_str)
+        cursor.execute('SELECT %(param)s FROM one_row', {'param': unicode_str})
         self.assertEqual(cursor.fetchall(), [(unicode_str,)])
 
     @with_cursor
     def test_null(self, cursor):
         cursor.execute('SELECT null FROM many_rows')
         self.assertEqual(cursor.fetchall(), [(None,)] * 10000)
-        cursor.execute('SELECT IF(a % 11 = 0, null, a) FROM many_rows')
+        cursor.execute('SELECT IF(a %% 11 = 0, null, a) FROM many_rows')
         self.assertEqual(cursor.fetchall(),
                          [(None if a % 11 == 0 else a,) for a in xrange(10000)])
 

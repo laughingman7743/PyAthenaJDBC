@@ -9,6 +9,8 @@ from sqlalchemy.sql.compiler import IdentifierPreparer, SQLCompiler
 from sqlalchemy.sql.sqltypes import (BIGINT, BINARY, BOOLEAN, DATE, DECIMAL, FLOAT,
                                      INTEGER, NULLTYPE, STRINGTYPE, TIMESTAMP)
 
+import pyathenajdbc
+
 
 class UniversalSet(object):
     """UniversalSet
@@ -57,6 +59,7 @@ class AthenaDialect(DefaultDialect):
     driver = 'jdbc'
     preparer = AthenaIdentifierPreparer
     statement_compiler = AthenaCompiler
+    default_paramstyle = pyathenajdbc.paramstyle
     supports_alter = False
     supports_pk_autoincrement = False
     supports_default_values = False
@@ -69,7 +72,6 @@ class AthenaDialect(DefaultDialect):
 
     @classmethod
     def dbapi(cls):
-        import pyathenajdbc
         return pyathenajdbc
 
     def _get_default_schema_name(self, connection):

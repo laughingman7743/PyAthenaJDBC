@@ -90,13 +90,8 @@ Query with parameter
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
-            SELECT col_int FROM one_row_complex where col_int = {0}
-            """, 2147483647)
-            print(cursor.fetchall())
-
-            cursor.execute("""
-            SELECT col_string FROM one_row_complex where col_string = {param}
-            """, param='a string')
+            SELECT col_string FROM one_row_complex where col_string = %(param)s
+            """, {'param': 'a string'})
             print(cursor.fetchall())
     finally:
         conn.close()
