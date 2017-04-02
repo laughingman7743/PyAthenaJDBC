@@ -32,7 +32,7 @@ class AthenaCompiler(SQLCompiler):
 
     https://github.com/dropbox/PyHive/blob/master/pyhive/sqlalchemy_presto.py"""
     def visit_char_length_func(self, fn, **kw):
-        return 'length{}'.format(self.function_argspec(fn, **kw))
+        return 'length{0}'.format(self.function_argspec(fn, **kw))
 
 
 _TYPE_MAPPINGS = {
