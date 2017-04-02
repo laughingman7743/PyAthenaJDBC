@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import re
 
+from sqlalchemy.engine import reflection
 from sqlalchemy.engine.default import DefaultDialect
 from sqlalchemy.sql.compiler import IdentifierPreparer, SQLCompiler
 from sqlalchemy.sql.sqltypes import (BIGINT, BINARY, BOOLEAN, DATE, DECIMAL, FLOAT,
@@ -88,6 +89,7 @@ class AthenaDialect(DefaultDialect):
         opts.update(url.query)
         return [[], opts]
 
+    @reflection.cache
     def get_schema_names(self, connection, **kw):
         query = """
                 SELECT schema_name
@@ -96,6 +98,7 @@ class AthenaDialect(DefaultDialect):
                 """
         return [row.schema_name for row in connection.execute(query).fetchall()]
 
+    @reflection.cache
     def get_table_names(self, connection, schema=None, **kw):
         schema = schema if schema else connection.connection.schema_name
         query = """
@@ -111,6 +114,7 @@ class AthenaDialect(DefaultDialect):
             return True
         return False
 
+    @reflection.cache
     def get_columns(self, connection, table_name, schema=None, **kw):
         # information_schema.columns fails when filtering with table_schema or table_name
         # when specifying a name that does not exist in table_schema or table_name.
