@@ -3,7 +3,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import contextlib
 import re
-import unittest
 from datetime import datetime, date
 
 from concurrent import futures
@@ -15,6 +14,7 @@ from pyathenajdbc.error import (DatabaseError,
                                 ProgrammingError,
                                 NotSupportedError)
 
+from tests import unittest
 from tests.conftest import SCHEMA
 from tests.util import with_cursor
 
