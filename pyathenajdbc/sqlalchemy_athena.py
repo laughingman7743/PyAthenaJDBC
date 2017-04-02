@@ -75,7 +75,7 @@ class AthenaDialect(DefaultDialect):
         return pyathenajdbc
 
     def _get_default_schema_name(self, connection):
-        return 'default'
+        return connection.connection.schema_name
 
     def create_connect_args(self, url):
         # Connection string format:
@@ -86,7 +86,7 @@ class AthenaDialect(DefaultDialect):
             'access_key': url.username,
             'secret_key': url.password,
             'region_name': re.sub(r'^athena\.([a-z0-9-]+)\.amazonaws\.com$', r'\1', url.host),
-            'schema_name': url.database if url.database else self.default_schema_name
+            'schema_name': url.database if url.database else 'default'
         }
         opts.update(url.query)
         return [[], opts]
