@@ -97,11 +97,12 @@ class AthenaDialect(DefaultDialect):
         return [row.schema_name for row in connection.execute(query).fetchall()]
 
     def get_table_names(self, connection, schema=None, **kw):
+        schema = schema if schema else connection.connection.schema_name
         query = """
                 SELECT table_name
                 FROM information_schema.tables
                 WHERE table_schema = '{0}'
-                """.format(schema if schema else connection.connection.schema_name)
+                """.format(schema)
         return [row.table_name for row in connection.execute(query).fetchall()]
 
     def has_table(self, connection, table_name, schema=None):
@@ -111,8 +112,13 @@ class AthenaDialect(DefaultDialect):
         return False
 
     def get_columns(self, connection, table_name, schema=None, **kw):
+        # information_schema.columns fails when filtering with table_schema or table_name
+        # when specifying a name that does not exist in table_schema or table_name.
+        schema = schema if schema else connection.connection.schema_name
         query = """
                 SELECT
+                  table_schema,
+                  table_name,
                   column_name,
                   data_type,
                   is_nullable,
@@ -120,8 +126,7 @@ class AthenaDialect(DefaultDialect):
                   ordinal_position,
                   comment
                 FROM information_schema.columns
-                WHERE table_schema = '{0}'
-                """.format(schema if schema else connection.connection.schema_name)
+                """
         return [
             {
                 'name': row.column_name,
@@ -132,6 +137,7 @@ class AthenaDialect(DefaultDialect):
                 'ordinal_position': row.ordinal_position,
                 'comment': row.comment,
             } for row in connection.execute(query).fetchall()
+            if row.table_schema == schema and row.table_name == table_name
         ]
 
     def get_foreign_keys(self, connection, table_name, schema=None, **kw):
