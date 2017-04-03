@@ -128,8 +128,6 @@ class TestSQLAlchemyAthena(unittest.TestCase):
         # TODO DECIMAL type issues: exclude decimal field
         engine.dialect.reflecttable(
             connection, one_row_complex, include_columns=[], exclude_columns=['col_decimal'])
-        self.assertRaises(AttributeError, lambda: one_row_complex.c.col_decimal)
-
         self.assertEqual(len(one_row_complex.c), 14)
         self.assertIsInstance(one_row_complex.c.col_string, Column)
         rows = one_row_complex.select().execute().fetchall()
