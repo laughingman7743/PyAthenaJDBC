@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 import datetime
 
-from pyathenajdbc.error import *
+from pyathenajdbc.error import *  # noqa
 
 
 __version__ = '1.0.9'
