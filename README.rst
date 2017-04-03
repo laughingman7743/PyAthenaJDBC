@@ -142,7 +142,7 @@ The connection string has the following format.
 
     awsathena+jdbc://{access_key}:{secret_key}@athena.{region_name}.amazonaws.com:443/{schema_name}?s3_staging_dir={s3_staging_dir}&driver_path={driver_path}&...
 
-NOTE: s3_staging_dir requires quote. If access_key and secret_key contain special characters, quote is also required.
+NOTE: ``s3_staging_dir`` requires quote. If ``access_key``, ``secret_key`` and other parameter contain special characters, quote is also required.
 
 Minimal example for Pandas DataFrame
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
