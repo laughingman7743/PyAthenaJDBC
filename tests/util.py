@@ -33,6 +33,18 @@ def with_cursor(fn):
     return wrapped_fn
 
 
+def with_engine(fn):
+    @functools.wraps(fn)
+    def wrapped_fn(self, *args, **kwargs):
+        engine = self.create_engine()
+        try:
+            with contextlib.closing(engine.connect()) as conn:
+                fn(self, engine, conn, *args, **kwargs)
+        finally:
+            engine.dispose()
+    return wrapped_fn
+
+
 def read_query(path):
     with codecs.open(path, 'rb', 'utf-8') as f:
         query = f.read()

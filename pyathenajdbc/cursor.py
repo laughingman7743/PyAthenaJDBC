@@ -96,11 +96,11 @@ class Cursor(object):
     def is_closed(self):
         return self._connection is None
 
-    def execute(self, operation, *parameter_args, **parameter_kwargs):
+    def execute(self, operation, parameters=None):
         if self.is_closed:
             raise ProgrammingError('Connection is closed.')
 
-        query = self._formatter.format(operation, *parameter_args, **parameter_kwargs)
+        query = self._formatter.format(operation, parameters)
         try:
             _logger.debug(query)
             self._description = None

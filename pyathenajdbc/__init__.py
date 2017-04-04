@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 
 import datetime
 
+from pyathenajdbc.error import *  # noqa
+
 
 __version__ = '1.0.9'
 __athena_driver_version__ = '1.0.0'

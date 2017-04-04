@@ -2,67 +2,22 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 import contextlib
-import os
-import random
 import re
-import string
-import unittest
 from datetime import datetime, date
 
 from concurrent import futures
 from concurrent.futures.thread import ThreadPoolExecutor
 from past.builtins.misc import xrange
+from pyathenajdbc.cursor import Cursor
 
 from pyathenajdbc import connect
 from pyathenajdbc.error import (DatabaseError,
                                 ProgrammingError,
                                 NotSupportedError)
 
-from tests.util import with_cursor, Env, read_query
-
-
-_ENV = Env()
-_BASE_PATH = os.path.dirname(os.path.abspath(__file__))
-_SCHEMA = 'test_pyathena_jdbc_' + ''.join([random.choice(
-    string.ascii_lowercase + string.digits) for i in xrange(10)])
-
-
-def setup_module(module):
-    with contextlib.closing(connect()) as conn:
-        with conn.cursor() as cursor:
-            _create_database(cursor)
-            _create_table(cursor)
-
-
-def teardown_module(module):
-    with contextlib.closing(connect()) as conn:
-        with conn.cursor() as cursor:
-            _drop_database(cursor)
-
-
-def _create_database(cursor):
-    for q in read_query(os.path.join(_BASE_PATH, 'sql', 'create_database.sql')):
-        cursor.execute(q.format(schema=_SCHEMA))
-
-
-def _drop_database(cursor):
-    for q in read_query(os.path.join(_BASE_PATH, 'sql', 'drop_database.sql')):
-        cursor.execute(q.format(schema=_SCHEMA))
-
-
-def _create_table(cursor):
-    location_one_row = '{0}{1}/{2}/'.format(
-        _ENV.s3_staging_dir, 'test_pyathena_jdbc', 'one_row')
-    location_many_rows = '{0}{1}/{2}/'.format(
-        _ENV.s3_staging_dir, 'test_pyathena_jdbc', 'many_rows')
-    location_one_row_complex = '{0}{1}/{2}/'.format(
-        _ENV.s3_staging_dir, 'test_pyathena_jdbc', 'one_row_complex')
-    for q in read_query(
-            os.path.join(_BASE_PATH, 'sql', 'create_table.sql')):
-        cursor.execute(q.format(schema=_SCHEMA,
-                                location_one_row=location_one_row,
-                                location_many_rows=location_many_rows,
-                                location_one_row_complex=location_one_row_complex))
+from tests import unittest
+from tests.conftest import SCHEMA
+from tests.util import with_cursor
 
 
 class TestPyAthenaJDBC(unittest.TestCase):
@@ -74,7 +29,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
     """
 
     def connect(self):
-        return connect(schema_name=_SCHEMA)
+        return connect(schema_name=SCHEMA)
 
     @with_cursor
     def test_fetchone(self, cursor):
@@ -93,7 +48,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
 
     @with_cursor
     def test_null_param(self, cursor):
-        cursor.execute('SELECT {0:s} FROM one_row', None)
+        cursor.execute('SELECT %(param)s FROM one_row', {'param': None})
         self.assertEqual(cursor.fetchall(), [(None,)])
 
     @with_cursor
@@ -138,9 +93,12 @@ class TestPyAthenaJDBC(unittest.TestCase):
         self.assertEqual(len(cursor.fetchmany()), 5)
 
     @with_cursor
+    def test_arraysize_default(self, cursor):
+        self.assertEqual(cursor.arraysize, Cursor.DEFAULT_FETCH_SIZE)
+
+    @with_cursor
     def test_no_params(self, cursor):
-        self.assertRaises(IndexError, lambda: cursor.execute("SELECT '{0:s}' FROM one_row"))
-        self.assertRaises(KeyError, lambda: cursor.execute("SELECT '{x:s}' FROM one_row"))
+        self.assertRaises(KeyError, lambda: cursor.execute("SELECT %(param)s FROM one_row"))
 
     def test_escape(self):
         bad_str = '''`~!@#$%^&*()_+-={}[]|\\;:'",./<>?\n\r\t '''
@@ -156,9 +114,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
         #   + [(1, u'`~!@#$%^&*()_+-={}[]|\\;:\'",./<>?\n\r\t ')]
         #   ?                                             ^
         expected = '''`~!@#$%^&*()_+-={}[]|\\;:'",./<>?\n\n\t '''
-        cursor.execute('SELECT {0:d}, {1:s} FROM one_row', 1, bad_str)
-        self.assertEqual(cursor.fetchall(), [(1, expected,)])
-        cursor.execute('SELECT {a:d}, {b:s} FROM one_row', a=1, b=bad_str)
+        cursor.execute('SELECT %(a)d, %(b)s FROM one_row', {'a': 1, 'b': bad_str})
         self.assertEqual(cursor.fetchall(), [(1, expected,)])
 
     @with_cursor
@@ -169,7 +125,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
     @with_cursor
     def test_invalid_params(self, cursor):
         self.assertRaises(TypeError, lambda: cursor.execute(
-            'SELECT * FROM one_row', {}))
+            'SELECT * FROM one_row', {'foo': {'bar': 1}}))
 
     def test_open_close(self):
         with contextlib.closing(self.connect()):
@@ -181,21 +137,24 @@ class TestPyAthenaJDBC(unittest.TestCase):
     @with_cursor
     def test_unicode(self, cursor):
         unicode_str = "王兢"
-        cursor.execute('SELECT {0:s} FROM one_row', unicode_str)
+        cursor.execute('SELECT %(param)s FROM one_row', {'param': unicode_str})
         self.assertEqual(cursor.fetchall(), [(unicode_str,)])
 
     @with_cursor
     def test_null(self, cursor):
         cursor.execute('SELECT null FROM many_rows')
         self.assertEqual(cursor.fetchall(), [(None,)] * 10000)
-        cursor.execute('SELECT IF(a % 11 = 0, null, a) FROM many_rows')
+        cursor.execute('SELECT IF(a %% 11 = 0, null, a) FROM many_rows')
         self.assertEqual(cursor.fetchall(),
                          [(None if a % 11 == 0 else a,) for a in xrange(10000)])
 
     @with_cursor
     def test_description(self, cursor):
         cursor.execute('SELECT 1 AS foobar FROM one_row')
-        self.assertEqual(cursor.description, [('foobar', 4, 11, None, 10, 0, 2)])
+        expected = [('foobar', 4, 11, None, 10, 0, 2)]
+        self.assertEqual(cursor.description, expected)
+        # description cache
+        self.assertEqual(cursor.description, expected)
 
     @with_cursor
     def test_query_id(self, cursor):
@@ -291,7 +250,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
 
     def test_multiple_connection(self):
         def execute_other_thread():
-            with contextlib.closing(connect(schema_name=_SCHEMA)) as conn:
+            with contextlib.closing(connect(schema_name=SCHEMA)) as conn:
                 with conn.cursor() as cursor:
                     cursor.execute('SELECT * FROM one_row')
                     return cursor.fetchall()

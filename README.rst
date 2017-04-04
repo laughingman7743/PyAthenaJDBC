@@ -37,6 +37,16 @@ Installation
 
     $ pip install PyAthenaJDBC
 
+Extra packages:
+
++---------------+------------------------------------------+----------+
+| Package       | Install command                          | Version  |
++===============+==========================================+==========+
+| Pandas        | ``pip install PyAthenaJDBC[Pandas]``     | >=0.19.0 |
++---------------+------------------------------------------+----------+
+| SQLAlchemy    | ``pip install PyAthenaJDBC[SQLAlchemy]`` | >=1.0.0  |
++---------------+------------------------------------------+----------+
+
 Usage
 -----
 
@@ -90,16 +100,49 @@ Query with parameter
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
-            SELECT col_int FROM one_row_complex where col_int = {0}
-            """, 2147483647)
-            print(cursor.fetchall())
-
-            cursor.execute("""
-            SELECT col_string FROM one_row_complex where col_string = {param}
-            """, param='a string')
+            SELECT col_string FROM one_row_complex where col_string = %(param)s
+            """, {'param': 'a string'})
             print(cursor.fetchall())
     finally:
         conn.close()
+
+SQLAlchemy
+~~~~~~~~~~
+
+Install SQLAlchemy with ``pip install SQLAlchemy>=1.0.0`` or ``pip install PyAthenaJDBC[SQLAlchemy]``.
+Supported SQLAlchemy is 1.0.0 or higher.
+
+.. code:: python
+
+    import contextlib
+    from urllib.parse import quote_plus  # PY2: from urllib import quote_plus
+    from sqlalchemy.engine import create_engine
+    from sqlalchemy.sql.expression import select
+    from sqlalchemy.sql.functions import func
+    from sqlalchemy.sql.schema import Table, MetaData
+
+    conn_str = 'awsathena+jdbc://{access_key}:{secret_key}@athena.{region_name}.amazonaws.com:443/'\
+               '{schema_name}?s3_staging_dir={s3_staging_dir}'
+    engine = create_engine(conn_str.format(
+        access_key=quote_plus('YOUR_ACCESS_KEY'),
+        secret_key=quote_plus('YOUR_SECRET_ACCESS_KEY'),
+        region_name='us-west-2',
+        schema_name='default',
+        s3_staging_dir=quote_plus('s3://YOUR_S3_BUCKET/path/to/')))
+    try:
+        with contextlib.closing(engine.connect()) as conn:
+            many_rows = Table('many_rows', MetaData(bind=engine), autoload=True)
+            print(select([func.count('*')], from_obj=many_rows).scalar())
+    finally:
+        engine.dispose()
+
+The connection string has the following format.
+
+.. code:: python
+
+    awsathena+jdbc://{access_key}:{secret_key}@athena.{region_name}.amazonaws.com:443/{schema_name}?s3_staging_dir={s3_staging_dir}&driver_path={driver_path}&...
+
+NOTE: ``s3_staging_dir`` requires quote. If ``access_key``, ``secret_key`` and other parameter contain special characters, quote is also required.
 
 Minimal example for Pandas DataFrame
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
