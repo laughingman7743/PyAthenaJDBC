@@ -136,7 +136,7 @@ Supported SQLAlchemy is 1.0.0 or higher.
     finally:
         engine.dispose()
 
-The connection string has the following format.
+The connection string has the following format:
 
 .. code:: python
 
@@ -144,8 +144,10 @@ The connection string has the following format.
 
 NOTE: ``s3_staging_dir`` requires quote. If ``access_key``, ``secret_key`` and other parameter contain special characters, quote is also required.
 
-Minimal example for Pandas DataFrame
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Pandas
+~~~~~~
+
+Minimal example for Pandas DataFrame:
 
 .. code:: python
 
@@ -159,8 +161,7 @@ Minimal example for Pandas DataFrame
                    jvm_path='/path/to/jvm')  # optional, as used by JPype
     df = pd.read_sql("SELECT * FROM many_rows LIMIT 10", conn)
 
-As Pandas DataFrame
-~~~~~~~~~~~~~~~~~~~
+As Pandas DataFrame:
 
 .. code:: python
 
@@ -192,9 +193,11 @@ See `examples/redash/athena.py`_
 Credential
 ----------
 
-Support `AWS CLI credentials configuration`_.
+Support `AWS CLI credentials`_, `Instance profile credentials`_ and `Properties file credentials`_.
 
-.. _`AWS CLI credentials configuration`: http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
+.. _`AWS CLI credentials`: http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
+.. _`Instance profile credentials`: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/InstanceProfileCredentialsProvider.html
+.. _`Properties file credentials`: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/PropertiesFileCredentialsProvider.html
 
 Credential Files
 ~~~~~~~~~~~~~~~~
@@ -229,6 +232,84 @@ Additional environment variable:
 .. code:: bash
 
     $ export AWS_ATHENA_S3_STAGING_DIR=s3://YOUR_S3_BUCKET/path/to/
+
+Instance profile credentials
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you create an EC2 instance profile with a policy like the following and attach it to the EC2 instance,
+PyAthenaJDBC accesses Amazon Athena using temporary credentials.
+
+.. code:: json
+
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "athena:*"
+          ],
+          "Resource": [
+            "*"
+          ]
+        },
+        {
+          "Effect": "Allow",
+          "Action": [
+            "s3:GetBucketLocation",
+            "s3:GetObject",
+            "s3:ListBucket",
+            "s3:ListBucketMultipartUploads",
+            "s3:ListMultipartUploadParts",
+            "s3:AbortMultipartUpload",
+            "s3:CreateBucket",
+            "s3:PutObject"
+          ],
+          "Resource": [
+            "arn:aws:s3:::aws-athena-query-results-*",
+            "arn:aws:s3:::YOUR_S3_STAGING_DIR",
+            "arn:aws:s3:::YOUR_S3_AWESOME_LOG_DATA"
+          ]
+        }
+      ]
+    }
+
+In the connect method or connection object, you can connect by specifying at least ``s3_staging_dir`` and ``region_name``.
+It is not necessary to specify ``access_key`` and ``secret_key``.
+
+.. code:: python
+
+    from pyathenajdbc import connect
+
+    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
+                   region_name='us-west-2')
+
+Terraform_ Instance profile example:
+
+See `examples/terraform/`_
+
+.. _Terraform: https://github.com/hashicorp/terraform
+.. _`examples/terraform/`: examples/terraform/
+
+
+Properties file credentials
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you create a property file of the following format and specify the path with ``credential_file`` of the connect method or connection object,
+PyAthenaJDBC accesses Amazon Athena using the properties file.
+
+.. code:: properties
+
+    accessKeyId:YOUR_ACCESS_KEY_ID
+    secretKey:YOUR_SECRET_ACCESS_KEY
+
+.. code:: python
+
+    from pyathenajdbc import connect
+
+    conn = connect(credential_file='/path/to/AWSCredentials.properties',
+                   s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
+                   region_name='us-west-2')
 
 Testing
 -------
