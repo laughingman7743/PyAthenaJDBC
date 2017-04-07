@@ -8,7 +8,7 @@ from pyathenajdbc.error import *  # noqa
 
 
 __version__ = '1.1.0'
-__athena_driver_version__ = '1.0.0'
+__athena_driver_version__ = '1.0.1'
 
 
 # Globals https://www.python.org/dev/peps/pep-0249/#globals
