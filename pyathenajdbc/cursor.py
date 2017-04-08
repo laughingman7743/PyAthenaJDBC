@@ -108,6 +108,7 @@ class Cursor(object):
             result_set = self._statement.executeQuery(query)
             if result_set:
                 self._result_set = result_set
+                self._result_set.setFetchSize(self._arraysize)
                 self._meta_data = result_set.getMetaData()
                 self._update_count = -1
             else:
@@ -142,13 +143,12 @@ class Cursor(object):
             raise ProgrammingError('Connection is closed.')
         self._statement.cancel()
 
-    def _fetch(self, size):
+    def _fetch(self):
         if self.is_closed:
             raise ProgrammingError('Connection is closed.')
         if not self.has_result_set:
             raise ProgrammingError('No result set.')
 
-        self._result_set.setFetchSize(size)
         if not self._result_set.next():
             return None
         self._rownumber += 1
@@ -158,14 +158,14 @@ class Cursor(object):
         ])
 
     def fetchone(self):
-        return self._fetch(1)
+        return self._fetch()
 
     def fetchmany(self, size=None):
         if not size or size <= 0:
             size = self._arraysize
         rows = []
         for i in xrange(size):
-            row = self._fetch(size)
+            row = self._fetch()
             if row:
                 rows.append(row)
             else:
@@ -175,7 +175,7 @@ class Cursor(object):
     def fetchall(self):
         rows = []
         while True:
-            row = self._fetch(self._arraysize)
+            row = self._fetch()
             if row:
                 rows.append(row)
             else:
