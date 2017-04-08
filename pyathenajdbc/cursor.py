@@ -6,7 +6,9 @@ import logging
 from past.builtins.misc import xrange
 
 from pyathenajdbc.error import ProgrammingError, NotSupportedError
-from pyathenajdbc.util import reraise_dbapi_error
+from pyathenajdbc.util import (reraise_dbapi_error,
+                               attach_thread_to_jvm,
+                               synchronized)
 
 
 _logger = logging.getLogger(__name__)
@@ -52,10 +54,12 @@ class Cursor(object):
         return -1
 
     @property
+    @attach_thread_to_jvm
     def has_result_set(self):
         return self._result_set and self._meta_data and not self._result_set.isClosed()
 
     @property
+    @attach_thread_to_jvm
     def description(self):
         if self._description:
             return self._description
@@ -76,11 +80,14 @@ class Cursor(object):
         return self._description
 
     @property
+    @attach_thread_to_jvm
     def query_id(self):
         if not self.has_result_set:
             raise ProgrammingError('No result set.')
         return self._result_set.getClient().getQueryExecutionId()
 
+    @attach_thread_to_jvm
+    @synchronized
     def close(self):
         self._meta_data = None
         if self._result_set and not self._result_set.isClosed():
@@ -96,6 +103,8 @@ class Cursor(object):
     def is_closed(self):
         return self._connection is None
 
+    @attach_thread_to_jvm
+    @synchronized
     def execute(self, operation, parameters=None):
         if self.is_closed:
             raise ProgrammingError('Connection is closed.')
@@ -108,6 +117,7 @@ class Cursor(object):
             result_set = self._statement.executeQuery(query)
             if result_set:
                 self._result_set = result_set
+                self._result_set.setFetchSize(self._arraysize)
                 self._meta_data = result_set.getMetaData()
                 self._update_count = -1
             else:
@@ -121,34 +131,20 @@ class Cursor(object):
     def executemany(self, operation, seq_of_parameters):
         raise NotSupportedError
 
+    @attach_thread_to_jvm
+    @synchronized
     def cancel(self):
-        # TODO AthenaStatement dose not support cancel operation.
-        #      Because ResultSet is not NULL only when query state finished.
-        # public void cancel() throws SQLException {
-        #     this.checkOpen();
-        #     if(!this.isCancelled.get()) {
-        #         this.lock.lock();
-        #         try {
-        #             if(this.currentResult.get() != null) {
-        #                 ((AthenaResultSet)this.currentResult.get()).getClient().cancel();
-        #                 this.isCancelled.compareAndSet(false, true);
-        #             }
-        #         } finally {
-        #             this.lock.unlock();
-        #         }
-        #     }
-        # }
         if self.is_closed:
             raise ProgrammingError('Connection is closed.')
         self._statement.cancel()
 
-    def _fetch(self, size):
+    @attach_thread_to_jvm
+    def _fetch(self):
         if self.is_closed:
             raise ProgrammingError('Connection is closed.')
         if not self.has_result_set:
             raise ProgrammingError('No result set.')
 
-        self._result_set.setFetchSize(size)
         if not self._result_set.next():
             return None
         self._rownumber += 1
@@ -157,25 +153,28 @@ class Cursor(object):
             for i in xrange(1, self._meta_data.getColumnCount() + 1)
         ])
 
+    @synchronized
     def fetchone(self):
-        return self._fetch(1)
+        return self._fetch()
 
+    @synchronized
     def fetchmany(self, size=None):
         if not size or size <= 0:
             size = self._arraysize
         rows = []
         for i in xrange(size):
-            row = self._fetch(size)
+            row = self._fetch()
             if row:
                 rows.append(row)
             else:
                 break
         return rows
 
+    @synchronized
     def fetchall(self):
         rows = []
         while True:
-            row = self._fetch(self._arraysize)
+            row = self._fetch()
             if row:
                 rows.append(row)
             else:

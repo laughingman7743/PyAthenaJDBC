@@ -3,14 +3,17 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import contextlib
 import re
+import time
 from datetime import datetime, date
+from decimal import Decimal
+from random import randint
 
 from concurrent import futures
 from concurrent.futures.thread import ThreadPoolExecutor
 from past.builtins.misc import xrange
-from pyathenajdbc.cursor import Cursor
 
 from pyathenajdbc import connect
+from pyathenajdbc.cursor import Cursor
 from pyathenajdbc.error import (DatabaseError,
                                 ProgrammingError,
                                 NotSupportedError)
@@ -142,11 +145,20 @@ class TestPyAthenaJDBC(unittest.TestCase):
 
     @with_cursor
     def test_null(self, cursor):
-        cursor.execute('SELECT null FROM many_rows')
-        self.assertEqual(cursor.fetchall(), [(None,)] * 10000)
-        cursor.execute('SELECT IF(a %% 11 = 0, null, a) FROM many_rows')
-        self.assertEqual(cursor.fetchall(),
-                         [(None if a % 11 == 0 else a,) for a in xrange(10000)])
+        # TODO In JDBC driver 1.0.1, the number of rows in the result set
+        #      of the following query is 9999.
+        # cursor.execute('SELECT null FROM many_rows')
+        cursor.execute('SELECT row_number() over () - 1, null FROM many_rows')
+        self.assertEqual(cursor.fetchall(), [(a, None, ) for a in xrange(10000)])
+        # TODO In JDBC driver 1.0.1, the number of rows in the result set
+        #      of the following query is 9999.
+        # cursor.execute('SELECT IF(a %% 11 = 0, null, a) FROM many_rows')
+        cursor.execute('SELECT row_number() over () - 1, IF(a %% 11 = 0, null, a) FROM many_rows')
+        expected = [(a, None if a % 11 == 0 else a, ) for a in xrange(10000)]
+        actual = cursor.fetchall()
+        # Comparison of large lists of tuples is slow, so expand and compare.
+        for a, e in zip(actual, expected):
+            self.assertEqual(a, e)
 
     @with_cursor
     def test_description(self, cursor):
@@ -166,8 +178,6 @@ class TestPyAthenaJDBC(unittest.TestCase):
 
     @with_cursor
     def test_complex(self, cursor):
-        # TODO DECIMAL type failed to fetch with java.lang.IndexOutOfBoundsException
-        # https://forums.aws.amazon.com/thread.jspa?threadID=245004
         cursor.execute("""
         SELECT
           col_boolean
@@ -184,7 +194,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
           ,col_array
           ,col_map
           ,col_struct
-          --,col_decimal
+          ,col_decimal
         FROM one_row_complex
         """)
         self.assertEqual(cursor.description, [
@@ -202,7 +212,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
             ('col_array', 2003, 0, None, 0, 0, 2),
             ('col_map', 2000, 0, None, 0, 0, 2),
             ('col_struct', 2000, 0, None, 0, 0, 2),
-            # ('col_decimal', ???, ???, None, ???, ???, ???),
+            ('col_decimal', 3, 0, None, 10, 1, 2),
         ])
         rows = cursor.fetchall()
         expected = [(
@@ -220,33 +230,26 @@ class TestPyAthenaJDBC(unittest.TestCase):
             '[1, 2]',
             '{1=2, 3=4}',
             '{a=1, b=2}',
-            # '0.1',
+            Decimal('0.1'),
         )]
         self.assertEqual(rows, expected)
         # catch unicode/str
         self.assertEqual(list(map(type, rows[0])), list(map(type, expected[0])))
 
-    # TODO
-    # @with_cursor
-    # def test_cancel(self, cursor):
-    #     from concurrent.futures import ThreadPoolExecutor
-    #
-    #     def cancel(c):
-    #         import jpype
-    #         import time
-    #         jpype.attachThreadToJVM()
-    #         time.sleep(10)
-    #         c.cancel()
-    #
-    #     with ThreadPoolExecutor(max_workers=1) as executor:
-    #         executor.submit(cancel, cursor)
-    #
-    #         self.assertRaises(DatabaseError, lambda:
-    #         cursor.execute("""
-    #         SELECT a.a * rand(), b.a * rand()
-    #         FROM many_rows a
-    #         CROSS JOIN many_rows b
-    #         """))
+    @with_cursor
+    def test_cancel(self, cursor):
+        def cancel(c):
+            time.sleep(randint(1, 5))
+            c.cancel()
+
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            executor.submit(cancel, cursor)
+
+            self.assertRaises(DatabaseError, lambda: cursor.execute("""
+            SELECT a.a * rand(), b.a * rand()
+            FROM many_rows a
+            CROSS JOIN many_rows b
+            """))
 
     def test_multiple_connection(self):
         def execute_other_thread():
