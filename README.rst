@@ -91,6 +91,9 @@ Cursor iteration
 Query with parameter
 ~~~~~~~~~~~~~~~~~~~~
 
+Supported `DB API paramstyle`_ is only ``PyFormat``.
+``PyFormat`` only supports `named placeholders`_ with old ``%`` operator style and parameters specify dictionary format.
+
 .. code:: python
 
     from pyathenajdbc import connect
@@ -100,11 +103,22 @@ Query with parameter
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
-            SELECT col_string FROM one_row_complex where col_string = %(param)s
+            SELECT col_string FROM one_row_complex
+            WHERE col_string = %(param)s
             """, {'param': 'a string'})
             print(cursor.fetchall())
     finally:
         conn.close()
+
+if ``%`` character is contained in your query, it must be escaped with ``%%`` like the following:
+
+.. code:: sql
+
+    SELECT col_string FROM one_row_complex
+    WHERE col_string = %(param)s OR col_string LIKE 'a%%'
+
+.. _`DB API paramstyle`: https://www.python.org/dev/peps/pep-0249/#paramstyle
+.. _`named placeholders`: https://pyformat.info/#named_placeholders
 
 SQLAlchemy
 ~~~~~~~~~~
