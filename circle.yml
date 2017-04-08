@@ -2,7 +2,7 @@ machine:
   pre:
     - cd /opt/circleci/.pyenv/plugins/python-build/../.. && git pull && cd -
   python:
-    version: '2.7.13'
+    version: '3.5.3'
   environment:
     PY26: '2.6.9'
     PY27: '2.7.13'
@@ -28,7 +28,7 @@ test:
   pre:
     - ./scripts/upload_test_data.sh
   override:
-    - detox
+    - tox
   post:
     # - ./scripts/delete_test_data.sh
     - bash <(curl -s https://codecov.io/bash)
