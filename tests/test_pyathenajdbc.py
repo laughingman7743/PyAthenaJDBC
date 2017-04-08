@@ -9,9 +9,9 @@ from decimal import Decimal
 from concurrent import futures
 from concurrent.futures.thread import ThreadPoolExecutor
 from past.builtins.misc import xrange
-from pyathenajdbc.cursor import Cursor
 
 from pyathenajdbc import connect
+from pyathenajdbc.cursor import Cursor
 from pyathenajdbc.error import (DatabaseError,
                                 ProgrammingError,
                                 NotSupportedError)
