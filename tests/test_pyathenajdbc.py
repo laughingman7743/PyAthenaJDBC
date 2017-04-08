@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import contextlib
 import re
 from datetime import datetime, date
+from decimal import Decimal
 
 from concurrent import futures
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -166,8 +167,6 @@ class TestPyAthenaJDBC(unittest.TestCase):
 
     @with_cursor
     def test_complex(self, cursor):
-        # TODO DECIMAL type failed to fetch with java.lang.IndexOutOfBoundsException
-        # https://forums.aws.amazon.com/thread.jspa?threadID=245004
         cursor.execute("""
         SELECT
           col_boolean
@@ -184,7 +183,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
           ,col_array
           ,col_map
           ,col_struct
-          --,col_decimal
+          ,col_decimal
         FROM one_row_complex
         """)
         self.assertEqual(cursor.description, [
@@ -202,7 +201,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
             ('col_array', 2003, 0, None, 0, 0, 2),
             ('col_map', 2000, 0, None, 0, 0, 2),
             ('col_struct', 2000, 0, None, 0, 0, 2),
-            # ('col_decimal', ???, ???, None, ???, ???, ???),
+            ('col_decimal', 3, 0, None, 10, 1, 2),
         ])
         rows = cursor.fetchall()
         expected = [(
@@ -220,7 +219,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
             '[1, 2]',
             '{1=2, 3=4}',
             '{a=1, b=2}',
-            # '0.1',
+            Decimal('0.1'),
         )]
         self.assertEqual(rows, expected)
         # catch unicode/str

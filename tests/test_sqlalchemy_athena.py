@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from datetime import datetime, date
+from decimal import Decimal
 
 import sqlalchemy
 from future.utils import PY2
@@ -9,8 +10,8 @@ from sqlalchemy.engine import create_engine
 from sqlalchemy.exc import NoSuchTableError
 from sqlalchemy.sql import expression
 from sqlalchemy.sql.schema import Table, MetaData, Column
-from sqlalchemy.sql.sqltypes import (BIGINT, BINARY, BOOLEAN, DATE, FLOAT,
-                                     INTEGER, STRINGTYPE, TIMESTAMP)
+from sqlalchemy.sql.sqltypes import (BIGINT, BINARY, BOOLEAN, DATE, DECIMAL,
+                                     FLOAT, INTEGER, STRINGTYPE, TIMESTAMP)
 
 from tests import unittest
 from tests.conftest import ENV, SCHEMA
@@ -123,12 +124,8 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_reflect_select(self, engine, connection):
-        # TODO DECIMAL type issues: autoload=False
-        one_row_complex = Table('one_row_complex', MetaData(bind=engine))
-        # TODO DECIMAL type issues: exclude decimal field
-        engine.dialect.reflecttable(
-            connection, one_row_complex, include_columns=[], exclude_columns=['col_decimal'])
-        self.assertEqual(len(one_row_complex.c), 14)
+        one_row_complex = Table('one_row_complex', MetaData(bind=engine), autoload=True)
+        self.assertEqual(len(one_row_complex.c), 15)
         self.assertIsInstance(one_row_complex.c.col_string, Column)
         rows = one_row_complex.select().execute().fetchall()
         self.assertEqual(len(rows), 1)
@@ -147,9 +144,8 @@ class TestSQLAlchemyAthena(unittest.TestCase):
             '[1, 2]',
             '{1=2, 3=4}',
             '{a=1, b=2}',
-            # '0.1',
+            Decimal('0.1'),
         ])
-        # TODO some of these types could be filled in better
         self.assertIsInstance(one_row_complex.c.col_boolean.type, BOOLEAN)
         self.assertIsInstance(one_row_complex.c.col_tinyint.type, INTEGER)
         self.assertIsInstance(one_row_complex.c.col_smallint.type, INTEGER)
@@ -164,7 +160,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
         self.assertIsInstance(one_row_complex.c.col_array.type, type(STRINGTYPE))
         self.assertIsInstance(one_row_complex.c.col_map.type, type(STRINGTYPE))
         self.assertIsInstance(one_row_complex.c.col_struct.type, type(STRINGTYPE))
-        # self.assertIsInstance(one_row_complex.c.col_decimal.type, DECIMAL)
+        self.assertIsInstance(one_row_complex.c.col_decimal.type, DECIMAL)
 
     @with_engine
     def test_reserved_words(self, engine, connection):
