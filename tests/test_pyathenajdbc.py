@@ -245,8 +245,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
         with ThreadPoolExecutor(max_workers=1) as executor:
             executor.submit(cancel, cursor)
 
-            self.assertRaises(DatabaseError, lambda:
-            cursor.execute("""
+            self.assertRaises(DatabaseError, lambda: cursor.execute("""
             SELECT a.a * rand(), b.a * rand()
             FROM many_rows a
             CROSS JOIN many_rows b
