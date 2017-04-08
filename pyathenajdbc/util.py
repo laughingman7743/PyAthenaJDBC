@@ -48,3 +48,13 @@ def synchronized(wrapped):
         with _lock:
             return wrapped(*args, **kwargs)
     return _wrapper
+
+
+def attach_thread_to_jvm(wrapped):
+    @functools.wraps(wrapped)
+    def _wrapper(*args, **kwargs):
+        import jpype
+        if not jpype.isThreadAttachedToJVM():
+            jpype.attachThreadToJVM()
+        return wrapped(*args, **kwargs)
+    return _wrapper

@@ -14,7 +14,7 @@ from pyathenajdbc.converter import JDBCTypeConverter
 from pyathenajdbc.cursor import Cursor
 from pyathenajdbc.error import ProgrammingError, NotSupportedError
 from pyathenajdbc.formatter import ParameterFormatter
-from pyathenajdbc.util import synchronized
+from pyathenajdbc.util import synchronized, attach_thread_to_jvm
 
 
 _logger = logging.getLogger(__name__)
@@ -124,17 +124,21 @@ class Connection(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
 
+    @attach_thread_to_jvm
     def cursor(self):
         if self.is_closed:
             raise ProgrammingError('Connection is closed.')
         return Cursor(self._jdbc_conn, self._converter, self._formatter)
 
+    @attach_thread_to_jvm
+    @synchronized
     def close(self):
         if not self.is_closed:
             self._jdbc_conn.close()
             self._jdbc_conn = None
 
     @property
+    @attach_thread_to_jvm
     def is_closed(self):
         return self._jdbc_conn is None or self._jdbc_conn.isClosed()
 

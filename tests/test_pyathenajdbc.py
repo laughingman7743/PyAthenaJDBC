@@ -3,8 +3,10 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import contextlib
 import re
+import time
 from datetime import datetime, date
 from decimal import Decimal
+from random import randint
 
 from concurrent import futures
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -234,27 +236,21 @@ class TestPyAthenaJDBC(unittest.TestCase):
         # catch unicode/str
         self.assertEqual(list(map(type, rows[0])), list(map(type, expected[0])))
 
-    # TODO
-    # @with_cursor
-    # def test_cancel(self, cursor):
-    #     from concurrent.futures import ThreadPoolExecutor
-    #
-    #     def cancel(c):
-    #         import jpype
-    #         import time
-    #         jpype.attachThreadToJVM()
-    #         time.sleep(10)
-    #         c.cancel()
-    #
-    #     with ThreadPoolExecutor(max_workers=1) as executor:
-    #         executor.submit(cancel, cursor)
-    #
-    #         self.assertRaises(DatabaseError, lambda:
-    #         cursor.execute("""
-    #         SELECT a.a * rand(), b.a * rand()
-    #         FROM many_rows a
-    #         CROSS JOIN many_rows b
-    #         """))
+    @with_cursor
+    def test_cancel(self, cursor):
+        def cancel(c):
+            time.sleep(randint(1, 5))
+            c.cancel()
+
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            executor.submit(cancel, cursor)
+
+            self.assertRaises(DatabaseError, lambda:
+            cursor.execute("""
+            SELECT a.a * rand(), b.a * rand()
+            FROM many_rows a
+            CROSS JOIN many_rows b
+            """))
 
     def test_multiple_connection(self):
         def execute_other_thread():
