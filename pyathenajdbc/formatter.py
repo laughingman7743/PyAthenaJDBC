@@ -16,6 +16,11 @@ _logger = logging.getLogger(__name__)
 if PY3:
     unicode = str
 
+def _escape_show(val):
+    """ParamEscaper
+
+    To accommodate the use of SHOW commands which do not expect outer quotes"""
+    return val
 
 def _escape_presto(val):
     """ParamEscaper
@@ -99,6 +104,8 @@ class ParameterFormatter(object):
 
         if operation.upper().startswith('SELECT') or operation.upper().startswith('WITH'):
             escaper = _escape_presto
+        elif operation.upper().startswith('SHOW'):
+            escaper = _escape_show
         else:
             escaper = _escape_hive
 
