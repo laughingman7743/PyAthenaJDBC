@@ -109,16 +109,8 @@ class TestPyAthenaJDBC(unittest.TestCase):
 
     @with_cursor
     def run_escape_case(self, cursor, bad_str):
-        # TODO Mmmm...
-        # Expected: \r -> \r
-        # Actual:   \r -> \n
-        #   - [(1, u'`~!@#$%^&*()_+-={}[]|\\;:\'",./<>?\n\n\t ')]
-        #   ?                                             ^
-        #   + [(1, u'`~!@#$%^&*()_+-={}[]|\\;:\'",./<>?\n\r\t ')]
-        #   ?                                             ^
-        expected = '''`~!@#$%^&*()_+-={}[]|\\;:'",./<>?\n\n\t '''
         cursor.execute('SELECT %(a)d, %(b)s FROM one_row', {'a': 1, 'b': bad_str})
-        self.assertEqual(cursor.fetchall(), [(1, expected,)])
+        self.assertEqual(cursor.fetchall(), [(1, bad_str,)])
 
     @with_cursor
     def test_none_empty_query(self, cursor):
