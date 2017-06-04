@@ -7,14 +7,11 @@ from datetime import datetime
 from decimal import Decimal
 
 import jpype
-from future.utils import iteritems, PY3
+from future.utils import iteritems
+from past.types import unicode
 
 
 _logger = logging.getLogger(__name__)
-
-
-if PY3:
-    unicode = str
 
 
 def _to_none(result_set, index):
