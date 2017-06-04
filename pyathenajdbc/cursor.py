@@ -3,9 +3,10 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import logging
 
+from future.utils import raise_from
 from past.builtins.misc import xrange
 
-from pyathenajdbc.error import ProgrammingError, NotSupportedError
+from pyathenajdbc.error import ProgrammingError, NotSupportedError, DatabaseError
 from pyathenajdbc.util import (reraise_dbapi_error,
                                attach_thread_to_jvm,
                                synchronized)
@@ -124,9 +125,9 @@ class Cursor(object):
                 self._result_set = None
                 self._meta_data = None
                 self._update_count = self._statement.getUpdatecount()
-        except Exception:
+        except Exception as e:
             _logger.exception('Failed to execute query.')
-            reraise_dbapi_error()
+            raise_from(DatabaseError(*e.args), e)
 
     def executemany(self, operation, seq_of_parameters):
         raise NotSupportedError
