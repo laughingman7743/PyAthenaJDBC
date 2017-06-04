@@ -101,10 +101,10 @@ class TestPyAthenaJDBC(unittest.TestCase):
 
     @with_cursor
     def test_no_params(self, cursor):
-        self.assertRaises(KeyError, lambda: cursor.execute("SELECT %(param)s FROM one_row"))
+        self.assertRaises(KeyError, lambda: cursor.execute('SELECT %(param)s FROM one_row'))
 
     def test_escape(self):
-        bad_str = '''`~!@#$%^&*()_+-={}[]|\\;:'",./<>?\n\r\t '''
+        bad_str = """`~!@#$%^&*()_+-={}[]|\\;:'",./<>?\n\r\t """
         self.run_escape_case(bad_str)
 
     @with_cursor
@@ -131,7 +131,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
 
     @with_cursor
     def test_unicode(self, cursor):
-        unicode_str = "王兢"
+        unicode_str = '王兢'
         cursor.execute('SELECT %(param)s FROM one_row', {'param': unicode_str})
         self.assertEqual(cursor.fetchall(), [(unicode_str,)])
 
