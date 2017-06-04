@@ -7,9 +7,7 @@ from future.utils import raise_from
 from past.builtins.misc import xrange
 
 from pyathenajdbc.error import ProgrammingError, NotSupportedError, DatabaseError
-from pyathenajdbc.util import (reraise_dbapi_error,
-                               attach_thread_to_jvm,
-                               synchronized)
+from pyathenajdbc.util import attach_thread_to_jvm, synchronized
 
 
 _logger = logging.getLogger(__name__)
