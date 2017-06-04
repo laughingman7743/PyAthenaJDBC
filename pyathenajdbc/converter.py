@@ -14,95 +14,71 @@ from past.types import unicode
 _logger = logging.getLogger(__name__)
 
 
-def _to_none(result_set, index):
+def _to_none(varchar_value):
     return None
 
 
-def _to_unicode(result_set, index):
-    val = result_set.getString(index)
-    was_null = result_set.wasNull()
-    if was_null:
+def _to_unicode(varchar_value):
+    if varchar_value is None:
         return None
-    elif isinstance(val, unicode):
-        return val
+    elif isinstance(varchar_value, unicode):
+        return varchar_value
     else:
-        return unicode(val)
+        return unicode(varchar_value)
 
 
-def _to_date(result_set, index):
-    val = result_set.getDate(index)
-    was_null = result_set.wasNull()
-    if was_null:
+def _to_date(varchar_value):
+    if varchar_value is None:
         return None
-    return datetime.strptime(val.toString(), '%Y-%m-%d').date()
+    return datetime.strptime(varchar_value, '%Y-%m-%d').date()
 
 
-def _to_datetime(result_set, index):
-    val = result_set.getTimestamp(index)
-    was_null = result_set.wasNull()
-    if was_null:
+def _to_datetime(varchar_value):
+    if varchar_value is None:
         return None
-    return datetime.strptime(val.toString(), '%Y-%m-%d %H:%M:%S.%f')
+    return datetime.strptime(varchar_value, '%Y-%m-%d %H:%M:%S.%f')
 
 
-def _to_float(result_set, index):
-    val = result_set.getDouble(index)
-    was_null = result_set.wasNull()
-    if was_null:
+def _to_float(varchar_value):
+    if varchar_value is None:
         return None
-    return float(val)
+    return float(varchar_value)
 
 
-def _to_int(result_set, index):
-    val = result_set.getLong(index)
-    was_null = result_set.wasNull()
-    if was_null:
+def _to_int(varchar_value):
+    if varchar_value is None:
         return None
-    return int(val)
+    return int(varchar_value)
 
 
-def _to_decimal(result_set, index):
-    val = result_set.getString(index)
-    was_null = result_set.wasNull()
-    if was_null:
+def _to_decimal(varchar_value):
+    if varchar_value is None:
         return None
-    return Decimal(val)
+    return Decimal(varchar_value)
 
 
-def _to_boolean(result_set, index):
-    val = result_set.getBoolean(index)
-    was_null = result_set.wasNull()
-    if was_null:
+def _to_boolean(varchar_value):
+    if varchar_value is None:
         return None
-    elif val:
+    elif varchar_value.lower() == 'true':
         return True
-    else:
+    elif varchar_value.lower() == 'false':
         return False
-
-
-def _to_array_str(result_set, index):
-    val = result_set.getString(index)
-    was_null = result_set.wasNull()
-    if was_null:
+    else:
         return None
-    return val
 
 
-def _to_binary(result_set, index):
-    val = result_set.getString(index)
-    was_null = result_set.wasNull()
-    if was_null:
+def _to_binary(varchar_value):
+    if varchar_value is None:
         return None
-    return binascii.a2b_hex(''.join(val.split(' ')))
+    return binascii.a2b_hex(''.join(varchar_value.split(' ')))
 
 
-def _to_default(result_set, index):
-    val = result_set.getObject(index)
-    was_null = result_set.wasNull()
-    if was_null:
+def _to_default(varchar_value):
+    if varchar_value is None:
         return None
     else:
-        return val
+        return varchar_value
 
 
 class JDBCTypeConverter(object):
@@ -121,9 +97,9 @@ class JDBCTypeConverter(object):
             else:
                 _logger.warning('%s is not defined java.sql.Types.', k)
 
-    def convert(self, type_code, result_set, index):
+    def convert(self, type_code, varchar_value):
         converter = self.converter_mappings.get(type_code, _to_default)
-        return converter(result_set, index)
+        return converter(varchar_value)
 
     def register_converter(self, type_name, converter):
         type_code = self.jdbc_type_mappings.get(type_name, None)
@@ -152,7 +128,7 @@ _DEFAULT_CONVERTERS = {
     'DATE': _to_date,
     'TIMESTAMP': _to_datetime,
     'TIMESTAMP_WITH_TIMEZONE': _to_datetime,
-    'ARRAY': _to_array_str,
+    'ARRAY': _to_unicode,
     'DECIMAL': _to_decimal,
     'NUMERIC': _to_decimal,
     'BINARY': _to_binary,
