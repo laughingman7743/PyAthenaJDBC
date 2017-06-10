@@ -162,7 +162,7 @@ class Cursor(object):
             return None
         self._rownumber += 1
         return tuple([
-            self._converter.convert(column.getSQLColumnType(), row)
+            self._converter.convert(column.getSQLColumnType(), row.getVarCharValue())
             for column, row in zip(self._columns(), self._rows())
         ])
 
