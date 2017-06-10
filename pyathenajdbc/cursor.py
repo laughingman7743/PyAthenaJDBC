@@ -137,6 +137,20 @@ class Cursor(object):
             raise ProgrammingError('Connection is closed.')
         self._statement.cancel()
 
+    def _rows(self):
+        for field in self._result_set.__javaclass__.getDeclaredFields():
+            if field.name == 'row':
+                field.setAccessible(True)
+                return field.get(self._result_set).get()
+        return []
+
+    def _columns(self):
+        for field in self._meta_data.__javaclass__.getDeclaredFields():
+            if field.name == 'columnInfo':
+                field.setAccessible(True)
+                return field.get(self._meta_data).toArray()
+        return []
+
     @attach_thread_to_jvm
     def _fetch(self):
         if self.is_closed:
@@ -148,8 +162,8 @@ class Cursor(object):
             return None
         self._rownumber += 1
         return tuple([
-            self._converter.convert(self._meta_data.getColumnType(i), self._result_set, i)
-            for i in xrange(1, self._meta_data.getColumnCount() + 1)
+            self._converter.convert(column.getSQLColumnType(), row.getVarCharValue())
+            for column, row in zip(self._columns(), self._rows())
         ])
 
     @synchronized

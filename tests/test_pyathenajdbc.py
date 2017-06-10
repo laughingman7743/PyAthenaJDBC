@@ -279,3 +279,15 @@ class TestPyAthenaJDBC(unittest.TestCase):
         self.assertRaises(NotSupportedError, lambda: conn.rollback())
         cursor.close()
         conn.close()
+
+    @with_cursor
+    def test_desc_query(self, cursor):
+        cursor.execute('DESC one_row')
+        self.assertEqual(cursor.description, [
+            ('col_name', -16, 1073741824, None, 1073741824, 0, 2),
+            ('data_type', -16, 1073741824, None, 1073741824, 0, 2),
+            ('comment', -16, 1073741824, None, 1073741824, 0, 2),
+        ])
+        self.assertEqual(cursor.fetchall(), [
+            ('number_of_rows      \tint                 \t                    ',)
+        ])
