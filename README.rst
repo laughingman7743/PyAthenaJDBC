@@ -120,6 +120,29 @@ if ``%`` character is contained in your query, it must be escaped with ``%%`` li
 .. _`DB API paramstyle`: https://www.python.org/dev/peps/pep-0249/#paramstyle
 .. _`named placeholders`: https://pyformat.info/#named_placeholders
 
+JVM Options
+~~~~~~~~~~~
+
+In the connect method or connection object, you can specify JVM options with a string array.
+
+You can increase the JVM heap size like the following:
+
+.. code:: python
+
+    from pyathenajdbc import connect
+
+    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
+                   region_name='us-west-2',
+                   jvm_options=['-Xms1024m', '-Xmx4096m'])
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+            SELECT * FROM many_rows
+            """)
+            print(cursor.fetchall())
+    finally:
+        conn.close()
+
 SQLAlchemy
 ~~~~~~~~~~
 
