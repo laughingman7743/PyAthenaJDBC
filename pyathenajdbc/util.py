@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import functools
 import threading
+from datetime import datetime
 
 
 def as_pandas(cursor):
@@ -32,3 +33,17 @@ def attach_thread_to_jvm(wrapped):
             jpype.attachThreadToJVM()
         return wrapped(*args, **kwargs)
     return _wrapper
+
+
+def to_datetime(java_date):
+    if not java_date:
+        return None
+    import jpype
+    cal = jpype.java.util.Calendar.getInstance()
+    cal.setTime(java_date)
+    return datetime(cal.get(jpype.java.util.Calendar.YEAR),
+                    cal.get(jpype.java.util.Calendar.MONTH) + 1,
+                    cal.get(jpype.java.util.Calendar.DAY_OF_MONTH),
+                    cal.get(jpype.java.util.Calendar.HOUR_OF_DAY),
+                    cal.get(jpype.java.util.Calendar.MINUTE),
+                    cal.get(jpype.java.util.Calendar.SECOND))
