@@ -147,6 +147,7 @@ class Cursor(object):
     def _reset_state(self):
         self._description = None
         self._result_set = None
+        self._meta_data = None
         self._rownumber = 0
 
         self._output_location = None
