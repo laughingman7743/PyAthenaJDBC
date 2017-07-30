@@ -90,7 +90,7 @@ class Cursor(object):
     @attach_thread_to_jvm
     def query_id(self):
         if not self.has_result_set:
-            raise ProgrammingError('No result set.')
+            return None
         return self._result_set.getClient().getQueryExecutionId()
 
     @property

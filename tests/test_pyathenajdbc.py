@@ -265,7 +265,6 @@ class TestPyAthenaJDBC(unittest.TestCase):
             self.assertRaises(ProgrammingError, lambda: cursor.fetchmany())
             self.assertRaises(ProgrammingError, lambda: cursor.fetchall())
             self.assertRaises(ProgrammingError, lambda: cursor.cancel())
-            self.assertRaises(ProgrammingError, lambda: cursor.query_id)
 
     def test_no_ops(self):
         conn = self.connect()
