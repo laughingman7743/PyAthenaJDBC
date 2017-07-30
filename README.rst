@@ -1,8 +1,8 @@
 .. image:: https://img.shields.io/pypi/pyversions/PyAthenaJDBC.svg
     :target: https://pypi.python.org/pypi/PyAthenaJDBC/
 
-.. image:: https://circleci.com/gh/laughingman7743/PyAthenaJDBC.svg?style=shield
-    :target: https://circleci.com/gh/laughingman7743/PyAthenaJDBC
+.. image:: https://travis-ci.org/laughingman7743/PyAthenaJDBC.svg?branch=master
+    :target: https://travis-ci.org/laughingman7743/PyAthenaJDBC
 
 .. image:: https://codecov.io/gh/laughingman7743/PyAthenaJDBC/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/laughingman7743/PyAthenaJDBC
@@ -351,20 +351,12 @@ PyAthenaJDBC accesses Amazon Athena using the properties file.
 Testing
 -------
 
-Depends on the AWS CLI credentials and the following environment variables:
-
-~/.aws/credentials
-
-.. code:: cfg
-
-    [default]
-    aws_access_key_id=YOUR_ACCESS_KEY_ID
-    aws_secret_access_key=YOUR_SECRET_ACCESS_KEY
-
-Environment variables
+Depends on the following environment variables:
 
 .. code:: bash
 
+    $ export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
+    $ export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY
     $ export AWS_DEFAULT_REGION=us-west-2
     $ export AWS_ATHENA_S3_STAGING_DIR=s3://YOUR_S3_BUCKET/path/to/
 
@@ -374,9 +366,9 @@ Run test
 .. code:: bash
 
     $ pip install pytest awscli
-    $ scripts/upload_test_data.sh
+    $ scripts/test_data/upload_test_data.sh
     $ py.test
-    $ scripts/delete_test_data.sh
+    $ scripts/test_data/delete_test_data.sh
 
 Run test multiple Python versions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -384,7 +376,7 @@ Run test multiple Python versions
 .. code:: bash
 
     $ pip install tox awscli
-    $ scripts/upload_test_data.sh
+    $ scripts/test_data/upload_test_data.sh
     $ pyenv local 2.6.9 2.7.12 3.4.5 3.5.2
     $ tox
-    $ scripts/delete_test_data.sh
+    $ scripts/test_data/delete_test_data.sh
