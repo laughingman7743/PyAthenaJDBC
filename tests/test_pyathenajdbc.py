@@ -224,7 +224,7 @@ class TestPyAthenaJDBC(unittest.TestCase):
         self.assertIsNone(cursor.output_location)
         cursor.execute('SELECT * from one_row')
         self.assertEqual(cursor.output_location,
-                         '{0}/{1}.csv'.format(ENV.s3_staging_dir, cursor.query_id))
+                         '{0}{1}.csv'.format(ENV.s3_staging_dir, cursor.query_id))
 
     @with_cursor
     def test_complex(self, cursor):
