@@ -108,6 +108,13 @@ class TestPyAthenaJDBC(unittest.TestCase):
         self.assertEqual(cursor.arraysize, Cursor.DEFAULT_FETCH_SIZE)
 
     @with_cursor
+    def test_invalid_arraysize(self, cursor):
+        with self.assertRaises(ProgrammingError):
+            cursor.arraysize = 10000
+        with self.assertRaises(ProgrammingError):
+            cursor.arraysize = -1
+
+    @with_cursor
     def test_no_params(self, cursor):
         self.assertRaises(DatabaseError, lambda: cursor.execute(
             'SELECT %(param)s FROM one_row'))
