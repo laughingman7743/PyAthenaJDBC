@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import unittest
 from datetime import datetime
 
 from pyathenajdbc.util import to_datetime
-
-from tests import unittest
 
 
 class TestUtil(unittest.TestCase):
