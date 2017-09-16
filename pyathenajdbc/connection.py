@@ -108,7 +108,7 @@ class Connection(object):
         elif self.token:
             props.setProperty('aws_credentials_provider_class',
                               'com.amazonaws.athena.jdbc.shaded.' +
-                              'com.amazonaws.auth.InstanceProfileCredentialsProvider')
+                              'com.amazonaws.auth.DefaultAWSCredentialsProviderChain')
         else:
             props.setProperty('user', self.access_key)
             props.setProperty('password', self.secret_key)
