@@ -23,7 +23,7 @@ from tests.conftest import SCHEMA, ENV
 from tests.util import with_cursor
 
 
-class TestPyAthenaJDBC(unittest.TestCase):
+class TestCursor(unittest.TestCase):
     """Reference test case is following:
 
     https://github.com/dropbox/PyHive/blob/master/pyhive/tests/dbapi_test_case.py
