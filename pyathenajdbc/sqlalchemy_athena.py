@@ -36,6 +36,8 @@ class AthenaCompiler(SQLCompiler):
 
 
 _TYPE_MAPPINGS = {
+    'REAL': FLOAT,
+    'FLOAT': FLOAT,
     'DOUBLE': FLOAT,
     'SMALLINT': INTEGER,
     'BOOLEAN': BOOLEAN,
