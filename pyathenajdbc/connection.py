@@ -40,6 +40,7 @@ class Connection(object):
             self.access_key = None
             self.secret_key = None
             self.token = None
+            self.profile_name = None
             self.credential_file = credential_file
             assert self.credential_file, 'Required argument `credential_file` not found.'
             self.region_name = region_name
@@ -59,6 +60,7 @@ class Connection(object):
             self.secret_key = credentials.secret_key
             assert self.secret_key, 'Required argument `secret_key` not found.'
             self.token = credentials.token
+            self.profile_name = session.profile
             self.credential_file = None
             self.region_name = session.get_config_variable('region')
             assert self.region_name, 'Required argument `region_name` not found.'
@@ -105,6 +107,12 @@ class Connection(object):
                               'com.amazonaws.auth.PropertiesFileCredentialsProvider')
             props.setProperty('aws_credentials_provider_arguments',
                               self.credential_file)
+        elif self.profile_name:
+            props.setProperty('aws_credentials_provider_class',
+                              'com.amazonaws.athena.jdbc.shaded.' +
+                              'com.amazonaws.auth.profile.ProfileCredentialsProvider')
+            props.setProperty('aws_credentials_provider_arguments',
+                              self.profile_name)
         elif self.token:
             props.setProperty('aws_credentials_provider_class',
                               'com.amazonaws.athena.jdbc.shaded.' +
