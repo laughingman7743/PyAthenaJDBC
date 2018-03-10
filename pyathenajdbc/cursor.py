@@ -9,7 +9,8 @@ from past.builtins.misc import xrange
 
 from pyathenajdbc.error import (ProgrammingError, NotSupportedError,
                                 DatabaseError, InternalError)
-from pyathenajdbc.util import attach_thread_to_jvm, synchronized, to_datetime
+from pyathenajdbc.util import (attach_thread_to_jvm, synchronized,
+                               to_datetime, unwrap_exception)
 
 
 _logger = logging.getLogger(__name__)
@@ -191,7 +192,7 @@ class Cursor(object):
             self._execution_time_in_millis = statistics.getEngineExecutionTimeInMillis()
         except Exception as e:
             _logger.exception('Failed to execute query.')
-            raise_from(DatabaseError(*e.args), e)
+            raise_from(DatabaseError(unwrap_exception(e)), e)
 
     def executemany(self, operation, seq_of_parameters):
         raise NotSupportedError
