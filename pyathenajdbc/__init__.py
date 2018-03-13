@@ -6,7 +6,7 @@ import datetime
 from pyathenajdbc.error import *  # noqa
 
 
-__version__ = '1.3.2'
+__version__ = '1.3.3'
 __athena_driver_version__ = '1.1.0'
 
 
