@@ -79,7 +79,7 @@ class Cursor(object):
         self._description = [
             (
                 self._meta_data.getColumnName(i),
-                self._meta_data.getColumnType(i),
+                self._converter.get_jdbc_type_name(self._meta_data.getColumnType(i)),
                 self._meta_data.getColumnDisplaySize(i),
                 None,
                 self._meta_data.getPrecision(i),

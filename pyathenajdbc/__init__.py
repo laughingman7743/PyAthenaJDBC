@@ -39,15 +39,18 @@ class DBAPITypeObject:
         else:
             return -1
 
+    def __eq__(self, other):
+        return other in self.values
 
-STRING = DBAPITypeObject('CHAR', 'NCHAR',
-                         'VARCHAR', 'NVARCHAR',
-                         'LONGVARCHAR', 'LONGNVARCHAR')
+
+STRING = DBAPITypeObject('CHAR', 'NCHAR', 'VARCHAR', 'NVARCHAR', 'LONGVARCHAR', 'LONGNVARCHAR',
+                         'ARRAY', 'JAVA_OBJECT')
 BINARY = DBAPITypeObject('BINARY', 'VARBINARY', 'LONGVARBINARY')
-NUMBER = DBAPITypeObject('BOOLEAN', 'TINYINT', 'SMALLINT', 'BIGINT', 'INTEGER',
+BOOLEAN = DBAPITypeObject('BOOLEAN')
+NUMBER = DBAPITypeObject('TINYINT', 'SMALLINT', 'BIGINT', 'INTEGER',
                          'REAL', 'DOUBLE', 'FLOAT', 'DECIMAL', 'NUMERIC')
+DATE = DBAPITypeObject('DATE')
 DATETIME = DBAPITypeObject('TIMESTAMP')
-ROWID = DBAPITypeObject('')
 
 
 Date = datetime.date
