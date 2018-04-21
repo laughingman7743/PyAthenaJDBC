@@ -85,26 +85,34 @@ class JDBCTypeConverter(object):
 
     def __init__(self):
         types = jpype.java.sql.Types
-        self.jdbc_type_mappings = dict()
+        self._jdbc_type_name_mappings = dict()
+        self._jdbc_type_code_mappings = dict()
         for field in types.__javaclass__.getClassFields():
-            self.jdbc_type_mappings[field.getName()] = field.getStaticAttribute()
-        _logger.debug(self.jdbc_type_mappings)
-        self.converter_mappings = dict()
+            self._jdbc_type_name_mappings[field.getName()] = field.getStaticAttribute()
+            self._jdbc_type_code_mappings[field.getStaticAttribute()] = field.getName()
+        _logger.debug(self._jdbc_type_name_mappings)
+        self._converter_mappings = dict()
         for k, v in iteritems(_DEFAULT_CONVERTERS):
-            type_code = self.jdbc_type_mappings.get(k, None)
+            type_code = self._jdbc_type_name_mappings.get(k, None)
             if type_code is not None:
-                self.converter_mappings[type_code] = v
+                self._converter_mappings[type_code] = v
             else:
                 _logger.warning('%s is not defined java.sql.Types.', k)
 
     def convert(self, type_code, varchar_value):
-        converter = self.converter_mappings.get(type_code, _to_default)
+        converter = self._converter_mappings.get(type_code, _to_default)
         return converter(varchar_value)
 
+    def get_jdbc_type_code(self, type_name):
+        return self._jdbc_type_name_mappings.get(type_name, None)
+
+    def get_jdbc_type_name(self, type_code):
+        return self._jdbc_type_code_mappings.get(type_code, None)
+
     def register_converter(self, type_name, converter):
-        type_code = self.jdbc_type_mappings.get(type_name, None)
+        type_code = self._jdbc_type_name_mappings.get(type_name, None)
         if type_code:
-            self.converter_mappings[type_code] = converter
+            self._converter_mappings[type_code] = converter
         else:
             _logger.warning('%s is not defined java.sql.Types.', type_name)
 
@@ -134,6 +142,7 @@ _DEFAULT_CONVERTERS = {
     'BINARY': _to_binary,
     'VARBINARY': _to_binary,
     'LONGVARBINARY': _to_binary,
+    'JAVA_OBJECT': _to_unicode,
     # TODO Converter impl
     # 'TIME': ???,
     # 'BIT': ???,
@@ -141,7 +150,6 @@ _DEFAULT_CONVERTERS = {
     # 'BLOB': ???,
     # 'NCLOB': ???,
     # 'STRUCT': ???,
-    # 'JAVA_OBJECT': ???,
     # 'REF_CURSOR': ???,
     # 'REF': ???,
     # 'DISTINCT': ???,

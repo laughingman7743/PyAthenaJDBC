@@ -13,7 +13,7 @@ from concurrent import futures
 from concurrent.futures.thread import ThreadPoolExecutor
 from past.builtins.misc import xrange
 
-from pyathenajdbc import connect
+from pyathenajdbc import connect, BOOLEAN, NUMBER, STRING, DATETIME, BINARY, DATE
 from pyathenajdbc.cursor import Cursor
 from pyathenajdbc.error import (DatabaseError,
                                 ProgrammingError,
@@ -212,7 +212,7 @@ class TestCursor(unittest.TestCase):
     @with_cursor
     def test_description(self, cursor):
         cursor.execute('SELECT 1 AS foobar FROM one_row')
-        expected = [('foobar', 4, 11, None, 10, 0, 2)]
+        expected = [('foobar', 'INTEGER', 11, None, 10, 0, 2)]
         self.assertEqual(cursor.description, expected)
         # description cache
         self.assertEqual(cursor.description, expected)
@@ -254,22 +254,23 @@ class TestCursor(unittest.TestCase):
           ,col_decimal
         FROM one_row_complex
         """)
+        print(cursor.description)
         self.assertEqual(cursor.description, [
-            ('col_boolean', 16, 5, None, 0, 0, 2),
-            ('col_tinyint', -6, 4, None, 3, 0, 2),
-            ('col_smallint', 5, 6, None, 5, 0, 2),
-            ('col_int', 4, 11, None, 10, 0, 2),
-            ('col_bigint', -5, 20, None, 19, 0, 2),
-            ('col_float', 8, 24, None, 17, 0, 2),
-            ('col_double', 8, 24, None, 17, 0, 2),
-            ('col_string', -16, 1073741824, None, 1073741824, 0, 2),
-            ('col_timestamp', 93, 23, None, 3, 0, 2),
-            ('col_date', 91, 10, None, 0, 0, 2),
-            ('col_binary', -4, 1073741824, None, 1073741824, 0, 2),
-            ('col_array', 2003, 0, None, 0, 0, 2),
-            ('col_map', 2000, 0, None, 0, 0, 2),
-            ('col_struct', 2000, 0, None, 0, 0, 2),
-            ('col_decimal', 3, 0, None, 10, 1, 2),
+            ('col_boolean', 'BOOLEAN', 5, None, 0, 0, 2),
+            ('col_tinyint', 'TINYINT', 4, None, 3, 0, 2),
+            ('col_smallint', 'SMALLINT', 6, None, 5, 0, 2),
+            ('col_int', 'INTEGER', 11, None, 10, 0, 2),
+            ('col_bigint', 'BIGINT', 20, None, 19, 0, 2),
+            ('col_float', 'DOUBLE', 24, None, 17, 0, 2),
+            ('col_double', 'DOUBLE', 24, None, 17, 0, 2),
+            ('col_string', 'LONGNVARCHAR', 1073741824, None, 1073741824, 0, 2),
+            ('col_timestamp', 'TIMESTAMP', 23, None, 3, 0, 2),
+            ('col_date', 'DATE', 10, None, 0, 0, 2),
+            ('col_binary', 'LONGVARBINARY', 1073741824, None, 1073741824, 0, 2),
+            ('col_array', 'ARRAY', 0, None, 0, 0, 2),
+            ('col_map', 'JAVA_OBJECT', 0, None, 0, 0, 2),
+            ('col_struct', 'JAVA_OBJECT', 0, None, 0, 0, 2),
+            ('col_decimal', 'DECIMAL', 0, None, 10, 1, 2),
         ])
         rows = cursor.fetchall()
         expected = [(
@@ -292,6 +293,24 @@ class TestCursor(unittest.TestCase):
         self.assertEqual(rows, expected)
         # catch unicode/str
         self.assertEqual(list(map(type, rows[0])), list(map(type, expected[0])))
+        # compare dbapi type object
+        self.assertEqual([d[1] for d in cursor.description], [
+            BOOLEAN,
+            NUMBER,
+            NUMBER,
+            NUMBER,
+            NUMBER,
+            NUMBER,
+            NUMBER,
+            STRING,
+            DATETIME,
+            DATE,
+            BINARY,
+            STRING,
+            STRING,
+            STRING,
+            NUMBER,
+        ])
 
     @with_cursor
     def test_cancel(self, cursor):
@@ -357,9 +376,9 @@ class TestCursor(unittest.TestCase):
     def test_desc_query(self, cursor):
         cursor.execute('DESC one_row')
         self.assertEqual(cursor.description, [
-            ('col_name', -16, 1073741824, None, 1073741824, 0, 2),
-            ('data_type', -16, 1073741824, None, 1073741824, 0, 2),
-            ('comment', -16, 1073741824, None, 1073741824, 0, 2),
+            ('col_name', 'LONGNVARCHAR', 1073741824, None, 1073741824, 0, 2),
+            ('data_type', 'LONGNVARCHAR', 1073741824, None, 1073741824, 0, 2),
+            ('comment', 'LONGNVARCHAR', 1073741824, None, 1073741824, 0, 2),
         ])
         self.assertEqual(cursor.fetchall(), [
             ('number_of_rows      \tint                 \t                    ',)
