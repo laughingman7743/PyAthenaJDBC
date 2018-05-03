@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
 import datetime
 
 from pyathenajdbc.error import *  # noqa
 
-
 __version__ = '1.3.4'
 __athena_driver_version__ = '1.1.0'
-
 
 # Globals https://www.python.org/dev/peps/pep-0249/#globals
 apilevel = '2.0'
 threadsafety = 3
 paramstyle = 'pyformat'
-
 
 ATHENA_JAR = 'AthenaJDBC41-{0}.jar'.format(__athena_driver_version__)
 ATHENA_DRIVER_DOWNLOAD_URL = 'https://s3.amazonaws.com/athena-downloads/drivers/{0}'.format(

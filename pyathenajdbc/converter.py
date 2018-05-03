@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from __future__ import unicode_literals
-import logging
+
 import binascii
+import logging
 from datetime import datetime
 from decimal import Decimal
 
 import jpype
 from future.utils import iteritems
 from past.types import unicode
-
 
 _logger = logging.getLogger(__name__)
 
