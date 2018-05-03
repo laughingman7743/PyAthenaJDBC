@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
 import logging
 import os
 
 import jpype
 from future.utils import iteritems
 
-from pyathenajdbc import (ATHENA_DRIVER_CLASS_NAME,
-                          ATHENA_CONNECTION_STRING,
-                          ATHENA_JAR)
+from pyathenajdbc import (ATHENA_CONNECTION_STRING, ATHENA_DRIVER_CLASS_NAME, ATHENA_JAR)
 from pyathenajdbc.converter import JDBCTypeConverter
 from pyathenajdbc.cursor import Cursor
-from pyathenajdbc.error import ProgrammingError, NotSupportedError
+from pyathenajdbc.error import NotSupportedError, ProgrammingError
 from pyathenajdbc.formatter import ParameterFormatter
-from pyathenajdbc.util import synchronized, attach_thread_to_jvm
-
+from pyathenajdbc.util import attach_thread_to_jvm, synchronized
 
 _logger = logging.getLogger(__name__)
 

@@ -1,25 +1,23 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
 import contextlib
 import re
 import time
 import unittest
-from datetime import datetime, date
+from concurrent import futures
+from concurrent.futures.thread import ThreadPoolExecutor
+from datetime import date, datetime
 from decimal import Decimal
 from random import randint
 
-from concurrent import futures
-from concurrent.futures.thread import ThreadPoolExecutor
 from past.builtins.misc import xrange
 
-from pyathenajdbc import connect, BOOLEAN, NUMBER, STRING, DATETIME, BINARY, DATE
+from pyathenajdbc import BINARY, BOOLEAN, DATE, DATETIME, NUMBER, STRING, connect
 from pyathenajdbc.cursor import Cursor
-from pyathenajdbc.error import (DatabaseError,
-                                ProgrammingError,
-                                NotSupportedError)
-
-from tests.conftest import SCHEMA, ENV
+from pyathenajdbc.error import (DatabaseError, NotSupportedError, ProgrammingError)
+from tests.conftest import ENV, SCHEMA
 from tests.util import with_cursor
 
 

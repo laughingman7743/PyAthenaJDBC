@@ -110,7 +110,7 @@ setup(
     install_requires=[
         'future',
         'jpype1>=0.6.0',
-        'botocore>=1.0.0'
+        'botocore>=1.0.0',
     ],
     extras_require={
         'Pandas': ['pandas>=0.19.0'],
@@ -119,10 +119,9 @@ setup(
     tests_require=[
         'futures',
         'SQLAlchemy>=1.0.0',
-        'pytest',
+        'pytest>=3.5',
         'pytest-cov',
-        'pytest-flake8',
-        'pytest-catchlog',
+        'pytest-flake8>=1.0.1',
     ],
     cmdclass=commands,
     entry_points={

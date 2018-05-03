@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[packages]
+"e1839a8" = {path = ".", extras = ["sqlalchemy"], editable = true}
+
+
+[dev-packages]
+awscli = "*"
+tox = "*"
+twine = "*"
+wheel = "*"
+
+jpype1 = { extras = ['numpy'] }
+
+pytest = ">=3.5"
+pytest-cov = "*"
+pytest-flake8 = ">=1.0.1"

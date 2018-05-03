@@ -17,3 +17,4 @@ cover/
 .cache/
 .tox
 .python-version
+.pytest_cache

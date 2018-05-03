@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
 import logging
 
 import jpype
 from future.utils import raise_from
 from past.builtins.misc import xrange
 
-from pyathenajdbc.error import (ProgrammingError, NotSupportedError,
-                                DatabaseError, InternalError)
+from pyathenajdbc.error import (DatabaseError, InternalError, NotSupportedError, ProgrammingError)
 from pyathenajdbc.util import (attach_thread_to_jvm, synchronized,
                                to_datetime, unwrap_exception)
-
 
 _logger = logging.getLogger(__name__)
 
