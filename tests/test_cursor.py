@@ -252,14 +252,13 @@ class TestCursor(unittest.TestCase):
           ,col_decimal
         FROM one_row_complex
         """)
-        print(cursor.description)
         self.assertEqual(cursor.description, [
             ('col_boolean', 'BOOLEAN', 5, None, 0, 0, 2),
             ('col_tinyint', 'TINYINT', 4, None, 3, 0, 2),
             ('col_smallint', 'SMALLINT', 6, None, 5, 0, 2),
             ('col_int', 'INTEGER', 11, None, 10, 0, 2),
             ('col_bigint', 'BIGINT', 20, None, 19, 0, 2),
-            ('col_float', 'DOUBLE', 24, None, 17, 0, 2),
+            ('col_float', 'FLOAT', 0, None, 17, 0, 2),
             ('col_double', 'DOUBLE', 24, None, 17, 0, 2),
             ('col_string', 'LONGNVARCHAR', 1073741824, None, 1073741824, 0, 2),
             ('col_timestamp', 'TIMESTAMP', 23, None, 3, 0, 2),
