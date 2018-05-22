@@ -1,21 +1,20 @@
 #!/usr/bin/env python
 #  -*- coding: utf-8 -*-
 from __future__ import print_function
+
 import codecs
 import os
 import sys
 
-from setuptools import setup, Command
+from setuptools import Command, find_packages, setup
 from setuptools.command.install import install
 
 import pyathenajdbc
-
 
 if sys.version_info[0] == 2:
     from urllib import urlretrieve
 else:
     from urllib.request import urlretrieve
-
 
 _PACKAGE_NAME = 'PyAthenaJDBC'
 _BASE_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -102,7 +101,7 @@ setup(
     author='laughingman7743',
     author_email='laughingman7743@gmail.com',
     license='MIT License',
-    packages=[_PACKAGE_NAME.lower()],
+    packages=find_packages(),
     package_data={
         '': ['*.rst'],
         _PACKAGE_NAME.lower(): ['*.jar'],
