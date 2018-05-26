@@ -58,9 +58,11 @@ Timestamp = datetime.datetime
 def connect(s3_staging_dir=None, access_key=None, secret_key=None,
             region_name=None, schema_name='default', profile_name=None, credential_file=None,
             jvm_path=None, jvm_options=None, converter=None, formatter=None,
+            role_arn=None, role_session_name='PyAthenaJDBCDefaultSession',
             driver_path=None, **kwargs):
     from pyathenajdbc.connection import Connection
     return Connection(s3_staging_dir, access_key, secret_key,
                       region_name, schema_name, profile_name, credential_file,
                       jvm_path, jvm_options, converter, formatter,
+                      role_arn, role_session_name,
                       driver_path, **kwargs)

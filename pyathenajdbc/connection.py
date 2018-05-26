@@ -27,6 +27,7 @@ class Connection(object):
     def __init__(self, s3_staging_dir=None, access_key=None, secret_key=None,
                  region_name=None, schema_name='default', profile_name=None, credential_file=None,
                  jvm_path=None, jvm_options=None, converter=None, formatter=None,
+                 role_arn=None, role_session_name='PyAthenaJDBCDefaultSession',
                  driver_path=None, **driver_kwargs):
         if s3_staging_dir:
             self.s3_staging_dir = s3_staging_dir
@@ -36,7 +37,32 @@ class Connection(object):
         assert schema_name, 'Required argument `schema_name` not found.'
         self.schema_name = schema_name
 
-        if credential_file:
+        if role_arn:
+            import boto3
+            import os
+            sts_client = boto3.client('sts', region_name=region_name)
+            sts_response = sts_client.assume_role(RoleArn=role_arn, RoleSessionName=role_session_name)
+            session = boto3.Session(
+                aws_access_key_id=sts_response['Credentials']['AccessKeyId'],
+                aws_secret_access_key=sts_response['Credentials']['SecretAccessKey'],
+                aws_session_token=sts_response['Credentials']['SessionToken'])
+
+            credentials = session.get_credentials()
+            self.credential_file = None
+            self.access_key = credentials.access_key
+            self.secret_key = credentials.secret_key
+            self.token = credentials.token
+            self.region_name = region_name
+            self.role_arn = role_arn
+
+            os.environ["AWS_ACCESS_KEY"] = self.access_key
+            os.environ["AWS_SECRET_KEY"] = self.secret_key
+            os.environ["AWS_SESSION_TOKEN"] = self.token
+
+            assert self.access_key, 'Required argument `access_key` not found.'
+            assert self.secret_key, 'Required argument `secret_key` not found.'
+            assert self.token, 'Required argument `token` not found.'
+        elif credential_file:
             self.access_key = None
             self.secret_key = None
             self.token = None
@@ -47,12 +73,15 @@ class Connection(object):
         else:
             import botocore.session
             session = botocore.session.get_session()
+
             if access_key and secret_key:
                 session.set_credentials(access_key, secret_key)
             if profile_name:
                 session.set_config_variable('profile', profile_name)
+
             if region_name:
                 session.set_config_variable('region', region_name)
+
             credentials = session.get_credentials()
             self.access_key = credentials.access_key
             assert self.access_key, 'Required argument `access_key` not found.'
@@ -105,6 +134,10 @@ class Connection(object):
                               'com.amazonaws.auth.PropertiesFileCredentialsProvider')
             props.setProperty('aws_credentials_provider_arguments',
                               self.credential_file)
+        elif self.role_arn:
+            props.setProperty('aws_credentials_provider_class',
+                              'com.amazonaws.athena.jdbc.shaded.' +
+                              'com.amazonaws.auth.EnvironmentVariableCredentialsProvider')
         elif self.token:
             props.setProperty('aws_credentials_provider_class',
                               'com.amazonaws.athena.jdbc.shaded.' +
