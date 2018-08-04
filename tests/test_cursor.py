@@ -374,8 +374,8 @@ class TestCursor(unittest.TestCase):
         cursor.execute('DESC one_row')
         self.assertEqual(cursor.description, [
             ('col_name', 'LONGNVARCHAR', 1073741824, None, 1073741824, 0, 2),
-            ('data_type', 'LONGNVARCHAR', 0, None, 0, 0, 2),
-            ('comment', 'LONGNVARCHAR', 0, None, 0, 0, 2),
+            ('data_type', 'LONGNVARCHAR', 1073741824, None, 1073741824, 0, 2),
+            ('comment', 'LONGNVARCHAR', 1073741824, None, 1073741824, 0, 2),
         ])
         self.assertEqual(cursor.fetchall(), [
             ('number_of_rows      \tint                 \t                    ',)
