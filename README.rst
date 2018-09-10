@@ -30,6 +30,17 @@ Requirements
 
   - Java >= 8
 
+JDBC driver compatibility
+-------------------------
+
++---------------+---------------------+-------------------------------------------------------------------------------+
+| Version       | JDBC driver version | Vendor                                                                        |
++===============+=====================+===============================================================================+
+| < 2.0.0       | == 1.1.0            | AWS (Early released jdbc driver. It is incompatible with Simba's JDBC driver) |
++---------------+---------------------+-------------------------------------------------------------------------------+
+| >= 2.0.0      | >= 2.0.5            | Simba                                                                         |
++---------------+---------------------+-------------------------------------------------------------------------------+
+
 Installation
 ------------
 
@@ -359,3 +370,23 @@ Run test multiple Python versions
     $ pyenv local 3.6.5 3.5.5 3.4.8 2.7.14
     $ pipenv run tox
     $ pipenv run scripts/test_data/delete_test_data.sh
+
+License
+-------
+
+The license of all Python code except JDBC driver is `MIT license`_.
+
+.. _`MIT license`: LICENSE
+
+JDBC driver
+~~~~~~~~~~~
+
+For the license of JDBC driver, please check the following link.
+
+* `JDBC driver release notes`_
+* `JDBC driver license`_
+* `JDBC driver notices`_
+
+.. _`JDBC driver release notes`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.5/docs/release-notes.txt
+.. _`JDBC driver License`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.5/docs/LICENSE.txt
+.. _`JDBC driver notices`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.5/docs/NOTICES.txt

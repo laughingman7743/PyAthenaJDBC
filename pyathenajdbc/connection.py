@@ -100,25 +100,23 @@ class Connection(object):
     def _build_driver_args(self, **kwargs):
         props = jpype.java.util.Properties()
         if self.credential_file:
-            props.setProperty('aws_credentials_provider_class',
-                              'com.amazonaws.athena.jdbc.shaded.' +
-                              'com.amazonaws.auth.PropertiesFileCredentialsProvider')
+            props.setProperty('AwsCredentialsProviderClass',
+                              'com.simba.athena.amazonaws.auth.PropertiesFileCredentialsProvider')
             props.setProperty('aws_credentials_provider_arguments',
                               self.credential_file)
         elif self.profile_name:
-            props.setProperty('aws_credentials_provider_class',
-                              'com.amazonaws.athena.jdbc.shaded.' +
-                              'com.amazonaws.auth.profile.ProfileCredentialsProvider')
+            props.setProperty('AwsCredentialsProviderClass',
+                              'com.simba.athena.amazonaws.auth.profile.ProfileCredentialsProvider')
             props.setProperty('aws_credentials_provider_arguments',
                               self.profile_name)
         elif self.token:
-            props.setProperty('aws_credentials_provider_class',
-                              'com.amazonaws.athena.jdbc.shaded.' +
-                              'com.amazonaws.auth.DefaultAWSCredentialsProviderChain')
+            props.setProperty('AwsCredentialsProviderClass',
+                              'com.simba.athena.amazonaws.auth.DefaultAWSCredentialsProviderChain')
         else:
-            props.setProperty('user', self.access_key)
-            props.setProperty('password', self.secret_key)
-        props.setProperty('s3_staging_dir', self.s3_staging_dir)
+            props.setProperty('UID', self.access_key)
+            props.setProperty('PWD', self.secret_key)
+        props.setProperty('Schema', self.schema_name)
+        props.setProperty('S3OutputLocation', self.s3_staging_dir)
         for k, v in iteritems(kwargs):
             if k and v:
                 props.setProperty(k, v)

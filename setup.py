@@ -103,7 +103,7 @@ setup(
     license='MIT License',
     packages=find_packages(),
     package_data={
-        '': ['*.rst'],
+        '': ['LICENSE', '*.rst', 'jdbc/*'],
         _PACKAGE_NAME.lower(): ['*.jar'],
     },
     install_requires=[

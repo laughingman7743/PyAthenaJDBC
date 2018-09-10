@@ -1,0 +1,175 @@
+﻿============================================================================= 
+Simba Athena JDBC Driver with SQL Connector Release Notes 
+============================================================================= 
+
+The release notes provide details of enhancements, features, and known issues 
+in Simba Athena JDBC Driver 2.0.2, as well as the version history. 
+
+
+2.0.2 ======================================================================= 
+
+Released 2018-04-06
+
+Enhancements & New Features 
+
+ * Improved AWS Glue workflow
+  
+   AWS Glue availability detection logic now calls an API in Glue to speed 
+   up detection logic. If the API fails, the driver falls back to the
+   original method.
+
+ * Jackson library updated
+
+   The driver now uses Jackson library version 2.9.5 because of the security
+   vulnerabilities reported against the earlier versions of the library. 
+   Because Jackson libraries 2.9.5 support Java 1.7 and higher, the JDBC 
+   driver is offered for JDBC API 4.1 and 4.2, but not for JDBC API 4.0,
+   which requires JDK 6. JDK 6 and Java 1.6 are not supported by Jackson 
+   2.9.5.
+
+ * Array type support
+ 
+   The driver now supports returning ResultSet data as an Array. This is
+   configured using the UseArraySupport configuration option. For more
+   information, see the Installation and Configuration Guide.
+   
+ 
+Resolved Issues
+The following issue has been resolved in Simba Athena JDBC Driver 2.0.2.
+
+ * When the driver executes a query containing comments, it incorrectly
+   returns a row-count result set.
+
+
+Workflow Changes ============================================================
+
+The following changes may disrupt workflows from earlier versions.
+
+
+2.0.2 -----------------------------------------------------------------------
+
+ * Removed support for JDBC 4.0
+
+   As of this release, the driver no longer supports JDBC 4.0. Please refer
+   to the release notes item "Jackson library updated" in the "Enhancements &
+   New Features" section of this release for more details.
+
+   
+2.0.0 -----------------------------------------------------------------------
+
+ * SDK interfaces
+
+   The following AWS SDK interfaces are no longer shaded in the driver jar,
+   they are included with the original AWS SDK package names. Any custom
+   credential providers that use the old shaded package names for these
+   interfaces must be updated.  
+   - com.amazonaws.auth.AWSCredentials
+   - com.amazonaws.auth.AWSCredentialsProvider
+   - com.amazonaws.auth.AWSSessionCredentials
+   - com.amazonaws.auth.AWSSessionCredentialsProvider   
+
+
+Version History ============================================================= 
+
+2.0.1 ----------------------------------------------------------------------- 
+
+2018-03-14
+
+Enhancements & New Features 
+
+ * Support for CHAR and FLOAT data types
+
+   The driver now supports CHAR and FLOAT data.
+
+
+Resolved Issues
+The following issues were resolved in Simba Athena JDBC Driver 2.0.1.
+
+ * When the driver executes a query containing Common Table Expression (CTE) 
+   syntax, it incorrectly returns a row-count result set.
+
+ * In the connection URL, if the Host or Catalog properties end with a 
+   backslash ( / ), the driver returns an error.
+   
+
+2.0.0 ----------------------------------------------------------------------- 
+
+2018-02-02
+
+Enhancements & New Features 
+
+ * AWS STS library
+
+   The AWS STS library is now bundled with the driver as a shaded jar file.
+
+ * Configuration option aliases
+
+   Aliases have been added for some configuration options. Recognized options
+   include: 
+
+   - s3_staging_dir: alias for S3OutputLocation
+   - query_results_encryption_option: alias for S3OutputEncOption
+   - query_results_aws_kms_key: alias for S3OutputEncKMSKey
+   - aws_credentials_provider_class: alias for AwsCredentialsProviderClass
+   - aws_credentials_provider_arguments: alias for AwsCredentialsProviderArguments
+   - max_error_retries: alias for MaxErrorRetry
+   - connection_timeout (time in milliseconds): alias for ConnectTimeout (time in seconds)
+   - socket_timeout (time in milliseconds): alias for SocketTimeout (time in seconds)
+
+   If a conflict occurs, the driver setting takes precedence over the alias.
+   See the Installation and Configuration Guide for full details.
+
+ * Improved class loading
+
+   The driver and data source can now be loaded using the same class name
+   for any JDBC version. The new class names are com.simba.athena.jdbc.Driver
+   and com.simba.athena.jdbc.DataSource. Old class names continue to work.
+
+ * Updated driver identification details
+
+   The DatabaseMetadata.getDatabaseProductName() call now returns 
+   "AWS.Athena".
+   The DatabaseMetadata.getDriverName() now returns "Simba Athena JDBC
+   Driver".	
+   The driver now populates UserAgentPrefix within the Athena SDK. The prefix
+   is "sbAthenaJDBCDriver/DRIVER_VERSION", where DRIVER_VERSION is the
+   major.minor version of the driver. For example, this release of the driver
+   would use the UserAgentPrefix "sbAthenaJDBCDriver/2.0".
+   
+ * Endpoint handling
+
+   You can now pass an endpoint in the form "athena.[REGION].amazonaws.com:
+   443;" in the connection string, instead of specifying the region using the
+   AWSRegion configuration option. The region is parsed out of this endpoint
+   and used to connect to Athena and Glue services. If an endpoint and
+   AWSRegion are present in the connection string the AWSRegion takes
+   precedence.
+
+ * Column name handling
+
+   The driver right-trims the column names when using the JDBC getColumns API
+   call. This only applies when the driver uses a query to get the metadata
+   for AWS regions that don’t support Glue or haven’t been upgraded to use
+   Glue.
+
+ * AWS SDK support
+ 
+   The driver now uses AWS SDK version 1.11.271.
+
+ * Jackson support
+ 
+   The driver now uses Jackson version 2.9.4. The JDBC 4 version of the driver
+   still uses jackson-databind-2.7.9.1 as newer versions are not compatible
+   with JDK 1.6.
+ 
+Resolved Issues
+The following issue was resolved in Simba Athena JDBC Driver 2.0.0.
+
+ * The precision and scale for integer type columns in the ResultSetMetaData
+   of the getColumns JDBC API call are both 1.
+
+   This has been resolved. The correct values, 10 and 0 respectively, have 
+   been implemented.
+
+
+============================================================================== 
