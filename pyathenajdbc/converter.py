@@ -81,11 +81,11 @@ def _to_boolean(result_set, index):
 
 
 def _to_array_str(result_set, index):
-    val = result_set.getString(index)
+    val = result_set.getArray(index)
     was_null = result_set.wasNull()
     if was_null:
         return None
-    return val
+    return unicode(val.toString())
 
 
 def _to_binary(result_set, index):
@@ -160,7 +160,7 @@ _DEFAULT_CONVERTERS = {
     'DATE': _to_date,
     'TIMESTAMP': _to_datetime,
     'TIMESTAMP_WITH_TIMEZONE': _to_datetime,
-    'ARRAY': _to_unicode,
+    'ARRAY': _to_array_str,
     'DECIMAL': _to_decimal,
     'NUMERIC': _to_decimal,
     'BINARY': _to_binary,
