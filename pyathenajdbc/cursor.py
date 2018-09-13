@@ -4,13 +4,12 @@ from __future__ import unicode_literals
 
 import logging
 
-import jpype
 from future.utils import raise_from
 from past.builtins.misc import xrange
 
-from pyathenajdbc.error import (DatabaseError, InternalError, NotSupportedError, ProgrammingError)
+from pyathenajdbc.error import (DatabaseError, NotSupportedError, ProgrammingError)
 from pyathenajdbc.util import (attach_thread_to_jvm, synchronized,
-                               to_datetime, unwrap_exception)
+                               unwrap_exception)
 
 _logger = logging.getLogger(__name__)
 
@@ -203,19 +202,20 @@ class Cursor(object):
             raise ProgrammingError('Connection is closed.')
         self._statement.cancel()
 
-    def _rows(self):
-        for field in self._result_set.__javaclass__.getDeclaredFields():
-            if field.name == 'row':
-                field.setAccessible(True)
-                return field.get(self._result_set).get()
-        raise InternalError('Row field not found.')
+    # def _rows(self):
+    #     for field in self._result_set.__javaclass__.getDeclaredFields():
+    #         print(field.name)
+    #         if field.name == 'row':
+    #             field.setAccessible(True)
+    #             return field.get(self._result_set).get()
+    #     raise InternalError('Row field not found.')
 
-    def _columns(self):
-        for field in self._meta_data.__javaclass__.getDeclaredFields():
-            if field.name == 'columnInfo':
-                field.setAccessible(True)
-                return field.get(self._meta_data).toArray()
-        raise InternalError('ColumnInfo field not found.')
+    # def _columns(self):
+    #     for field in self._meta_data.__javaclass__.getDeclaredFields():
+    #         if field.name == 'columnInfo':
+    #             field.setAccessible(True)
+    #             return field.get(self._meta_data).toArray()
+    #     raise InternalError('ColumnInfo field not found.')
 
     @attach_thread_to_jvm
     def _fetch(self):
@@ -228,8 +228,8 @@ class Cursor(object):
             return None
         self._rownumber += 1
         return tuple([
-            self._converter.convert(column.getSQLColumnType(), row.getVarCharValue())
-            for column, row in zip(self._columns(), self._rows())
+            self._converter.convert(self._meta_data.getColumnType(i), self._result_set, i)
+            for i in xrange(1, self._meta_data.getColumnCount() + 1)
         ])
 
     @synchronized
