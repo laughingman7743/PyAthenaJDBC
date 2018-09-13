@@ -32,12 +32,6 @@ class Cursor(object):
         self._meta_data = None
         self._update_count = -1
 
-        # self._output_location = None
-        # self._completion_date_time = None
-        # self._submission_date_time = None
-        # self._data_scanned_in_bytes = None
-        # self._execution_time_in_millis = None
-
     @property
     def connection(self):
         return self._connection
@@ -88,33 +82,6 @@ class Cursor(object):
         ]
         return self._description
 
-    # @property
-    # @attach_thread_to_jvm
-    # def query_id(self):
-    #     if not self.has_result_set:
-    #         return None
-    #     return self._result_set.getClient().getQueryExecutionId()
-
-    # @property
-    # def output_location(self):
-    #     return self._output_location
-
-    # @property
-    # def completion_date_time(self):
-    #     return self._completion_date_time
-
-    # @property
-    # def submission_date_time(self):
-    #     return self._submission_date_time
-
-    # @property
-    # def data_scanned_in_bytes(self):
-    #     return self._data_scanned_in_bytes
-
-    # @property
-    # def execution_time_in_millis(self):
-    #     return self._execution_time_in_millis
-
     @attach_thread_to_jvm
     @synchronized
     def close(self):
@@ -132,31 +99,11 @@ class Cursor(object):
     def is_closed(self):
         return self._connection is None
 
-    # def _athena_client(self):
-    #     for field in self._connection.__javaclass__.getDeclaredFields():
-    #         if field.name == 'athenaServiceClient':
-    #             field.setAccessible(True)
-    #             return field.get(self._connection).getClient()
-    #     raise InternalError('AthenaServiceClient field not found.')
-
-    # def _query_execution(self):
-    #     client = self._athena_client()
-    #     request = jpype.JPackage('com.amazonaws.athena.jdbc.shaded.' +
-    #                              'com.amazonaws.services.athena.model').GetQueryExecutionRequest()
-    #     result = client.getQueryExecution(request.withQueryExecutionId(self.query_id))
-    #     return result.getQueryExecution()
-
     def _reset_state(self):
         self._description = None
         self._result_set = None
         self._meta_data = None
         self._rownumber = 0
-
-        # self._output_location = None
-        # self._completion_date_time = None
-        # self._submission_date_time = None
-        # self._data_scanned_in_bytes = None
-        # self._execution_time_in_millis = None
 
     @attach_thread_to_jvm
     @synchronized
@@ -176,18 +123,6 @@ class Cursor(object):
                 self._update_count = -1
             else:
                 self._update_count = self._statement.getUpdateCount()
-            # query_execution = self._query_execution()
-
-            # result_conf = query_execution.getResultConfiguration()
-            # self._output_location = result_conf.getOutputLocation()
-
-            # status = query_execution.getStatus()
-            # self._completion_date_time = to_datetime(status.getCompletionDateTime())
-            # self._submission_date_time = to_datetime(status.getSubmissionDateTime())
-
-            # statistics = query_execution.getStatistics()
-            # self._data_scanned_in_bytes = statistics.getDataScannedInBytes()
-            # self._execution_time_in_millis = statistics.getEngineExecutionTimeInMillis()
         except Exception as e:
             _logger.exception('Failed to execute query.')
             raise_from(DatabaseError(unwrap_exception(e)), e)
