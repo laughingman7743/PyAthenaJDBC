@@ -137,21 +137,6 @@ class Cursor(object):
             raise ProgrammingError('Connection is closed.')
         self._statement.cancel()
 
-    # def _rows(self):
-    #     for field in self._result_set.__javaclass__.getDeclaredFields():
-    #         print(field.name)
-    #         if field.name == 'row':
-    #             field.setAccessible(True)
-    #             return field.get(self._result_set).get()
-    #     raise InternalError('Row field not found.')
-
-    # def _columns(self):
-    #     for field in self._meta_data.__javaclass__.getDeclaredFields():
-    #         if field.name == 'columnInfo':
-    #             field.setAccessible(True)
-    #             return field.get(self._meta_data).toArray()
-    #     raise InternalError('ColumnInfo field not found.')
-
     @attach_thread_to_jvm
     def _fetch(self):
         if self.is_closed:
