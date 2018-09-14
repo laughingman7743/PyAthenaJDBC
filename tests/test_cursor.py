@@ -201,7 +201,7 @@ class TestCursor(unittest.TestCase):
     @with_cursor
     def test_description(self, cursor):
         cursor.execute('SELECT 1 AS foobar FROM one_row')
-        expected = [('foobar', 'INTEGER', 11, None, 10, 0, 2)]
+        expected = [('foobar', 'INTEGER', 11, None, 10, 0, 1)]
         self.assertEqual(cursor.description, expected)
         # description cache
         self.assertEqual(cursor.description, expected)
@@ -228,21 +228,21 @@ class TestCursor(unittest.TestCase):
         FROM one_row_complex
         """)
         self.assertEqual(cursor.description, [
-            ('col_boolean', 'BOOLEAN', 5, None, 0, 0, 2),
-            ('col_tinyint', 'TINYINT', 4, None, 3, 0, 2),
-            ('col_smallint', 'SMALLINT', 6, None, 5, 0, 2),
-            ('col_int', 'INTEGER', 11, None, 10, 0, 2),
-            ('col_bigint', 'BIGINT', 20, None, 19, 0, 2),
-            ('col_float', 'FLOAT', 0, None, 17, 0, 2),
-            ('col_double', 'DOUBLE', 24, None, 17, 0, 2),
-            ('col_string', 'LONGNVARCHAR', 1073741824, None, 1073741824, 0, 2),
-            ('col_timestamp', 'TIMESTAMP', 23, None, 3, 0, 2),
-            ('col_date', 'DATE', 10, None, 0, 0, 2),
-            ('col_binary', 'LONGVARBINARY', 1073741824, None, 1073741824, 0, 2),
-            ('col_array', 'ARRAY', 0, None, 0, 0, 2),
-            ('col_map', 'JAVA_OBJECT', 0, None, 0, 0, 2),
-            ('col_struct', 'JAVA_OBJECT', 0, None, 0, 0, 2),
-            ('col_decimal', 'DECIMAL', 0, None, 10, 1, 2),
+            ('col_boolean', 'BOOLEAN', 1, None, 1, 0, 1),
+            ('col_tinyint', 'TINYINT', 3, None, 3, 0, 1),
+            ('col_smallint', 'SMALLINT', 6, None, 5, 0, 1),
+            ('col_int', 'INTEGER', 11, None, 10, 0, 1),
+            ('col_bigint', 'BIGINT', 20, None, 19, 0, 1),
+            ('col_float', 'REAL', 14, None, 24, 0, 1),
+            ('col_double', 'DOUBLE', 24, None, 53, 0, 1),
+            ('col_string', 'VARCHAR', 255, None, 255, 0, 1),
+            ('col_timestamp', 'TIMESTAMP', 23, None, 23, 6, 1),
+            ('col_date', 'DATE', 10, None, 10, 0, 1),
+            ('col_binary', 'VARBINARY', 65534, None, 32767, 0, 1),
+            ('col_array', 'ARRAY', -4, None, 0, 0, 1),
+            ('col_map', 'VARCHAR', 65535, None, 65535, 0, 1),
+            ('col_struct', 'VARCHAR', 65535, None, 65535, 0, 1),
+            ('col_decimal', 'DECIMAL', 12, None, 10, 1, 1),
         ])
         rows = cursor.fetchall()
         expected = [(

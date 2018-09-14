@@ -141,10 +141,10 @@ class TestSQLAlchemyAthena(unittest.TestCase):
             datetime(2017, 1, 1, 0, 0, 0),
             date(2017, 1, 2),
             b'123',
-            '[1, 2]',
+            '1, 2',
             '{1=2, 3=4}',
             '{a=1, b=2}',
-            Decimal('0.1'),
+            Decimal('0.100000'),
         ])
         self.assertIsInstance(one_row_complex.c.col_boolean.type, BOOLEAN)
         self.assertIsInstance(one_row_complex.c.col_tinyint.type, INTEGER)
