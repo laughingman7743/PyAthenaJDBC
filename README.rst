@@ -28,7 +28,18 @@ Requirements
 
 * Java
 
-  - Java >= 8
+  - Java >= 8 (JDBC 4.2)
+
+JDBC driver compatibility
+-------------------------
+
++---------------+---------------------+-------------------------------------------------------------------------------+
+| Version       | JDBC driver version | Vendor                                                                        |
++===============+=====================+===============================================================================+
+| < 2.0.0       | == 1.1.0            | AWS (Early released jdbc driver. It is incompatible with Simba's JDBC driver) |
++---------------+---------------------+-------------------------------------------------------------------------------+
+| >= 2.0.0      | >= 2.0.5            | Simba                                                                         |
++---------------+---------------------+-------------------------------------------------------------------------------+
 
 Installation
 ------------
@@ -120,7 +131,7 @@ if ``%`` character is contained in your query, it must be escaped with ``%%`` li
 .. _`DB API paramstyle`: https://www.python.org/dev/peps/pep-0249/#paramstyle
 .. _`named placeholders`: https://pyformat.info/#named_placeholders
 
-JVM Options
+JVM options
 ~~~~~~~~~~~
 
 In the connect method or connection object, you can specify JVM options with a string array.
@@ -142,6 +153,48 @@ You can increase the JVM heap size like the following:
             print(cursor.fetchall())
     finally:
         conn.close()
+
+JDBC 4.1
+~~~~~~~~
+
+If you want to use JDBC 4.1, download the corresponding JDBC driver
+and specify the path of the downloaded JDBC driver as the argument ``driver_path`` of the connect method or connection object.
+
+* The `AthenaJDBC41-2.0.5.jar`_ is compatible with JDBC 4.1 and requires JDK 7.0 or later.
+
+.. _`AthenaJDBC41-2.0.5.jar`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.5/AthenaJDBC41_2.0.5.jar
+
+.. code:: python
+
+    from pyathenajdbc import connect
+
+    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
+                   region_name='us-west-2',
+                   driver_path='/path/to/AthenaJDBC41_2.0.5.jar')
+
+JDBC driver configuration options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The connect method or connection object pass keyword arguments as options to the JDBC driver.
+If you want to change the behavior of the JDBC driver,
+specify the option as a keyword argument in the connect method or connection object.
+
+.. code:: python
+
+    from pyathenajdbc import connect
+
+    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
+                   region_name='us-west-2',
+                   LogPath='/path/to/pyathenajdbc/log/',
+                   LogLevel='6')
+
+For details of the JDBC driver options refer to the official documentation.
+
+* `JDBC Driver Installation and Configuration Guide`_.
+
+.. _`JDBC Driver Installation and Configuration Guide`: JDBC Driver Installation and Configuration Guide.
+
+NOTE: Option names and values are case-sensitive. The option value is specified as a character string.
 
 SQLAlchemy
 ~~~~~~~~~~
@@ -236,7 +289,7 @@ Support `AWS CLI credentials`_, `Properties file credentials`_ and `AWS credenti
 .. _`Properties file credentials`: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/PropertiesFileCredentialsProvider.html
 .. _`AWS credentials provider chain`: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/DefaultAWSCredentialsProviderChain.html
 
-Credential Files
+Credential files
 ~~~~~~~~~~~~~~~~
 
 ~/.aws/credentials
@@ -359,3 +412,23 @@ Run test multiple Python versions
     $ pyenv local 3.6.5 3.5.5 3.4.8 2.7.14
     $ pipenv run tox
     $ pipenv run scripts/test_data/delete_test_data.sh
+
+License
+-------
+
+The license of all Python code except JDBC driver is `MIT license`_.
+
+.. _`MIT license`: LICENSE
+
+JDBC driver
+~~~~~~~~~~~
+
+For the license of JDBC driver, please check the following link.
+
+* `JDBC driver release notes`_
+* `JDBC driver license`_
+* `JDBC driver notices`_
+
+.. _`JDBC driver release notes`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.5/docs/release-notes.txt
+.. _`JDBC driver License`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.5/docs/LICENSE.txt
+.. _`JDBC driver notices`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.5/docs/NOTICES.txt

@@ -6,19 +6,20 @@ import datetime
 
 from pyathenajdbc.error import *  # noqa
 
-__version__ = '1.3.4'
-__athena_driver_version__ = '1.1.0'
+__version__ = '2.0.0'
+__athena_driver_version__ = '2.0.5'
 
 # Globals https://www.python.org/dev/peps/pep-0249/#globals
 apilevel = '2.0'
 threadsafety = 3
 paramstyle = 'pyformat'
 
-ATHENA_JAR = 'AthenaJDBC41-{0}.jar'.format(__athena_driver_version__)
-ATHENA_DRIVER_DOWNLOAD_URL = 'https://s3.amazonaws.com/athena-downloads/drivers/{0}'.format(
-    ATHENA_JAR)
-ATHENA_DRIVER_CLASS_NAME = 'com.amazonaws.athena.jdbc.AthenaDriver'
-ATHENA_CONNECTION_STRING = 'jdbc:awsathena://athena.{region}.amazonaws.com:443/hive/{schema}/'
+ATHENA_JAR = 'AthenaJDBC42_{0}.jar'.format(__athena_driver_version__)
+ATHENA_DRIVER_DOWNLOAD_URL = 'https://s3.amazonaws.com/athena-downloads/drivers/JDBC/' + \
+                             'SimbaAthenaJDBC_{0}/{1}'.format(__athena_driver_version__,
+                                                              ATHENA_JAR)
+ATHENA_DRIVER_CLASS_NAME = 'com.simba.athena.jdbc.Driver'
+ATHENA_CONNECTION_STRING = 'jdbc:awsathena://AwsRegion={region};'
 
 
 class DBAPITypeObject:
