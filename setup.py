@@ -5,6 +5,7 @@ from __future__ import print_function
 import codecs
 import os
 import sys
+from glob import glob
 
 from setuptools import Command, find_packages, setup
 from setuptools.command.install import install
@@ -103,10 +104,15 @@ setup(
     license='MIT License',
     packages=find_packages(),
     package_data={
-        '': ['LICENSE', '*.rst'],
+        '': ['LICENSE', '*.rst', 'Pipfile*'],
         'jdbc': ['*.txt'],
         _PACKAGE_NAME.lower(): ['*.jar', '*.properties'],
     },
+    include_package_data=True,
+    data_files=[
+        ('', ['LICENSE'] + glob('*.rst') + glob('Pipfile*')),
+        ('jdbc', glob('jdbc/*.txt')),
+    ],
     install_requires=[
         'future',
         'jpype1>=0.6.0',
