@@ -123,7 +123,7 @@ class Connection(object):
         return props
 
     def __enter__(self):
-        return self.cursor()
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
