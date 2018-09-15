@@ -105,7 +105,7 @@ setup(
     package_data={
         '': ['LICENSE', '*.rst'],
         'jdbc': ['*.txt'],
-        _PACKAGE_NAME.lower(): ['*.jar'],
+        _PACKAGE_NAME.lower(): ['*.jar', '*.properties'],
     },
     install_requires=[
         'future',
