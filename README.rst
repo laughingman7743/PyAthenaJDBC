@@ -192,7 +192,7 @@ For details of the JDBC driver options refer to the official documentation.
 
 * `JDBC Driver Installation and Configuration Guide`_.
 
-.. _`JDBC Driver Installation and Configuration Guide`: JDBC Driver Installation and Configuration Guide.
+.. _`JDBC Driver Installation and Configuration Guide`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.5/docs/Simba+Athena+JDBC+Driver+Install+and+Configuration+Guide.pdf
 
 NOTE: Option names and values are case-sensitive. The option value is specified as a character string.
 
