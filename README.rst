@@ -10,6 +10,9 @@
 .. image:: https://img.shields.io/pypi/l/PyAthenaJDBC.svg
     :target: https://github.com/laughingman7743/PyAthenaJDBC/blob/master/LICENSE
 
+.. image:: https://img.shields.io/pypi/dm/pyathenajdbc.svg
+    :target: https://pypi.python.org/pypi/PyAthenaJDBC/
+
 
 PyAthenaJDBC
 ============
