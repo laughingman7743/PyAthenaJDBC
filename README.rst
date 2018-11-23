@@ -10,7 +10,7 @@
 .. image:: https://img.shields.io/pypi/l/PyAthenaJDBC.svg
     :target: https://github.com/laughingman7743/PyAthenaJDBC/blob/master/LICENSE
 
-.. image:: https://img.shields.io/pypi/dm/pyathenajdbc.svg
+.. image:: https://img.shields.io/pypi/dm/PyathenaJDBC.svg
     :target: https://pypi.python.org/pypi/PyAthenaJDBC/
 
 
@@ -234,6 +234,12 @@ The connection string has the following format:
 .. code:: python
 
     awsathena+jdbc://{access_key}:{secret_key}@athena.{region_name}.amazonaws.com:443/{schema_name}?s3_staging_dir={s3_staging_dir}&driver_path={driver_path}&...
+
+If you do not specify ``access_key`` and ``secret_key`` using instance profile or boto3 configuration file:
+
+.. code:: python
+
+    awsathena+jdbc://:@athena.{region_name}.amazonaws.com:443/{schema_name}?s3_staging_dir={s3_staging_dir}&driver_path={driver_path}&...
 
 NOTE: ``s3_staging_dir`` requires quote. If ``access_key``, ``secret_key`` and other parameter contain special characters, quote is also required.
 
