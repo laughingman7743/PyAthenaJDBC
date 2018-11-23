@@ -87,8 +87,8 @@ class AthenaDialect(DefaultDialect):
         #   {access_key}:{secret_key}@athena.{region_name}.amazonaws.com:443/
         #   {schema_name}?s3_staging_dir={s3_staging_dir}&driver_path={driver_path}&...
         opts = {
-            'access_key': url.username,
-            'secret_key': url.password,
+            'access_key': url.username if url.username else None,
+            'secret_key': url.password if url.password else None,
             'region_name': re.sub(r'^athena\.([a-z0-9-]+)\.amazonaws\.com$', r'\1', url.host),
             'schema_name': url.database if url.database else 'default'
         }
