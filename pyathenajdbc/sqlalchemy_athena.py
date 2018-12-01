@@ -6,7 +6,8 @@ import re
 
 from sqlalchemy.engine import reflection
 from sqlalchemy.engine.default import DefaultDialect
-from sqlalchemy.sql.compiler import IdentifierPreparer, SQLCompiler
+from sqlalchemy.sql.compiler import (BIND_PARAMS, BIND_PARAMS_ESC,
+                                     IdentifierPreparer, SQLCompiler)
 from sqlalchemy.sql.sqltypes import (BIGINT, BINARY, BOOLEAN, DATE, DECIMAL, FLOAT,
                                      INTEGER, NULLTYPE, STRINGTYPE, TIMESTAMP)
 
@@ -34,6 +35,29 @@ class AthenaCompiler(SQLCompiler):
     https://github.com/dropbox/PyHive/blob/master/pyhive/sqlalchemy_presto.py"""
     def visit_char_length_func(self, fn, **kw):
         return 'length{0}'.format(self.function_argspec(fn, **kw))
+
+    def visit_textclause(self, textclause, **kw):
+        def do_bindparam(m):
+            name = m.group(1)
+            if name in textclause._bindparams:
+                return self.process(textclause._bindparams[name], **kw)
+            else:
+                return self.bindparam_string(name, **kw)
+
+        if not self.stack:
+            self.isplaintext = True
+
+        if len(textclause._bindparams) == 0:
+            # Prevents double escaping of percent character
+            return textclause.text
+        else:
+            # un-escape any \:params
+            return BIND_PARAMS_ESC.sub(
+                lambda m: m.group(1),
+                BIND_PARAMS.sub(
+                    do_bindparam,
+                    self.post_process_text(textclause.text))
+            )
 
 
 _TYPE_MAPPINGS = {
