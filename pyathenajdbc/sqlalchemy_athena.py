@@ -61,23 +61,23 @@ class AthenaCompiler(SQLCompiler):
 
 
 _TYPE_MAPPINGS = {
-    'BOOLEAN': BOOLEAN,
-    'REAL': FLOAT,
-    'FLOAT': FLOAT,
-    'DOUBLE': FLOAT,
-    'TINYINT': INTEGER,
-    'SMALLINT': INTEGER,
-    'INTEGER': INTEGER,
-    'BIGINT': BIGINT,
-    'DECIMAL': DECIMAL,
-    'CHAR': STRINGTYPE,
-    'VARCHAR': STRINGTYPE,
-    'ARRAY': STRINGTYPE,
-    'ROW': STRINGTYPE,  # StructType
-    'VARBINARY': BINARY,
-    'MAP': STRINGTYPE,
-    'DATE': DATE,
-    'TIMESTAMP': TIMESTAMP,
+    'boolean': BOOLEAN,
+    'real': FLOAT,
+    'float': FLOAT,
+    'double': FLOAT,
+    'tinyint': INTEGER,
+    'smallint': INTEGER,
+    'integer': INTEGER,
+    'bigint': BIGINT,
+    'decimal': DECIMAL,
+    'char': STRINGTYPE,
+    'varchar': STRINGTYPE,
+    'array': STRINGTYPE,
+    'row': STRINGTYPE,  # StructType
+    'varbinary': BINARY,
+    'map': STRINGTYPE,
+    'date': DATE,
+    'timestamp': TIMESTAMP,
 }
 
 
@@ -97,6 +97,8 @@ class AthenaDialect(DefaultDialect):
     returns_unicode_strings = True
     description_encoding = None
     supports_native_boolean = True
+
+    _pattern_column_type = re.compile(r'^([a-zA-Z]+)($|\(.+\)$)')
 
     @classmethod
     def dbapi(cls):
@@ -146,8 +148,6 @@ class AthenaDialect(DefaultDialect):
 
     @reflection.cache
     def get_columns(self, connection, table_name, schema=None, **kw):
-        # information_schema.columns fails when filtering with table_schema or table_name,
-        # if specifying a name that does not exist in table_schema or table_name.
         schema = schema if schema else connection.connection.schema_name
         query = """
                 SELECT
@@ -160,19 +160,22 @@ class AthenaDialect(DefaultDialect):
                   ordinal_position,
                   comment
                 FROM information_schema.columns
-                """
+                WHERE table_schema = '{schema}'
+                AND table_name = '{table}'
+                """.format(schema=schema, table=table_name)
         return [
             {
                 'name': row.column_name,
-                'type': _TYPE_MAPPINGS.get(re.sub(r'^([A-Z]+)($|\(.+\)$)', r'\1',
-                                                  row.data_type.upper()), NULLTYPE),
+                'type': _TYPE_MAPPINGS.get(self._get_column_type(row.data_type), NULLTYPE),
                 'nullable': True if row.is_nullable == 'YES' else False,
                 'default': row.column_default,
                 'ordinal_position': row.ordinal_position,
                 'comment': row.comment,
             } for row in connection.execute(query).fetchall()
-            if row.table_schema == schema and row.table_name == table_name
         ]
+
+    def _get_column_type(self, type_):
+        return self._pattern_column_type.sub(r'\1', type_)
 
     def get_foreign_keys(self, connection, table_name, schema=None, **kw):
         # Athena has no support for foreign keys.
