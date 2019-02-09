@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 import re
 
-from sqlalchemy.engine import reflection
+from sqlalchemy.engine import reflection, Engine
 from sqlalchemy.engine.default import DefaultDialect
 from sqlalchemy.sql.compiler import (BIND_PARAMS, BIND_PARAMS_ESC,
                                      IdentifierPreparer, SQLCompiler)
@@ -104,8 +104,10 @@ class AthenaDialect(DefaultDialect):
     def dbapi(cls):
         return pyathenajdbc
 
-    def _get_default_schema_name(self, connection):
-        return connection.connection.schema_name
+    def _raw_connection(self, connection):
+        if isinstance(connection, Engine):
+            return connection.raw_connection()
+        return connection.connection
 
     def create_connect_args(self, url):
         # Connection string format:
@@ -132,7 +134,8 @@ class AthenaDialect(DefaultDialect):
 
     @reflection.cache
     def get_table_names(self, connection, schema=None, **kw):
-        schema = schema if schema else connection.connection.schema_name
+        raw_connection = self._raw_connection(connection)
+        schema = schema if schema else raw_connection.schema_name
         query = """
                 SELECT table_name
                 FROM information_schema.tables
@@ -148,7 +151,8 @@ class AthenaDialect(DefaultDialect):
 
     @reflection.cache
     def get_columns(self, connection, table_name, schema=None, **kw):
-        schema = schema if schema else connection.connection.schema_name
+        raw_connection = self._raw_connection(connection)
+        schema = schema if schema else raw_connection.schema_name
         query = """
                 SELECT
                   table_schema,
