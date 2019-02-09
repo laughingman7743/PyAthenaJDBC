@@ -115,6 +115,17 @@ class TestSQLAlchemyAthena(unittest.TestCase):
         self.assertFalse(Table('this_table_does_not_exist', MetaData(bind=engine)).exists())
 
     @with_engine
+    def test_get_columns(self, engine, connection):
+        insp = sqlalchemy.inspect(engine)
+        actual = insp.get_columns(table_name='one_row', schema=SCHEMA)[0]
+        self.assertEqual(actual['name'], 'number_of_rows')
+        self.assertTrue(isinstance(actual['type'], INTEGER))
+        self.assertTrue(actual['nullable'])
+        self.assertIsNone(actual['default'])
+        self.assertEqual(actual['ordinal_position'], 1)
+        self.assertIsNone(actual['comment'])
+
+    @with_engine
     def test_char_length(self, engine, connection):
         one_row_complex = Table('one_row_complex', MetaData(bind=engine), autoload=True)
         result = sqlalchemy.select([
@@ -171,6 +182,25 @@ class TestSQLAlchemyAthena(unittest.TestCase):
         self.assertIn('"current_timestamp"', query)
         self.assertNotIn('`select`', query)
         self.assertNotIn('`current_timestamp`', query)
+
+    @with_engine
+    def test_get_column_type(self, engine, connection):
+        dialect = engine.dialect
+        self.assertEqual(dialect._get_column_type('boolean'), 'boolean')
+        self.assertEqual(dialect._get_column_type('tinyint'), 'tinyint')
+        self.assertEqual(dialect._get_column_type('smallint'), 'smallint')
+        self.assertEqual(dialect._get_column_type('integer'), 'integer')
+        self.assertEqual(dialect._get_column_type('bigint'), 'bigint')
+        self.assertEqual(dialect._get_column_type('real'), 'real')
+        self.assertEqual(dialect._get_column_type('double'), 'double')
+        self.assertEqual(dialect._get_column_type('varchar'), 'varchar')
+        self.assertEqual(dialect._get_column_type('timestamp'), 'timestamp')
+        self.assertEqual(dialect._get_column_type('date'), 'date')
+        self.assertEqual(dialect._get_column_type('varbinary'), 'varbinary')
+        self.assertEqual(dialect._get_column_type('array(integer)'), 'array')
+        self.assertEqual(dialect._get_column_type('map(integer, integer)'), 'map')
+        self.assertEqual(dialect._get_column_type('row(a integer, b integer)'), 'row')
+        self.assertEqual(dialect._get_column_type('decimal(10,1)'), 'decimal')
 
     @with_engine
     def test_contain_percents_character_query(self, engine, connection):
