@@ -163,9 +163,9 @@ JDBC 4.1
 If you want to use JDBC 4.1, download the corresponding JDBC driver
 and specify the path of the downloaded JDBC driver as the argument ``driver_path`` of the connect method or connection object.
 
-* The `AthenaJDBC41-2.0.5.jar`_ is compatible with JDBC 4.1 and requires JDK 7.0 or later.
+* The `AthenaJDBC41-2.0.6.jar`_ is compatible with JDBC 4.1 and requires JDK 7.0 or later.
 
-.. _`AthenaJDBC41-2.0.5.jar`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.5/AthenaJDBC41_2.0.5.jar
+.. _`AthenaJDBC41-2.0.6.jar`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.6/AthenaJDBC41_2.0.6.jar
 
 .. code:: python
 
@@ -173,7 +173,7 @@ and specify the path of the downloaded JDBC driver as the argument ``driver_path
 
     conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
                    region_name='us-west-2',
-                   driver_path='/path/to/AthenaJDBC41_2.0.5.jar')
+                   driver_path='/path/to/AthenaJDBC41_2.0.6.jar')
 
 JDBC driver configuration options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -195,7 +195,7 @@ For details of the JDBC driver options refer to the official documentation.
 
 * `JDBC Driver Installation and Configuration Guide`_.
 
-.. _`JDBC Driver Installation and Configuration Guide`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.5/docs/Simba+Athena+JDBC+Driver+Install+and+Configuration+Guide.pdf
+.. _`JDBC Driver Installation and Configuration Guide`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.6/docs/Simba+Athena+JDBC+Driver+Install+and+Configuration+Guide.pdf
 
 NOTE: Option names and values are case-sensitive. The option value is specified as a character string.
 
@@ -438,6 +438,6 @@ For the license of JDBC driver, please check the following link.
 * `JDBC driver license`_
 * `JDBC driver notices`_
 
-.. _`JDBC driver release notes`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.5/docs/release-notes.txt
-.. _`JDBC driver License`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.5/docs/LICENSE.txt
-.. _`JDBC driver notices`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.5/docs/NOTICES.txt
+.. _`JDBC driver release notes`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.6/docs/release-notes.txt
+.. _`JDBC driver License`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.6/docs/LICENSE.txt
+.. _`JDBC driver notices`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.6/docs/NOTICES.txt

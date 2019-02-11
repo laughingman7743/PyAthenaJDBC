@@ -344,7 +344,7 @@ class TestCursor(unittest.TestCase):
         cursor.close()
         conn.close()
 
-    # TODO Perhaps Athena JDBC driver 2.0.5 does not support DESC queries.
+    # TODO Perhaps Athena JDBC driver 2.0.6 does not support DESC queries.
     # @with_cursor
     # def test_desc_query(self, cursor):
     #     cursor.execute('DESC one_row')
