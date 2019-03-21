@@ -1,52 +1,56 @@
-﻿============================================================================= 
-Simba Athena JDBC Driver with SQL Connector Release Notes 
-============================================================================= 
+﻿==============================================================================
+Simba Athena JDBC Driver with SQL Connector Release Notes
+==============================================================================
 
-The release notes provide details of enhancements, features, and known issues 
-in Simba Athena JDBC Driver 2.0.2, as well as the version history. 
+The release notes provide details of enhancements, features, known issues, and
+workflow changes in Simba Athena JDBC Driver 2.0.7, as well as the version
+history.
 
 
-2.0.2 ======================================================================= 
+2.0.7 ========================================================================
 
-Released 2018-04-06
+Released 2019-01-31
 
-Enhancements & New Features 
+Enhancements & New Features
 
- * Improved AWS Glue workflow
-  
-   AWS Glue availability detection logic now calls an API in Glue to speed 
-   up detection logic. If the API fails, the driver falls back to the
-   original method.
+ * [AJ-152] Support for CTAS statements
 
- * Jackson library updated
+   The driver now provides support for CTAS statements, consistent with the
+   Athena API. As part of this update, the driver now reports the correct
+   update count when a CTAS query is executed.
 
-   The driver now uses Jackson library version 2.9.5 because of the security
-   vulnerabilities reported against the earlier versions of the library. 
-   Because Jackson libraries 2.9.5 support Java 1.7 and higher, the JDBC 
-   driver is offered for JDBC API 4.1 and 4.2, but not for JDBC API 4.0,
-   which requires JDK 6. JDK 6 and Java 1.6 are not supported by Jackson 
-   2.9.5.
+ * [AJ-177] Updated Jackson library
 
- * Array type support
- 
-   The driver now supports returning ResultSet data as an Array. This is
-   configured using the UseArraySupport configuration option. For more
-   information, see the Installation and Configuration Guide.
-   
- 
+   The driver has been updated to use Jackson 2.9.8. Previously the driver
+   used 2.9.5.
+
+ * [AJ-167] Support for workgroups
+
+   A new configuration option has been added that allows you to specify
+   a workgroup when authenticating into the data source. To do this, specify
+   the Workgroup configuration option.  For details, see the Installation and
+   Configuration Guide.
+
+
 Resolved Issues
-The following issue has been resolved in Simba Athena JDBC Driver 2.0.2.
+The following issue has been resolved in Simba Athena JDBC Driver 2.0.7.
 
- * When the driver executes a query containing comments, it incorrectly
-   returns a row-count result set.
+ * [AJ-165] In some cases, the driver may display the following message
+   when retrieving large result sets using the streaming API:
+   "[Simba][AthenaJDBC](100121) An error has occurred."
+
+   This issue has been resolved. The driver now supports retries for
+   retrieving failed blocks when using the streaming API. To configure
+   the number of retries, use the new MaxStreamErrorRetry configuration
+   option. For more information, see the Installation and Configuration Guide.
 
 
-Workflow Changes ============================================================
+Workflow Changes =============================================================
 
 The following changes may disrupt workflows from earlier versions.
 
 
-2.0.2 -----------------------------------------------------------------------
+2.0.2 ------------------------------------------------------------------------
 
  * Removed support for JDBC 4.0
 
@@ -54,28 +58,149 @@ The following changes may disrupt workflows from earlier versions.
    to the release notes item "Jackson library updated" in the "Enhancements &
    New Features" section of this release for more details.
 
-   
-2.0.0 -----------------------------------------------------------------------
+
+2.0.0 ------------------------------------------------------------------------
 
  * SDK interfaces
 
    The following AWS SDK interfaces are no longer shaded in the driver jar,
    they are included with the original AWS SDK package names. Any custom
    credential providers that use the old shaded package names for these
-   interfaces must be updated.  
+   interfaces must be updated.
    - com.amazonaws.auth.AWSCredentials
    - com.amazonaws.auth.AWSCredentialsProvider
    - com.amazonaws.auth.AWSSessionCredentials
-   - com.amazonaws.auth.AWSSessionCredentialsProvider   
+   - com.amazonaws.auth.AWSSessionCredentialsProvider
 
 
-Version History ============================================================= 
+Version History ==============================================================
 
-2.0.1 ----------------------------------------------------------------------- 
+2.0.6 ------------------------------------------------------------------------
 
-2018-03-14
+Released 2018-11-07
 
-Enhancements & New Features 
+Enhancements & New Features
+
+ * [AJ-124] SAML authentication using AD FS
+
+   The driver now supports SAML authentication, and can retrieve and use
+   credentials from an AD FS (Active Directory Federation Services) credential
+   provider. Additionally, to support authentication workflows where the
+   retrieved credentials must be exchanged for more specialized AWS
+   credentials, the driver provides a post-SAML workflow hook. For more
+   information, see the Installation and Configuration Guide.
+
+ * [AJ-162] Optimized and configurable polling intervals for query results
+
+   When a query is being executed, the driver now polls the Athena server for
+   the query results at an exponentially changing rate. The driver begins
+   polling 5ms after query execution begins, and exponentially increases the
+   polling interval to the amount of time indicated by the
+   MaxQueryExecutionPollingInterval property setting. This change in polling
+   behavior reduces the load on the server.
+
+   Additionally, you can now specify the maximum polling interval. To do this,
+   set the MaxQueryExecutionPollingInterval property to the maximum number of
+   milliseconds that you want the driver to wait between polling attempts. For
+   more information, see the Installation and Configuration Guide.
+
+ * [AJ-164] Improved logging for query timeout errors
+
+   If a query times out, the driver now logs and reports the query ID in the
+   error message that is returned.
+
+
+Resolved Issues
+The following issues were resolved in Simba Athena JDBC Driver 2.0.6.
+
+ * [AJ-156][AJ-157] In some cases, when attempting to execute a long query
+   statement, the driver fails to execute the query and returns a
+   StackOverflowError message.
+
+   This issue has been resolved. Before, this issue occurred due to a
+   limitation in the regex library.
+
+
+2.0.5 ------------------------------------------------------------------------
+
+Released 2018-08-15
+
+Resolved Issues
+The following issue was resolved in Simba Athena JDBC Driver 2.0.5.
+
+ * [AJ-145] The cursor for result set streaming can become blocked, causing
+   the application to stop responding, when the application attempts to move
+   the cursor two or more rows beyond the actual table size.
+
+
+2.0.4 ------------------------------------------------------------------------
+
+Released 2018-07-10
+
+Enhancements & New Features
+
+ * [AJ-121] Support for resultset streaming API
+
+   The driver now supports the AWS resultset streaming API. This can be
+   toggled on or off with the UseResultsetStreaming configuration option.
+   See the Installation and Configuration Guide for details.
+
+
+2.0.3 ------------------------------------------------------------------------
+
+Released 2018-06-15
+
+Resolved Issues
+The following issues were resolved in Simba Athena JDBC Driver 2.0.3.
+
+ * [AJ-129] When returning the results of a DatabaseMetadata.getColumns() API
+   call, the driver does not return partition column names.
+
+ * [AJ-136] The driver does not return the VIRTUAL_VIEW table type when
+   getTableTypes() is called, and as a result some applications cannot query
+   tables of this type.
+
+
+2.0.2 ------------------------------------------------------------------------
+
+Released 2018-04-06
+
+Enhancements & New Features
+
+ * Improved AWS Glue workflow
+
+   AWS Glue availability detection logic now calls an API in Glue to speed
+   up detection logic. If the API fails, the driver falls back to the
+   original method.
+
+ * Jackson library updated
+
+   The driver now uses Jackson library version 2.9.5 because of the security
+   vulnerabilities reported against the earlier versions of the library.
+   Because Jackson libraries 2.9.5 support Java 1.7 and higher, the JDBC
+   driver is offered for JDBC API 4.1 and 4.2, but not for JDBC API 4.0,
+   which requires JDK 6. JDK 6 and Java 1.6 are not supported by Jackson
+   2.9.5.
+
+ * Array type support
+
+   The driver now supports returning ResultSet data as an Array. This is
+   configured using the UseArraySupport configuration option. For more
+   information, see the Installation and Configuration Guide.
+
+
+Resolved Issues
+The following issue has been resolved in Simba Athena JDBC Driver 2.0.2.
+
+ * When the driver executes a query containing comments, it incorrectly
+   returns a row-count result set.
+
+
+2.0.1 ------------------------------------------------------------------------
+
+Released 2018-03-14
+
+Enhancements & New Features
 
  * Support for CHAR and FLOAT data types
 
@@ -85,18 +210,18 @@ Enhancements & New Features
 Resolved Issues
 The following issues were resolved in Simba Athena JDBC Driver 2.0.1.
 
- * When the driver executes a query containing Common Table Expression (CTE) 
+ * When the driver executes a query containing Common Table Expression (CTE)
    syntax, it incorrectly returns a row-count result set.
 
- * In the connection URL, if the Host or Catalog properties end with a 
+ * In the connection URL, if the Host or Catalog properties end with a
    backslash ( / ), the driver returns an error.
-   
 
-2.0.0 ----------------------------------------------------------------------- 
 
-2018-02-02
+2.0.0 ------------------------------------------------------------------------
 
-Enhancements & New Features 
+Released 2018-02-02
+
+Enhancements & New Features
 
  * AWS STS library
 
@@ -105,7 +230,7 @@ Enhancements & New Features
  * Configuration option aliases
 
    Aliases have been added for some configuration options. Recognized options
-   include: 
+   include:
 
    - s3_staging_dir: alias for S3OutputLocation
    - query_results_encryption_option: alias for S3OutputEncOption
@@ -113,8 +238,10 @@ Enhancements & New Features
    - aws_credentials_provider_class: alias for AwsCredentialsProviderClass
    - aws_credentials_provider_arguments: alias for AwsCredentialsProviderArguments
    - max_error_retries: alias for MaxErrorRetry
-   - connection_timeout (time in milliseconds): alias for ConnectTimeout (time in seconds)
-   - socket_timeout (time in milliseconds): alias for SocketTimeout (time in seconds)
+   - connection_timeout (time in milliseconds): alias for ConnectTimeout (time
+     in seconds)
+   - socket_timeout (time in milliseconds): alias for SocketTimeout (time in
+     seconds)
 
    If a conflict occurs, the driver setting takes precedence over the alias.
    See the Installation and Configuration Guide for full details.
@@ -127,15 +254,15 @@ Enhancements & New Features
 
  * Updated driver identification details
 
-   The DatabaseMetadata.getDatabaseProductName() call now returns 
+   The DatabaseMetadata.getDatabaseProductName() call now returns
    "AWS.Athena".
    The DatabaseMetadata.getDriverName() now returns "Simba Athena JDBC
-   Driver".	
+   Driver".
    The driver now populates UserAgentPrefix within the Athena SDK. The prefix
    is "sbAthenaJDBCDriver/DRIVER_VERSION", where DRIVER_VERSION is the
    major.minor version of the driver. For example, this release of the driver
    would use the UserAgentPrefix "sbAthenaJDBCDriver/2.0".
-   
+
  * Endpoint handling
 
    You can now pass an endpoint in the form "athena.[REGION].amazonaws.com:
@@ -153,23 +280,24 @@ Enhancements & New Features
    Glue.
 
  * AWS SDK support
- 
+
    The driver now uses AWS SDK version 1.11.271.
 
  * Jackson support
- 
+
    The driver now uses Jackson version 2.9.4. The JDBC 4 version of the driver
    still uses jackson-databind-2.7.9.1 as newer versions are not compatible
    with JDK 1.6.
- 
+
+
 Resolved Issues
 The following issue was resolved in Simba Athena JDBC Driver 2.0.0.
 
  * The precision and scale for integer type columns in the ResultSetMetaData
    of the getColumns JDBC API call are both 1.
 
-   This has been resolved. The correct values, 10 and 0 respectively, have 
+   This has been resolved. The correct values, 10 and 0 respectively, have
    been implemented.
 
 
-============================================================================== 
+==============================================================================
