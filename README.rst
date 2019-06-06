@@ -202,7 +202,7 @@ NOTE: Option names and values are case-sensitive. The option value is specified 
 Specify the Query Results
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you want to specify where athena stores the `txt` and `txt.metadata` files containing the result of each query, you can specify it as follows:
+If you want to specify where athena stores the `txt`/`cxv` and `txt.metadata`/`csv.metadata` files containing the result of each query, you can specify it as follows:
 
 .. code:: python
 
@@ -214,7 +214,7 @@ If you want to specify where athena stores the `txt` and `txt.metadata` files co
                    LogLevel='6',
                    S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/query_results/' )
 
-For details of the JDBC driver options refer to the official documentation.
+For details see the Athena Documentation:
 
 * `Athena Documentation on Query Results`_.
 
