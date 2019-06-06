@@ -212,7 +212,7 @@ If you want to specify where athena stores the `txt`/`cxv` and `txt.metadata`/`c
                    region_name='us-west-2',
                    LogPath='/path/to/pyathenajdbc/log/',
                    LogLevel='6',
-                   S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/query_results/' )
+                   S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/query_results/')
 
 For details see the Athena Documentation:
 
