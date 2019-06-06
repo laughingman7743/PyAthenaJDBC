@@ -199,6 +199,28 @@ For details of the JDBC driver options refer to the official documentation.
 
 NOTE: Option names and values are case-sensitive. The option value is specified as a character string.
 
+Specify the Query Results
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you want to specify where athena stores the `txt`/`cxv` and `txt.metadata`/`csv.metadata` files containing the result of each query, you can specify it as follows:
+
+.. code:: python
+
+    from pyathenajdbc import connect
+
+    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
+                   region_name='us-west-2',
+                   LogPath='/path/to/pyathenajdbc/log/',
+                   LogLevel='6',
+                   S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/query_results/' )
+
+For details see the Athena Documentation:
+
+* `Athena Documentation on Query Results`_.
+
+.. _`Athena Documentation on Query Results`: https://docs.aws.amazon.com/athena/latest/ug/querying.html#default-location-query-results
+
+
 SQLAlchemy
 ~~~~~~~~~~
 
