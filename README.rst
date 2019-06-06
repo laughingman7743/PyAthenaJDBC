@@ -202,7 +202,7 @@ NOTE: Option names and values are case-sensitive. The option value is specified 
 Specify the Query Results
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you want to specify where athena stores the `txt`/`cxv` and `txt.metadata`/`csv.metadata` files containing the result of each query, you can specify it as follows:
+If you want to specify where athena stores the ``txt``/``cxv`` and ``txt.metadata``/``csv.metadata`` files containing the result of each query, you can specify it as follows:
 
 .. code:: python
 
