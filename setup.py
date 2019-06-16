@@ -120,11 +120,11 @@ setup(
     ],
     extras_require={
         'Pandas': ['pandas>=0.19.0'],
-        'SQLAlchemy': ['SQLAlchemy>=1.0.0, <1.3.0'],
+        'SQLAlchemy': ['SQLAlchemy>=1.0.0, <2.0.0'],
     },
     tests_require=[
         'futures',
-        'SQLAlchemy>=1.0.0, <1.3.0',
+        'SQLAlchemy>=1.0.0, <2.0.0',
         'pytest>=3.5',
         'pytest-cov',
         'pytest-flake8>=1.0.1',
