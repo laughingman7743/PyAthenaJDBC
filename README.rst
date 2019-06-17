@@ -58,7 +58,7 @@ Extra packages:
 +===============+==========================================+=================+
 | Pandas        | ``pip install PyAthenaJDBC[Pandas]``     | >=0.19.0        |
 +---------------+------------------------------------------+-----------------+
-| SQLAlchemy    | ``pip install PyAthenaJDBC[SQLAlchemy]`` | >=1.0.0, <1.3.0 |
+| SQLAlchemy    | ``pip install PyAthenaJDBC[SQLAlchemy]`` | >=1.0.0, <2.0.0 |
 +---------------+------------------------------------------+-----------------+
 
 Usage
@@ -225,7 +225,7 @@ SQLAlchemy
 ~~~~~~~~~~
 
 Install SQLAlchemy with ``pip install SQLAlchemy>=1.0.0`` or ``pip install PyAthenaJDBC[SQLAlchemy]``.
-Supported SQLAlchemy is 1.0.0 or higher and less than 1.3.0.
+Supported SQLAlchemy is 1.0.0 or higher and less than 2.0.0.
 
 .. code:: python
 
