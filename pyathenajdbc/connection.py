@@ -94,7 +94,10 @@ class Connection(object):
             if jvm_options:
                 args.extend(jvm_options)
             _logger.debug('JVM args: %s', args)
-            jpype.startJVM(jvm_path, *args)
+            if jpype.__version__.startswith("0.6"):
+                jpype.startJVM(jvm_path, *args)
+            else:
+                jpype.startJVM(jvm_path, *args, ignoreUnrecognized=True, convertStrings=True)
             cls.class_loader = jpype.java.lang.Thread.currentThread().getContextClassLoader()
         if not jpype.isThreadAttachedToJVM():
             jpype.attachThreadToJVM()
