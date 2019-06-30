@@ -8,8 +8,7 @@ from future.utils import raise_from
 from past.builtins.misc import xrange
 
 from pyathenajdbc.error import (DatabaseError, NotSupportedError, ProgrammingError)
-from pyathenajdbc.util import (attach_thread_to_jvm, synchronized,
-                               unwrap_exception)
+from pyathenajdbc.util import (attach_thread_to_jvm, synchronized)
 
 _logger = logging.getLogger(__name__)
 
@@ -125,7 +124,7 @@ class Cursor(object):
                 self._update_count = self._statement.getUpdateCount()
         except Exception as e:
             _logger.exception('Failed to execute query.')
-            raise_from(DatabaseError(unwrap_exception(e)), e)
+            raise_from(DatabaseError(e), e)
 
     def executemany(self, operation, seq_of_parameters):
         raise NotSupportedError

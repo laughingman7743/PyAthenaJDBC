@@ -48,17 +48,3 @@ def to_datetime(java_date):
                     cal.get(jpype.java.util.Calendar.HOUR_OF_DAY),
                     cal.get(jpype.java.util.Calendar.MINUTE),
                     cal.get(jpype.java.util.Calendar.SECOND))
-
-
-def unwrap_exception(exc):
-    import jpype
-    if isinstance(exc, jpype._jexception.JavaException) and \
-            issubclass(exc.__javaclass__, jpype.java.sql.SQLException):
-        args = exc.args
-        if args:
-            cause = args[0].cause
-            if cause:
-                return cause
-            else:
-                return args[0]
-    return exc

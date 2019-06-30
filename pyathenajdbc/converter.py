@@ -108,12 +108,16 @@ def _to_default(result_set, index):
 class JDBCTypeConverter(object):
 
     def __init__(self):
+        modifier = jpype.java.lang.reflect.Modifier
         types = jpype.java.sql.Types
         self._jdbc_type_name_mappings = dict()
         self._jdbc_type_code_mappings = dict()
-        for field in types.__javaclass__.getClassFields():
-            self._jdbc_type_name_mappings[field.getName()] = field.getStaticAttribute()
-            self._jdbc_type_code_mappings[field.getStaticAttribute()] = field.getName()
+        for field in types.class_.getFields():
+            if modifier.isStatic(field.getModifiers()):
+                name = field.getName()
+                attr = getattr(types, field.getName())
+                self._jdbc_type_name_mappings[name] = attr
+                self._jdbc_type_code_mappings[attr] = name
         _logger.debug(self._jdbc_type_name_mappings)
         self._converter_mappings = dict()
         for k, v in iteritems(_DEFAULT_CONVERTERS):
