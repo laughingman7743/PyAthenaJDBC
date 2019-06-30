@@ -300,17 +300,6 @@ As Pandas DataFrame:
             df = as_pandas(cursor)
     print(df.describe())
 
-Examples
---------
-
-Redash_ query runner example
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-See `examples/redash/athena.py`_
-
-.. _Redash: https://github.com/getredash/redash
-.. _`examples/redash/athena.py`: examples/redash/athena.py
-
 Credential
 ----------
 
@@ -400,13 +389,6 @@ It is not necessary to specify ``access_key`` and ``secret_key``.
 
     conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
                    region_name='us-west-2')
-
-Terraform_ Instance profile example:
-
-See `examples/terraform/`_
-
-.. _Terraform: https://github.com/hashicorp/terraform
-.. _`examples/terraform/`: examples/terraform/
 
 
 Testing
