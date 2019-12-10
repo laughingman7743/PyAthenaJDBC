@@ -115,7 +115,7 @@ setup(
     ],
     install_requires=[
         'future',
-        'jpype1>=0.6.0',
+        'jpype1==0.6.0',
         'botocore>=1.0.0',
     ],
     extras_require={
