@@ -3,52 +3,64 @@ Simba Athena JDBC Driver with SQL Connector Release Notes
 ==============================================================================
 
 The release notes provide details of enhancements, features, known issues, and
-workflow changes in Simba Athena JDBC Driver 2.0.7, as well as the version
+workflow changes in Simba Athena JDBC Driver 2.0.9, as well as the version
 history.
 
 
-2.0.7 ========================================================================
+2.0.9 ========================================================================
 
-Released 2019-01-31
+Released 2019-08-30
 
 Enhancements & New Features
 
- * [AJ-152] Support for CTAS statements
+ * [AJ-188] Support for Okta credentials provider
 
-   The driver now provides support for CTAS statements, consistent with the
-   Athena API. As part of this update, the driver now reports the correct
-   update count when a CTAS query is executed.
+   The driver now supports the use of the Okta service for authentication. For
+   more information, see the Installation and Configuration Guide.
 
- * [AJ-177] Updated Jackson library
+ * [AJ-217] Query ID retrieval
 
-   The driver has been updated to use Jackson 2.9.8. Previously the driver
-   used 2.9.5.
+   The driver can now retrieve query IDs. This is accomplished using the
+   com.interfaces.core.IStatementQueryInfoProvider interface. For more
+   information, see the Installation and Configuration Guide.
 
- * [AJ-167] Support for workgroups
+ * [AJ-221] Support for VPC endpoints
 
-   A new configuration option has been added that allows you to specify
-   a workgroup when authenticating into the data source. To do this, specify
-   the Workgroup configuration option.  For details, see the Installation and
-   Configuration Guide.
+   The driver now supports connections to VPC endpoints. This is configured
+   using a set of endpoint override connection properties. For more
+   information, see the Installation and Configuration Guide.
+
+ * [AJ-226] S3OutputLocation no longer mandatory
+
+   You no longer need to define the S3OutputLocaiton connection property
+   provided a location is defined as part of the Athena Workgroup
+   configuration.
+
+ * [AJ-210] Updated Jackson library
+
+   The driver has been updated to use Jackson 2.9.9.
+
+ * [AJ-218] AWS SDK packaged in the driver .jar
+
+   The driver .jar has been updated to include AWS SDK version 1.11.569.
 
 
 Resolved Issues
-The following issue has been resolved in Simba Athena JDBC Driver 2.0.7.
+The following issues have been resolved in Simba Athena JDBC Driver 2.0.9.
 
- * [AJ-165] In some cases, the driver may display the following message
-   when retrieving large result sets using the streaming API:
-   "[Simba][AthenaJDBC](100121) An error has occurred."
+ * [AJ-183] When parameters are missing from a table definition, the driver
+   returns an unclear error message.
 
-   This issue has been resolved. The driver now supports retries for
-   retrieving failed blocks when using the streaming API. To configure
-   the number of retries, use the new MaxStreamErrorRetry configuration
-   option. For more information, see the Installation and Configuration Guide.
+ * [AJ-212] For some permissions errors, the returned error message does not
+   provide sufficient information for identifying the issue
+
+ * [AJ-216] The driver throws Null Pointer Exception when the "partitionkeys"
+   parameter is missing from the table definition.
 
 
 Workflow Changes =============================================================
 
 The following changes may disrupt workflows from earlier versions.
-
 
 2.0.2 ------------------------------------------------------------------------
 
@@ -74,6 +86,60 @@ The following changes may disrupt workflows from earlier versions.
 
 
 Version History ==============================================================
+
+2.0.8 ------------------------------------------------------------------------
+
+Released 2019-05-14
+
+Resolved Issues
+The following issue has been resolved in Simba Athena JDBC Driver 2.0.8.
+
+ * [AJ-198] The driver does not support moving the cursor by an offset.
+
+   This issue has been resolved. The driver now supports the
+   ResultSet.absolute(offset) function in cases where the offset value
+   moves the cursor. Note that the offset only moves the cursor forward;
+   moving the cursor backwards is not supported. Also, negative values for the
+   offset are not supported.
+
+
+2.0.7 ------------------------------------------------------------------------
+
+Released 2019-01-31
+
+Enhancements & New Features
+
+ * [AJ-152] Support for CTAS statements
+
+   The driver now provides support for CTAS statements, consistent with the
+   Athena API. As part of this update, the driver now reports the correct
+   update count when a CTAS query is executed.
+
+ * [AJ-177] Updated Jackson library
+
+   The driver has been updated to use Jackson 2.9.8. Previously the driver
+   used 2.9.5.
+
+ * [AJ-167] Support for workgroups
+
+   A new configuration option has been added that allows you to specify
+   a workgroup when authenticating into the data source. To do this, specify
+   the Workgroup configuration option.  For details, see the Installation and
+   Configuration Guide.
+
+
+Resolved Issues
+The following issue was resolved in Simba Athena JDBC Driver 2.0.7.
+
+ * [AJ-165] In some cases, the driver may display the following message
+   when retrieving large result sets using the streaming API:
+   "[Simba][AthenaJDBC](100121) An error has occurred."
+
+   This issue has been resolved. The driver now supports retries for
+   retrieving failed blocks when using the streaming API. To configure
+   the number of retries, use the new MaxStreamErrorRetry configuration
+   option. For more information, see the Installation and Configuration Guide.
+
 
 2.0.6 ------------------------------------------------------------------------
 
