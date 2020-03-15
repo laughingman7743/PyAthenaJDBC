@@ -14,8 +14,6 @@ tox = "*"
 twine = "*"
 wheel = "*"
 
-jpype1 = { extras = ['numpy'] }
-
 pytest = ">=3.5"
 pytest-cov = "*"
 pytest-flake8 = ">=1.0.1"
