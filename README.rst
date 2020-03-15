@@ -1,8 +1,8 @@
 .. image:: https://img.shields.io/pypi/pyversions/PyAthenaJDBC.svg
     :target: https://pypi.python.org/pypi/PyAthenaJDBC/
 
-.. image:: https://travis-ci.org/laughingman7743/PyAthenaJDBC.svg?branch=master
-    :target: https://travis-ci.org/laughingman7743/PyAthenaJDBC
+.. image:: https://travis-ci.com/laughingman7743/PyAthenaJDBC.svg?branch=master
+    :target: https://travis-ci.com/laughingman7743/PyAthenaJDBC
 
 .. image:: https://codecov.io/gh/laughingman7743/PyAthenaJDBC/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/laughingman7743/PyAthenaJDBC
