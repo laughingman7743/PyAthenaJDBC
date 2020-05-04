@@ -149,9 +149,9 @@ class TestCursor(unittest.TestCase):
             TypeError,
             lambda: cursor.execute(
                 """
-            SELECT col_string, %(param)s FROM one_row_complex
-            WHERE col_string LIKE '%str%'
-            """,
+                SELECT col_string, %(param)s FROM one_row_complex
+                WHERE col_string LIKE '%str%'
+                """,
                 {"param": "a string"},
             ),
         )
@@ -167,9 +167,9 @@ class TestCursor(unittest.TestCase):
             ValueError,
             lambda: cursor.execute(
                 """
-            SELECT col_string, '%' FROM one_row_complex
-            WHERE col_string LIKE %(param)s
-            """,
+                SELECT col_string, '%' FROM one_row_complex
+                WHERE col_string LIKE %(param)s
+                """,
                 {"param": "%str%"},
             ),
         )
@@ -334,10 +334,10 @@ class TestCursor(unittest.TestCase):
                 DatabaseError,
                 lambda: cursor.execute(
                     """
-            SELECT a.a * rand(), b.a * rand()
-            FROM many_rows a
-            CROSS JOIN many_rows b
-            """
+                    SELECT a.a * rand(), b.a * rand()
+                    FROM many_rows a
+                    CROSS JOIN many_rows b
+                    """
                 ),
             )
 
