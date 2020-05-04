@@ -17,22 +17,24 @@ if sys.version_info[0] == 2:
 else:
     from urllib.request import urlretrieve
 
-_PACKAGE_NAME = 'PyAthenaJDBC'
+_PACKAGE_NAME = "PyAthenaJDBC"
 _BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
 
 class DriverDownloader(object):
-
     def __init__(self, on_completion):
         self.on_completion = on_completion
 
     def _download(self):
         dest = os.path.join(_BASE_PATH, _PACKAGE_NAME.lower(), pyathenajdbc.ATHENA_JAR)
         if os.path.exists(dest):
-            print('skipping driver download')
+            print("skipping driver download")
         else:
-            print('running driver download from {0}'.format(
-                pyathenajdbc.ATHENA_DRIVER_DOWNLOAD_URL))
+            print(
+                "running driver download from {0}".format(
+                    pyathenajdbc.ATHENA_DRIVER_DOWNLOAD_URL
+                )
+            )
             urlretrieve(pyathenajdbc.ATHENA_DRIVER_DOWNLOAD_URL, dest)
 
     def download(self):
@@ -42,7 +44,7 @@ class DriverDownloader(object):
 
 class DriverDownloadCommand(Command):
 
-    description = 'Download Amazon Athena JDBC driver'
+    description = "Download Amazon Athena JDBC driver"
     user_options = []
 
     def initialize_options(self):
@@ -57,7 +59,6 @@ class DriverDownloadCommand(Command):
 
 
 class InstallWithDriver(install):
-
     def _run(self):
         install.run(self)
 
@@ -67,8 +68,8 @@ class InstallWithDriver(install):
 
 
 commands = {
-    'driver_download': DriverDownloadCommand,
-    'install': InstallWithDriver,
+    "driver_download": DriverDownloadCommand,
+    "install": InstallWithDriver,
 }
 
 
@@ -76,7 +77,6 @@ try:
     from wheel.bdist_wheel import bdist_wheel
 
     class BdistWheelWithDriver(bdist_wheel):
-
         def _run(self):
             bdist_wheel.run(self)
 
@@ -84,71 +84,67 @@ try:
             downloader = DriverDownloader(self._run)
             downloader.download()
 
-    commands['bdist_wheel'] = BdistWheelWithDriver
+    commands["bdist_wheel"] = BdistWheelWithDriver
 except ImportError:
     pass
 
 
-with codecs.open('README.rst', 'rb', 'utf-8') as readme:
+with codecs.open("README.rst", "rb", "utf-8") as readme:
     long_description = readme.read()
 
 
 setup(
     name=_PACKAGE_NAME,
     version=pyathenajdbc.__version__,
-    description='Python DB API 2.0 (PEP 249) compliant wrapper for Amazon Athena JDBC driver',
+    description="Python DB API 2.0 (PEP 249) compliant wrapper for Amazon Athena JDBC driver",
     long_description=long_description,
-    url='https://github.com/laughingman7743/PyAthenaJDBC/',
-    author='laughingman7743',
-    author_email='laughingman7743@gmail.com',
-    license='MIT License',
-    packages=find_packages('.', exclude=['tests']),
+    url="https://github.com/laughingman7743/PyAthenaJDBC/",
+    author="laughingman7743",
+    author_email="laughingman7743@gmail.com",
+    license="MIT License",
+    packages=find_packages(".", exclude=["tests"]),
     package_data={
-        '': ['LICENSE', '*.rst', 'Pipfile*'],
-        'jdbc': ['*.txt'],
-        _PACKAGE_NAME.lower(): ['*.jar', '*.properties'],
+        "": ["LICENSE", "*.rst", "Pipfile*"],
+        "jdbc": ["*.txt"],
+        _PACKAGE_NAME.lower(): ["*.jar", "*.properties"],
     },
     include_package_data=True,
     data_files=[
-        ('', ['LICENSE'] + glob('*.rst') + glob('Pipfile*')),
-        ('jdbc', glob('jdbc/*.txt')),
+        ("", ["LICENSE"] + glob("*.rst") + glob("Pipfile*")),
+        ("jdbc", glob("jdbc/*.txt")),
     ],
-    install_requires=[
-        'future',
-        'jpype1>=0.6.0, <=0.7.1',
-        'botocore>=1.0.0',
-    ],
+    install_requires=["future", "jpype1>=0.6.0, <=0.7.1", "botocore>=1.0.0"],
     extras_require={
-        'Pandas': ['pandas>=0.19.0'],
-        'SQLAlchemy': ['SQLAlchemy>=1.0.0, <2.0.0'],
+        "Pandas": ["pandas>=0.19.0"],
+        "SQLAlchemy": ["SQLAlchemy>=1.0.0, <2.0.0"],
     },
     tests_require=[
-        'futures',
-        'SQLAlchemy>=1.0.0, <2.0.0',
-        'pytest>=3.5',
-        'pytest-cov',
-        'pytest-flake8>=1.0.1',
+        "futures",
+        "SQLAlchemy>=1.0.0, <2.0.0",
+        "pytest>=3.5",
+        "pytest-cov",
+        "pytest-flake8>=1.0.1",
     ],
     cmdclass=commands,
     entry_points={
-        'sqlalchemy.dialects': [
-            'awsathena.jdbc = pyathenajdbc.sqlalchemy_athena:AthenaDialect',
+        "sqlalchemy.dialects": [
+            "awsathena.jdbc = pyathenajdbc.sqlalchemy_athena:AthenaDialect",
         ],
     },
     zip_safe=False,
     classifiers=[
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
-        'Operating System :: OS Independent',
-        'Topic :: Database :: Front-Ends',
-        'Programming Language :: Java',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Topic :: Database :: Front-Ends",
+        "Programming Language :: Java",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
     ],
 )

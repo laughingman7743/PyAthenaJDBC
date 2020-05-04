@@ -1,15 +1,28 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
 
 import re
 
-from sqlalchemy.engine import reflection, Engine
+from sqlalchemy.engine import Engine, reflection
 from sqlalchemy.engine.default import DefaultDialect
-from sqlalchemy.sql.compiler import (BIND_PARAMS, BIND_PARAMS_ESC,
-                                     IdentifierPreparer, SQLCompiler)
-from sqlalchemy.sql.sqltypes import (BIGINT, BINARY, BOOLEAN, DATE, DECIMAL, FLOAT,
-                                     INTEGER, NULLTYPE, STRINGTYPE, TIMESTAMP)
+from sqlalchemy.sql.compiler import (
+    BIND_PARAMS,
+    BIND_PARAMS_ESC,
+    IdentifierPreparer,
+    SQLCompiler,
+)
+from sqlalchemy.sql.sqltypes import (
+    BIGINT,
+    BINARY,
+    BOOLEAN,
+    DATE,
+    DECIMAL,
+    FLOAT,
+    INTEGER,
+    NULLTYPE,
+    STRINGTYPE,
+    TIMESTAMP,
+)
 
 import pyathenajdbc
 
@@ -18,6 +31,7 @@ class UniversalSet(object):
     """UniversalSet
 
     https://github.com/dropbox/PyHive/blob/master/pyhive/common.py"""
+
     def __contains__(self, item):
         return True
 
@@ -26,6 +40,7 @@ class AthenaIdentifierPreparer(IdentifierPreparer):
     """PrestoIdentifierPreparer
 
     https://github.com/dropbox/PyHive/blob/master/pyhive/sqlalchemy_presto.py"""
+
     reserved_words = UniversalSet()
 
 
@@ -33,8 +48,9 @@ class AthenaCompiler(SQLCompiler):
     """PrestoCompiler
 
     https://github.com/dropbox/PyHive/blob/master/pyhive/sqlalchemy_presto.py"""
+
     def visit_char_length_func(self, fn, **kw):
-        return 'length{0}'.format(self.function_argspec(fn, **kw))
+        return "length{0}".format(self.function_argspec(fn, **kw))
 
     def visit_textclause(self, textclause, **kw):
         def do_bindparam(m):
@@ -54,37 +70,35 @@ class AthenaCompiler(SQLCompiler):
             # un-escape any \:params
             return BIND_PARAMS_ESC.sub(
                 lambda m: m.group(1),
-                BIND_PARAMS.sub(
-                    do_bindparam,
-                    self.post_process_text(textclause.text))
+                BIND_PARAMS.sub(do_bindparam, self.post_process_text(textclause.text)),
             )
 
 
 _TYPE_MAPPINGS = {
-    'boolean': BOOLEAN,
-    'real': FLOAT,
-    'float': FLOAT,
-    'double': FLOAT,
-    'tinyint': INTEGER,
-    'smallint': INTEGER,
-    'integer': INTEGER,
-    'bigint': BIGINT,
-    'decimal': DECIMAL,
-    'char': STRINGTYPE,
-    'varchar': STRINGTYPE,
-    'array': STRINGTYPE,
-    'row': STRINGTYPE,  # StructType
-    'varbinary': BINARY,
-    'map': STRINGTYPE,
-    'date': DATE,
-    'timestamp': TIMESTAMP,
+    "boolean": BOOLEAN,
+    "real": FLOAT,
+    "float": FLOAT,
+    "double": FLOAT,
+    "tinyint": INTEGER,
+    "smallint": INTEGER,
+    "integer": INTEGER,
+    "bigint": BIGINT,
+    "decimal": DECIMAL,
+    "char": STRINGTYPE,
+    "varchar": STRINGTYPE,
+    "array": STRINGTYPE,
+    "row": STRINGTYPE,  # StructType
+    "varbinary": BINARY,
+    "map": STRINGTYPE,
+    "date": DATE,
+    "timestamp": TIMESTAMP,
 }
 
 
 class AthenaDialect(DefaultDialect):
 
-    name = 'awsathena'
-    driver = 'jdbc'
+    name = "awsathena"
+    driver = "jdbc"
     preparer = AthenaIdentifierPreparer
     statement_compiler = AthenaCompiler
     default_paramstyle = pyathenajdbc.paramstyle
@@ -98,7 +112,7 @@ class AthenaDialect(DefaultDialect):
     description_encoding = None
     supports_native_boolean = True
 
-    _pattern_column_type = re.compile(r'^([a-zA-Z]+)($|\(.+\)$)')
+    _pattern_column_type = re.compile(r"^([a-zA-Z]+)($|\(.+\)$)")
 
     @classmethod
     def dbapi(cls):
@@ -115,11 +129,12 @@ class AthenaDialect(DefaultDialect):
         #   {access_key}:{secret_key}@athena.{region_name}.amazonaws.com:443/
         #   {schema_name}?s3_staging_dir={s3_staging_dir}&driver_path={driver_path}&...
         opts = {
-            'access_key': url.username if url.username else None,
-            'secret_key': url.password if url.password else None,
-            'region_name': re.sub(r'^athena\.([a-z0-9-]+)\.amazonaws\.(com|com.cn)$', r'\1',
-                                  url.host),
-            'schema_name': url.database if url.database else 'default'
+            "access_key": url.username if url.username else None,
+            "secret_key": url.password if url.password else None,
+            "region_name": re.sub(
+                r"^athena\.([a-z0-9-]+)\.amazonaws\.(com|com.cn)$", r"\1", url.host
+            ),
+            "schema_name": url.database if url.database else "default",
         }
         opts.update(url.query)
         return [[], opts]
@@ -141,7 +156,9 @@ class AthenaDialect(DefaultDialect):
                 SELECT table_name
                 FROM information_schema.tables
                 WHERE table_schema = '{0}'
-                """.format(schema)
+                """.format(
+            schema
+        )
         return [row.table_name for row in connection.execute(query).fetchall()]
 
     def has_table(self, connection, table_name, schema=None):
@@ -167,20 +184,25 @@ class AthenaDialect(DefaultDialect):
                 FROM information_schema.columns
                 WHERE table_schema = '{schema}'
                 AND table_name = '{table}'
-                """.format(schema=schema, table=table_name)
+                """.format(
+            schema=schema, table=table_name
+        )
         return [
             {
-                'name': row.column_name,
-                'type': _TYPE_MAPPINGS.get(self._get_column_type(row.data_type), NULLTYPE),
-                'nullable': True if row.is_nullable == 'YES' else False,
-                'default': row.column_default,
-                'ordinal_position': row.ordinal_position,
-                'comment': row.comment,
-            } for row in connection.execute(query).fetchall()
+                "name": row.column_name,
+                "type": _TYPE_MAPPINGS.get(
+                    self._get_column_type(row.data_type), NULLTYPE
+                ),
+                "nullable": True if row.is_nullable == "YES" else False,
+                "default": row.column_default,
+                "ordinal_position": row.ordinal_position,
+                "comment": row.comment,
+            }
+            for row in connection.execute(query).fetchall()
         ]
 
     def _get_column_type(self, type_):
-        return self._pattern_column_type.sub(r'\1', type_)
+        return self._pattern_column_type.sub(r"\1", type_)
 
     def get_foreign_keys(self, connection, table_name, schema=None, **kw):
         # Athena has no support for foreign keys.
