@@ -7,6 +7,7 @@ from datetime import date, datetime
 from decimal import Decimal
 
 import numpy as np
+
 from pyathenajdbc.util import as_pandas
 from tests import WithConnect
 from tests.util import with_cursor
