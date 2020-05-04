@@ -3,7 +3,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import unittest
-from datetime import date, datetime
+from datetime import date
 from decimal import Decimal
 
 import numpy as np
