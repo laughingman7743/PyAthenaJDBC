@@ -23,7 +23,7 @@ class TestParameterFormatter(unittest.TestCase):
         expected = textwrap.dedent(
             """
             ALTER TABLE test_table
-            ADD PARTITION (dt='2017-01-01', hour=1)
+            ADD PARTITION (dt=DATE '2017-01-01', hour=1)
             """
         ).strip()
 
@@ -42,7 +42,7 @@ class TestParameterFormatter(unittest.TestCase):
         expected = textwrap.dedent(
             """
             ALTER TABLE test_table
-            DROP PARTITION (dt='2017-01-01', hour=1)
+            DROP PARTITION (dt=DATE '2017-01-01', hour=1)
             """
         ).strip()
 
@@ -83,8 +83,8 @@ class TestParameterFormatter(unittest.TestCase):
             """
             SELECT *
             FROM test_table
-            WHERE col_timestamp >= timestamp'2017-01-01 12:00:00.000'
-              AND col_timestamp <= timestamp'2017-01-02 06:00:00.000'
+            WHERE col_timestamp >= TIMESTAMP '2017-01-01 12:00:00.000'
+              AND col_timestamp <= TIMESTAMP '2017-01-02 06:00:00.000'
             """
         ).strip()
 
@@ -109,7 +109,7 @@ class TestParameterFormatter(unittest.TestCase):
             """
             SELECT *
             FROM test_table
-            WHERE col_date between date'2017-01-01' and date'2017-01-02'
+            WHERE col_date between DATE '2017-01-01' and DATE '2017-01-02'
             """
         ).strip()
 
@@ -256,7 +256,7 @@ class TestParameterFormatter(unittest.TestCase):
             """
             SELECT *
             FROM test_table
-            WHERE col IN (null,null)
+            WHERE col IN (null, null)
             """
         ).strip()
 
@@ -278,7 +278,7 @@ class TestParameterFormatter(unittest.TestCase):
             SELECT *
             FROM test_table
             WHERE col_timestamp IN
-            (timestamp'2017-01-01 12:00:00.000',timestamp'2017-01-02 06:00:00.000')
+            (TIMESTAMP '2017-01-01 12:00:00.000', TIMESTAMP '2017-01-02 06:00:00.000')
             """
         ).strip()
 
@@ -300,7 +300,7 @@ class TestParameterFormatter(unittest.TestCase):
             """
             SELECT *
             FROM test_table
-            WHERE col_date IN (date'2017-01-01',date'2017-01-02')
+            WHERE col_date IN (DATE '2017-01-01', DATE '2017-01-02')
             """
         ).strip()
 
@@ -321,7 +321,7 @@ class TestParameterFormatter(unittest.TestCase):
             """
             SELECT *
             FROM test_table
-            WHERE col_int IN (1,2)
+            WHERE col_int IN (1, 2)
             """
         ).strip()
 
@@ -343,7 +343,7 @@ class TestParameterFormatter(unittest.TestCase):
             """
             SELECT *
             FROM test_table
-            WHERE col_float IN (0.100000,0.200000)
+            WHERE col_float IN (0.100000, 0.200000)
             """
         ).strip()
 
@@ -364,7 +364,7 @@ class TestParameterFormatter(unittest.TestCase):
             """
             SELECT *
             FROM test_table
-            WHERE col_decimal IN (0.0000000001,99.9999999999)
+            WHERE col_decimal IN (0.0000000001, 99.9999999999)
             """
         ).strip()
 
@@ -385,7 +385,7 @@ class TestParameterFormatter(unittest.TestCase):
             """
             SELECT *
             FROM test_table
-            WHERE col_boolean IN (True,False)
+            WHERE col_boolean IN (True, False)
             """
         ).strip()
 
@@ -406,7 +406,7 @@ class TestParameterFormatter(unittest.TestCase):
             """
             SELECT *
             FROM test_table
-            WHERE col_string IN ('amazon','athena')
+            WHERE col_string IN ('amazon', 'athena')
             """
         ).strip()
 
@@ -427,7 +427,7 @@ class TestParameterFormatter(unittest.TestCase):
             """
             SELECT *
             FROM test_table
-            WHERE col_string IN ('密林','女神')
+            WHERE col_string IN ('密林', '女神')
             """
         ).strip()
 
