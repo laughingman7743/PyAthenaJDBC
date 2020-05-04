@@ -7,6 +7,7 @@ from datetime import date, datetime
 from decimal import Decimal
 
 import numpy as np
+import pandas as pd
 
 from pyathenajdbc.util import as_pandas
 from tests import WithConnect
@@ -28,13 +29,10 @@ class TestUtil(unittest.TestCase, WithConnect):
           ,col_double
           ,col_string
           ,col_timestamp
-          ,CAST(col_timestamp AS time) AS col_time
           ,col_date
           ,col_binary
           ,col_array
-          ,CAST(col_array AS json) AS col_array_json
           ,col_map
-          ,CAST(col_map AS json) AS col_map_json
           ,col_struct
           ,col_decimal
         FROM one_row_complex
@@ -53,13 +51,10 @@ class TestUtil(unittest.TestCase, WithConnect):
                     row["col_double"],
                     row["col_string"],
                     row["col_timestamp"],
-                    row["col_time"],
                     row["col_date"],
                     row["col_binary"],
                     row["col_array"],
-                    row["col_array_json"],
                     row["col_map"],
-                    row["col_map_json"],
                     row["col_struct"],
                     row["col_decimal"],
                 ]
@@ -76,14 +71,11 @@ class TestUtil(unittest.TestCase, WithConnect):
                 0.5,
                 0.25,
                 "a string",
-                datetime(2017, 1, 1, 0, 0, 0),
-                datetime(2017, 1, 1, 0, 0, 0).time(),
+                pd.Timestamp(2017, 1, 1, 0, 0, 0),
                 date(2017, 1, 2),
                 b"123",
-                "[1, 2]",
-                [1, 2],
+                "1, 2",
                 "{1=2, 3=4}",
-                {"1": 2, "3": 4},
                 "{a=1, b=2}",
                 Decimal("0.1"),
             )
