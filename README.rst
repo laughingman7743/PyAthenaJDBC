@@ -447,11 +447,14 @@ Appy format
 ~~~~~~~~~~~
 
 .. code:: bash
+
     $ make fmt
+
 Check format
 ~~~~~~~~~~~~
 
 .. code:: bash
+
     $ make chk
 
 .. _`black`: https://github.com/psf/black
