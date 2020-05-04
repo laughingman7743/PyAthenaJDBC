@@ -10,8 +10,8 @@
 .. image:: https://img.shields.io/pypi/l/PyAthenaJDBC.svg
     :target: https://github.com/laughingman7743/PyAthenaJDBC/blob/master/LICENSE
 
-.. image:: https://pepy.tech/badge/pyathena/month
-    :target: https://pepy.tech/project/pyathena/month
+.. image:: https://pepy.tech/badge/pyathenajdbc/month
+    :target: https://pepy.tech/project/pyathenajdbc/month
 
 
 PyAthenaJDBC
