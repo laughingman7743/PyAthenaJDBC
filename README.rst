@@ -1,5 +1,5 @@
 .. image:: https://img.shields.io/pypi/pyversions/PyAthenaJDBC.svg
-    :target: https://pypi.python.org/pypi/PyAthenaJDBC/
+    :target: https://pypi.org/project/PyAthenaJDBC/
 
 .. image:: https://travis-ci.com/laughingman7743/PyAthenaJDBC.svg?branch=master
     :target: https://travis-ci.com/laughingman7743/PyAthenaJDBC
@@ -10,8 +10,8 @@
 .. image:: https://img.shields.io/pypi/l/PyAthenaJDBC.svg
     :target: https://github.com/laughingman7743/PyAthenaJDBC/blob/master/LICENSE
 
-.. image:: https://img.shields.io/pypi/dm/PyAthenaJDBC.svg
-    :target: https://pypistats.org/packages/pyathenajdbc
+.. image:: https://pepy.tech/badge/pyathena/month
+    :target: https://pepy.tech/project/pyathena/month
 
 
 PyAthenaJDBC
@@ -20,7 +20,7 @@ PyAthenaJDBC
 PyAthenaJDBC is a Python `DB API 2.0 (PEP 249)`_ compliant wrapper for `Amazon Athena JDBC driver`_.
 
 .. _`DB API 2.0 (PEP 249)`: https://www.python.org/dev/peps/pep-0249/
-.. _`Amazon Athena JDBC driver`: http://docs.aws.amazon.com/athena/latest/ug/connect-with-jdbc.html
+.. _`Amazon Athena JDBC driver`: https://docs.aws.amazon.com/athena/latest/ug/connect-with-jdbc.html
 
 Requirements
 ------------
@@ -253,13 +253,13 @@ Supported SQLAlchemy is 1.0.0 or higher and less than 2.0.0.
 
 The connection string has the following format:
 
-.. code:: python
+.. code:: text
 
     awsathena+jdbc://{access_key}:{secret_key}@athena.{region_name}.amazonaws.com:443/{schema_name}?s3_staging_dir={s3_staging_dir}&driver_path={driver_path}&...
 
 If you do not specify ``access_key`` and ``secret_key`` using instance profile or boto3 configuration file:
 
-.. code:: python
+.. code:: text
 
     awsathena+jdbc://:@athena.{region_name}.amazonaws.com:443/{schema_name}?s3_staging_dir={s3_staging_dir}&driver_path={driver_path}&...
 
@@ -268,7 +268,10 @@ NOTE: ``s3_staging_dir`` requires quote. If ``access_key``, ``secret_key`` and o
 Pandas
 ~~~~~~
 
-Minimal example for Pandas DataFrame:
+As DataFrame
+^^^^^^^^^^^^
+
+You can use the `pandas.read_sql`_ to handle the query results as a `DataFrame object`_.
 
 .. code:: python
 
@@ -282,7 +285,7 @@ Minimal example for Pandas DataFrame:
                    jvm_path='/path/to/jvm')  # optional, as used by JPype
     df = pd.read_sql("SELECT * FROM many_rows LIMIT 10", conn)
 
-As Pandas DataFrame:
+The ``pyathena.util`` package also has helper methods.
 
 .. code:: python
 
@@ -299,6 +302,9 @@ As Pandas DataFrame:
             """)
             df = as_pandas(cursor)
     print(df.describe())
+
+.. _`pandas.read_sql`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql.html
+.. _`DataFrame object`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html
 
 Credential
 ----------
