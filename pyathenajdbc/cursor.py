@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
 
 import logging
 
 from future.utils import raise_from
 from past.builtins.misc import xrange
 
-from pyathenajdbc.error import (DatabaseError, NotSupportedError, ProgrammingError)
-from pyathenajdbc.util import (attach_thread_to_jvm, synchronized)
+from pyathenajdbc.error import DatabaseError, NotSupportedError, ProgrammingError
+from pyathenajdbc.util import attach_thread_to_jvm, synchronized
 
 _logger = logging.getLogger(__name__)
 
@@ -42,8 +41,11 @@ class Cursor(object):
     @arraysize.setter
     def arraysize(self, value):
         if value <= 0 or value > self.DEFAULT_FETCH_SIZE:
-            raise ProgrammingError('MaxResults is more than maximum allowed length {0}.'.format(
-                self.DEFAULT_FETCH_SIZE))
+            raise ProgrammingError(
+                "MaxResults is more than maximum allowed length {0}.".format(
+                    self.DEFAULT_FETCH_SIZE
+                )
+            )
         self._arraysize = value
 
     @property
@@ -75,7 +77,7 @@ class Cursor(object):
                 None,
                 self._meta_data.getPrecision(i),
                 self._meta_data.getScale(i),
-                self._meta_data.isNullable(i)
+                self._meta_data.isNullable(i),
             )
             for i in xrange(1, self._meta_data.getColumnCount() + 1)
         ]
@@ -108,7 +110,7 @@ class Cursor(object):
     @synchronized
     def execute(self, operation, parameters=None):
         if self.is_closed:
-            raise ProgrammingError('Connection is closed.')
+            raise ProgrammingError("Connection is closed.")
 
         query = self._formatter.format(operation, parameters)
         _logger.debug(query)
@@ -123,7 +125,7 @@ class Cursor(object):
             else:
                 self._update_count = self._statement.getUpdateCount()
         except Exception as e:
-            _logger.exception('Failed to execute query.')
+            _logger.exception("Failed to execute query.")
             raise_from(DatabaseError(e), e)
 
     def executemany(self, operation, seq_of_parameters):
@@ -133,23 +135,27 @@ class Cursor(object):
     @synchronized
     def cancel(self):
         if self.is_closed:
-            raise ProgrammingError('Connection is closed.')
+            raise ProgrammingError("Connection is closed.")
         self._statement.cancel()
 
     @attach_thread_to_jvm
     def _fetch(self):
         if self.is_closed:
-            raise ProgrammingError('Connection is closed.')
+            raise ProgrammingError("Connection is closed.")
         if not self.has_result_set:
-            raise ProgrammingError('No result set.')
+            raise ProgrammingError("No result set.")
 
         if not self._result_set.next():
             return None
         self._rownumber += 1
-        return tuple([
-            self._converter.convert(self._meta_data.getColumnType(i), self._result_set, i)
-            for i in xrange(1, self._meta_data.getColumnCount() + 1)
-        ])
+        return tuple(
+            [
+                self._converter.convert(
+                    self._meta_data.getColumnType(i), self._result_set, i
+                )
+                for i in xrange(1, self._meta_data.getColumnCount() + 1)
+            ]
+        )
 
     @synchronized
     def fetchone(self):

@@ -7,10 +7,10 @@ from pyathenajdbc.util import to_datetime
 
 
 class TestUtil(unittest.TestCase):
-
     def test_to_datetime(self):
         self.assertIsNone(to_datetime(None))
         import jpype
+
         cal = jpype.java.util.Calendar.getInstance()
         cal.set(jpype.java.util.Calendar.YEAR, 2017)
         cal.set(jpype.java.util.Calendar.MONTH, 0)
