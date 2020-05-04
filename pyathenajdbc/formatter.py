@@ -42,17 +42,11 @@ def _format_default(formatter, escaper, val):
 
 
 def _format_date(formatter, escaper, val):
-    if escaper is _escape_presto:
-        return "date'{0}'".format(val.strftime("%Y-%m-%d"))
-    else:
-        return "'{0}'".format(val.strftime("%Y-%m-%d"))
+    return "DATE '{0}'".format(val.strftime("%Y-%m-%d"))
 
 
 def _format_datetime(formatter, escaper, val):
-    if escaper is _escape_presto:
-        return "timestamp'{0}'".format(val.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3])
-    else:
-        return "'{0}'".format(val.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3])
+    return "TIMESTAMP '{0}'".format(val.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3])
 
 
 def _format_bool(formatter, escaper, val):
@@ -75,7 +69,7 @@ def _format_seq(formatter, escaper, val):
             else:
                 formatted = "{0}".format(formatted)
         results.append(formatted)
-    return "({0})".format(",".join(results))
+    return "({0})".format(", ".join(results))
 
 
 class ParameterFormatter(object):
