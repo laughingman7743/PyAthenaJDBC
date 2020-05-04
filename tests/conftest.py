@@ -8,7 +8,7 @@ import pytest
 
 from pyathenajdbc import connect
 from tests import BASE_PATH, ENV, S3_PREFIX, SCHEMA
-from tests.util import Env, read_query
+from tests.util import read_query
 
 
 @pytest.fixture(scope="session", autouse=True)
