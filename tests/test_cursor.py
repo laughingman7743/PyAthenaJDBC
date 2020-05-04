@@ -16,7 +16,7 @@ from past.builtins.misc import xrange
 from pyathenajdbc import BINARY, BOOLEAN, DATE, DATETIME, NUMBER, STRING, connect
 from pyathenajdbc.cursor import Cursor
 from pyathenajdbc.error import (DatabaseError, NotSupportedError, ProgrammingError)
-from tests.conftest import SCHEMA
+from tests.conftest import SCHEMA, WORK_GROUP
 from tests.util import with_cursor
 
 
@@ -28,8 +28,8 @@ class TestCursor(unittest.TestCase):
     https://github.com/dropbox/PyHive/blob/master/pyhive/tests/test_presto.py
     """
 
-    def connect(self):
-        return connect(schema_name=SCHEMA)
+    def connect(self, work_group=None):
+        return connect(schema_name=SCHEMA, work_group=work_group)
 
     @with_cursor
     def test_fetchone(self, cursor):
@@ -356,3 +356,9 @@ class TestCursor(unittest.TestCase):
     #     self.assertEqual(cursor.fetchall(), [
     #         ('number_of_rows      \tint                 \t                    ',)
     #     ])
+
+    def test_workgroup(self):
+        with contextlib.closing(self.connect(work_group=WORK_GROUP)) as conn:
+            with contextlib.closing(conn.cursor()) as cursor:
+                cursor.execute('SELECT * FROM one_row')
+            self.assertEqual(conn.work_group, WORK_GROUP)

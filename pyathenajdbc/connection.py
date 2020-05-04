@@ -22,19 +22,21 @@ _logger = logging.getLogger(__name__)
 class Connection(object):
 
     _ENV_S3_STAGING_DIR = 'AWS_ATHENA_S3_STAGING_DIR'
+    _ENV_WORK_GROUP = 'AWS_ATHENA_WORK_GROUP'
     _BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
     def __init__(self, s3_staging_dir=None, access_key=None, secret_key=None,
                  region_name=None, schema_name='default', profile_name=None, credential_file=None,
                  jvm_path=None, jvm_options=None, converter=None, formatter=None,
-                 driver_path=None, log4j_conf=None, **driver_kwargs):
-        if s3_staging_dir:
-            self.s3_staging_dir = s3_staging_dir
-        else:
-            self.s3_staging_dir = os.getenv(self._ENV_S3_STAGING_DIR, None)
-        assert self.s3_staging_dir, 'Required argument `s3_staging_dir` not found.'
-        assert schema_name, 'Required argument `schema_name` not found.'
+                 driver_path=None, log4j_conf=None, work_group=None, **driver_kwargs):
+        self.s3_staging_dir = s3_staging_dir if s3_staging_dir \
+            else os.getenv(self._ENV_S3_STAGING_DIR, None)
+        self.work_group = work_group if work_group else os.getenv(self._ENV_WORK_GROUP, None)
         self.schema_name = schema_name
+
+        assert schema_name, 'Required argument `schema_name` not found.'
+        assert self.s3_staging_dir or self.work_group, \
+            'Required argument `s3_staging_dir` or `work_group` not found.'
 
         if credential_file:
             self.access_key = None
@@ -127,7 +129,10 @@ class Connection(object):
             props.setProperty('UID', self.access_key)
             props.setProperty('PWD', self.secret_key)
         props.setProperty('Schema', self.schema_name)
-        props.setProperty('S3OutputLocation', self.s3_staging_dir)
+        if self.s3_staging_dir:
+            props.setProperty('S3OutputLocation', self.s3_staging_dir)
+        if self.work_group:
+            props.setProperty('Workgroup', self.work_group)
         for k, v in iteritems(kwargs):
             if k and v:
                 props.setProperty(k, v)
