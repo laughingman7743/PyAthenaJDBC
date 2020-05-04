@@ -15,20 +15,17 @@ from past.builtins.misc import xrange
 from pyathenajdbc import BINARY, BOOLEAN, DATE, DATETIME, NUMBER, STRING, connect
 from pyathenajdbc.cursor import Cursor
 from pyathenajdbc.error import DatabaseError, NotSupportedError, ProgrammingError
-from tests.conftest import SCHEMA, WORK_GROUP
+from tests import SCHEMA, WORK_GROUP, WithConnect
 from tests.util import with_cursor
 
 
-class TestCursor(unittest.TestCase):
+class TestCursor(unittest.TestCase, WithConnect):
     """Reference test case is following:
 
     https://github.com/dropbox/PyHive/blob/master/pyhive/tests/dbapi_test_case.py
     https://github.com/dropbox/PyHive/blob/master/pyhive/tests/test_hive.py
     https://github.com/dropbox/PyHive/blob/master/pyhive/tests/test_presto.py
     """
-
-    def connect(self, work_group=None):
-        return connect(schema_name=SCHEMA, work_group=work_group)
 
     @with_cursor
     def test_fetchone(self, cursor):

@@ -7,7 +7,7 @@ name = "pypi"
 allow_prereleases = true
 
 [packages]
-"e1839a8" = {path = ".", extras = ["sqlalchemy"], editable = true}
+"e1839a8" = {path = ".", extras = ["sqlalchemy", "pandas"], editable = true}
 
 [dev-packages]
 awscli = "*"
