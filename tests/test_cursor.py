@@ -359,6 +359,6 @@ class TestCursor(unittest.TestCase):
 
     def test_workgroup(self):
         with contextlib.closing(self.connect(work_group=WORK_GROUP)) as conn:
-            with contextlib.closing(conn.cursor()) as cursor:
+            with conn.cursor() as cursor:
                 cursor.execute('SELECT * FROM one_row')
             self.assertEqual(conn.work_group, WORK_GROUP)
