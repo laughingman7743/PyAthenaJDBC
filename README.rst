@@ -14,6 +14,9 @@
     :target: https://pepy.tech/project/pyathenajdbc/month
 
 
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
+
 PyAthenaJDBC
 ============
 
@@ -434,6 +437,25 @@ Run test multiple Python versions
     $ pyenv local 3.7.2 3.6.8 3.5.7 3.4.10 2.7.16
     $ pipenv run tox
     $ pipenv run scripts/test_data/delete_test_data.sh
+
+Code formatting
+---------------
+
+The code formatting uses `black`_ and `isort`_.
+
+Appy format
+~~~~~~~~~~~
+
+.. code:: bash
+    $ make fmt
+Check format
+~~~~~~~~~~~~
+
+.. code:: bash
+    $ make chk
+
+.. _`black`: https://github.com/psf/black
+.. _`isort`: https://github.com/timothycrosley/isort
 
 License
 -------
