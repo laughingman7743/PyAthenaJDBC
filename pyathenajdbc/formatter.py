@@ -72,6 +72,10 @@ def _format_seq(formatter, escaper, val):
     return "({0})".format(", ".join(results))
 
 
+def _format_decimal(formatter, escaper, val):
+    return "DECIMAL {0}".format(escaper("{0:f}".format(val)))
+
+
 class ParameterFormatter(object):
     def __init__(self):
         self.mappings = _DEFAULT_FORMATTERS
@@ -119,7 +123,7 @@ _DEFAULT_FORMATTERS = {
     int: _format_default,
     float: _format_default,
     long: _format_default,
-    Decimal: _format_default,
+    Decimal: _format_decimal,
     bool: _format_bool,
     str: _format_str,
     unicode: _format_str,
