@@ -6,11 +6,13 @@ import threading
 from datetime import datetime
 
 
-def as_pandas(cursor):
+def as_pandas(cursor, coerce_float=False):
     from pandas import DataFrame
 
     names = [metadata[0] for metadata in cursor.description]
-    return DataFrame.from_records(cursor.fetchall(), columns=names)
+    return DataFrame.from_records(
+        cursor.fetchall(), columns=names, coerce_float=coerce_float
+    )
 
 
 def synchronized(wrapped):

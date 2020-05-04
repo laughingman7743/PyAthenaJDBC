@@ -172,7 +172,7 @@ class TestParameterFormatter(unittest.TestCase):
             """
             SELECT *
             FROM test_table
-            WHERE col_decimal <= 0.0000000001
+            WHERE col_decimal <= DECIMAL '0.0000000001'
             """
         ).strip()
 
@@ -181,7 +181,7 @@ class TestParameterFormatter(unittest.TestCase):
                 """
                 SELECT *
                 FROM test_table
-                WHERE col_decimal <= %(param).10f
+                WHERE col_decimal <= %(param)s
                 """
             ).strip(),
             {"param": Decimal("0.0000000001")},
@@ -364,7 +364,7 @@ class TestParameterFormatter(unittest.TestCase):
             """
             SELECT *
             FROM test_table
-            WHERE col_decimal IN (0.0000000001, 99.9999999999)
+            WHERE col_decimal IN (DECIMAL '0.0000000001', DECIMAL '99.9999999999')
             """
         ).strip()
 
