@@ -30,3 +30,27 @@ CREATE EXTERNAL TABLE IF NOT EXISTS {schema}.one_row_complex (
 )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE
 LOCATION '{location_one_row_complex}';
+
+DROP TABLE IF EXISTS {schema}.partition_table;
+CREATE EXTERNAL TABLE IF NOT EXISTS {schema}.partition_table (
+    a STRING
+)
+PARTITIONED BY (b INT)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE
+LOCATION '{location_partition_table}';
+
+DROP TABLE IF EXISTS {schema}.integer_na_values;
+CREATE EXTERNAL TABLE IF NOT EXISTS {schema}.integer_na_values (
+    a INT,
+    b INT
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE
+LOCATION '{location_integer_na_values}';
+
+DROP TABLE IF EXISTS {schema}.boolean_na_values;
+CREATE EXTERNAL TABLE IF NOT EXISTS {schema}.boolean_na_values (
+    a BOOLEAN,
+    b BOOLEAN
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE
+LOCATION '{location_boolean_na_values}';
