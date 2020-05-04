@@ -129,8 +129,10 @@ class Connection(object):
             props.setProperty('UID', self.access_key)
             props.setProperty('PWD', self.secret_key)
         props.setProperty('Schema', self.schema_name)
-        props.setProperty('S3OutputLocation', self.s3_staging_dir)
-        props.setProperty('Workgroup', self.work_group)
+        if self.s3_staging_dir:
+            props.setProperty('S3OutputLocation', self.s3_staging_dir)
+        if self.work_group:
+            props.setProperty('Workgroup', self.work_group)
         for k, v in iteritems(kwargs):
             if k and v:
                 props.setProperty(k, v)
