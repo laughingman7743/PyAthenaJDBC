@@ -297,7 +297,8 @@ class TestSQLAlchemyAthena(unittest.TestCase):
             schema=SCHEMA,
             index=False,
             if_exists="replace",
-            method="multi",
+            # Supported by Pandas version 0.24.0 or later.
+            # method="multi",
         )
 
         table = Table(table_name, MetaData(bind=engine), autoload=True)
