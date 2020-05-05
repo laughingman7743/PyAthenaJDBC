@@ -3,11 +3,13 @@ from __future__ import absolute_import, unicode_literals
 
 import re
 
+from sqlalchemy import exc, util
 from sqlalchemy.engine import Engine, reflection
 from sqlalchemy.engine.default import DefaultDialect
 from sqlalchemy.sql.compiler import (
     BIND_PARAMS,
     BIND_PARAMS_ESC,
+    DDLCompiler,
     IdentifierPreparer,
     SQLCompiler,
 )
@@ -36,7 +38,7 @@ class UniversalSet(object):
         return True
 
 
-class AthenaIdentifierPreparer(IdentifierPreparer):
+class AthenaDMLIdentifierPreparer(IdentifierPreparer):
     """PrestoIdentifierPreparer
 
     https://github.com/dropbox/PyHive/blob/master/pyhive/sqlalchemy_presto.py"""
@@ -44,9 +46,28 @@ class AthenaIdentifierPreparer(IdentifierPreparer):
     reserved_words = UniversalSet()
 
 
-class AthenaCompiler(SQLCompiler):
-    """PrestoCompiler
+class AthenaDDLIdentifierPreparer(IdentifierPreparer):
+    def __init__(
+        self,
+        dialect,
+        initial_quote="`",
+        final_quote=None,
+        escape_quote="`",
+        quote_case_sensitive_collations=True,
+        omit_schema=False,
+    ):
+        super(AthenaDDLIdentifierPreparer, self).__init__(
+            dialect=dialect,
+            initial_quote=initial_quote,
+            final_quote=final_quote,
+            escape_quote=escape_quote,
+            quote_case_sensitive_collations=quote_case_sensitive_collations,
+            omit_schema=omit_schema,
+        )
 
+
+class AthenaStatementCompiler(SQLCompiler):
+    """PrestoCompiler
     https://github.com/dropbox/PyHive/blob/master/pyhive/sqlalchemy_presto.py"""
 
     def visit_char_length_func(self, fn, **kw):
@@ -74,6 +95,94 @@ class AthenaCompiler(SQLCompiler):
             )
 
 
+class AthenaDDLCompiler(DDLCompiler):
+    @property
+    def preparer(self):
+        return self._preparer
+
+    @preparer.setter
+    def preparer(self, value):
+        pass
+
+    def __init__(
+        self,
+        dialect,
+        statement,
+        bind=None,
+        schema_translate_map=None,
+        compile_kwargs=util.immutabledict(),
+    ):
+        self._preparer = AthenaDDLIdentifierPreparer(dialect)
+        super(AthenaDDLCompiler, self).__init__(
+            dialect=dialect,
+            statement=statement,
+            bind=bind,
+            schema_translate_map=schema_translate_map,
+            compile_kwargs=compile_kwargs,
+        )
+
+    def visit_create_table(self, create):
+        table = create.element
+        preparer = self.preparer
+
+        text = "\nCREATE EXTERNAL "
+        text += "TABLE " + preparer.format_table(table) + " "
+        text += "("
+
+        separator = "\n"
+        for create_column in create.columns:
+            column = create_column.element
+            try:
+                processed = self.process(create_column)
+                if processed is not None:
+                    text += separator
+                    separator = ", \n"
+                    text += "\t" + processed
+            except exc.CompileError as ce:
+                util.raise_from_cause(
+                    exc.CompileError(
+                        util.u("(in table '{0}', column '{1}'): {2}").format(
+                            table.description, column.name, ce.args[0]
+                        )
+                    )
+                )
+
+        const = self.create_table_constraints(
+            table,
+            _include_foreign_key_constraints=create.include_foreign_key_constraints,
+        )
+        if const:
+            text += separator + "\t" + const
+
+        text += "\n)\n%s\n\n" % self.post_create_table(table)
+        return text
+
+    def post_create_table(self, table):
+        raw_connection = table.bind.raw_connection()
+        # TODO Supports orc, avro, json, csv or tsv format
+        text = "STORED AS PARQUET\n"
+
+        location = (
+            raw_connection._driver_kwargs["s3_dir"]
+            if "s3_dir" in raw_connection._driver_kwargs
+            else raw_connection.s3_staging_dir
+        )
+        if not location:
+            raise exc.CompileError(
+                "`s3_dir` or `s3_staging_dir` parameter is required"
+                " in the connection string."
+            )
+        text += "LOCATION '{0}{1}/{2}/'\n".format(location, table.schema, table.name)
+
+        compression = raw_connection._driver_kwargs.get("compression")
+        if compression:
+            text += "TBLPROPERTIES ('parquet.compress'='{0}')\n".format(
+                compression.upper()
+            )
+
+        return text
+
+
 _TYPE_MAPPINGS = {
     "boolean": BOOLEAN,
     "real": FLOAT,
@@ -99,18 +208,21 @@ class AthenaDialect(DefaultDialect):
 
     name = "awsathena"
     driver = "jdbc"
-    preparer = AthenaIdentifierPreparer
-    statement_compiler = AthenaCompiler
+    preparer = AthenaDMLIdentifierPreparer
+    statement_compiler = AthenaStatementCompiler
+    ddl_compiler = AthenaDDLCompiler
     default_paramstyle = pyathenajdbc.paramstyle
     supports_alter = False
     supports_pk_autoincrement = False
     supports_default_values = False
     supports_empty_insert = False
+    supports_multivalues_insert = True
     supports_unicode_statements = True
     supports_unicode_binds = True
     returns_unicode_strings = True
     description_encoding = None
     supports_native_boolean = True
+    postfetch_lastrowid = False
 
     _pattern_column_type = re.compile(r"^([a-zA-Z]+)($|\(.+\)$)")
 

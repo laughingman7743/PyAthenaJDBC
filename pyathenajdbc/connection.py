@@ -95,7 +95,8 @@ class Connection(object):
 
         self._start_jvm(jvm_path, jvm_options, driver_path, log4j_conf)
 
-        props = self._build_driver_args(**driver_kwargs)
+        self._driver_kwargs = driver_kwargs
+        props = self._build_driver_args()
         jpype.JClass(ATHENA_DRIVER_CLASS_NAME)
         self._jdbc_conn = jpype.java.sql.DriverManager.getConnection(
             ATHENA_CONNECTION_STRING.format(
@@ -147,7 +148,7 @@ class Connection(object):
             )
             jpype.java.lang.Thread.currentThread().setContextClassLoader(class_loader)
 
-    def _build_driver_args(self, **kwargs):
+    def _build_driver_args(self):
         props = jpype.java.util.Properties()
         if self.credential_file:
             props.setProperty(
@@ -176,7 +177,7 @@ class Connection(object):
             props.setProperty("S3OutputLocation", self.s3_staging_dir)
         if self.work_group:
             props.setProperty("Workgroup", self.work_group)
-        for k, v in iteritems(kwargs):
+        for k, v in iteritems(self._driver_kwargs):
             if k and v:
                 props.setProperty(k, v)
         return props

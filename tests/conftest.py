@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 import contextlib
 import os
+import uuid
 
 import pytest
 
@@ -53,6 +54,11 @@ def _create_table(cursor):
     location_boolean_na_values = "{0}{1}/{2}/".format(
         ENV.s3_staging_dir, S3_PREFIX, "boolean_na_values"
     )
+    location_execute_many = "{0}{1}/{2}/".format(
+        ENV.s3_staging_dir,
+        S3_PREFIX,
+        "execute_many_{0}".format(str(uuid.uuid4()).replace("-", "")),
+    )
     for q in read_query(os.path.join(BASE_PATH, "sql", "create_table.sql")):
         cursor.execute(
             q.format(
@@ -63,5 +69,6 @@ def _create_table(cursor):
                 location_partition_table=location_partition_table,
                 location_integer_na_values=location_integer_na_values,
                 location_boolean_na_values=location_boolean_na_values,
+                location_execute_many=location_execute_many,
             )
         )

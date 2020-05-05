@@ -129,7 +129,10 @@ class Cursor(object):
             raise_from(DatabaseError(e), e)
 
     def executemany(self, operation, seq_of_parameters):
-        raise NotSupportedError
+        for parameters in seq_of_parameters:
+            self.execute(operation, parameters)
+        # Operations that have result sets are not allowed with executemany.
+        self._reset_state()
 
     @attach_thread_to_jvm
     @synchronized
