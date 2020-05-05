@@ -13,7 +13,6 @@
 .. image:: https://pepy.tech/badge/pyathenajdbc/month
     :target: https://pepy.tech/project/pyathenajdbc/month
 
-
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 
@@ -308,6 +307,37 @@ The ``pyathena.util`` package also has helper methods.
 
 .. _`pandas.read_sql`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql.html
 .. _`DataFrame object`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html
+
+To SQL
+^^^^^^
+
+You can use `pandas.DataFrame.to_sql`_ to write records stored in DataFrame to Amazon Athena.
+`pandas.DataFrame.to_sql`_ uses `SQLAlchemy`_, so you need to install it.
+
+.. code:: python
+    import pandas as pd
+    from urllib.parse import quote_plus
+    from sqlalchemy import create_engine
+    conn_str = 'awsathena+jdbc://:@athena.{region_name}.amazonaws.com:443/'\
+               '{schema_name}?s3_staging_dir={s3_staging_dir}&s3_dir={s3_dir}&compression=snappy'
+    engine = create_engine(conn_str.format(
+        region_name='us-west-2',
+        schema_name='YOUR_SCHEMA',
+        s3_staging_dir=quote_plus('s3://YOUR_S3_BUCKET/path/to/'),
+        s3_dir=quote_plus('s3://YOUR_S3_BUCKET/path/to/')))
+    df = pd.DataFrame({'a': [1, 2, 3, 4, 5]})
+    df.to_sql('YOUR_TABLE', engine, schema="YOUR_SCHEMA", index=False, if_exists='replace', method='multi')
+
+The location of the Amazon S3 table is specified by the ``s3_dir`` parameter in the connection string.
+If ``s3_dir`` is not specified, ``s3_staging_dir`` parameter will be used. The following rules apply.
+
+.. code:: text
+
+    s3://{s3_dir or s3_staging_dir}/{schema}/{table}/
+
+The data format only supports Parquet. The compression format is specified by the ``compression`` parameter in the connection string.
+
+.. _`pandas.DataFrame.to_sql`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_sql.html
 
 Credential
 ----------
