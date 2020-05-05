@@ -315,6 +315,7 @@ You can use `pandas.DataFrame.to_sql`_ to write records stored in DataFrame to A
 `pandas.DataFrame.to_sql`_ uses `SQLAlchemy`_, so you need to install it.
 
 .. code:: python
+
     import pandas as pd
     from urllib.parse import quote_plus
     from sqlalchemy import create_engine
