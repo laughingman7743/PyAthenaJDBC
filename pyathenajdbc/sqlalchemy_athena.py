@@ -12,7 +12,8 @@ from sqlalchemy.sql.compiler import (
     DDLCompiler,
     GenericTypeCompiler,
     IdentifierPreparer,
-    SQLCompiler)
+    SQLCompiler,
+)
 from sqlalchemy.sql.sqltypes import (
     BIGINT,
     BINARY,
