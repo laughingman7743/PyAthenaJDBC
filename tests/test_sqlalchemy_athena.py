@@ -323,7 +323,8 @@ class TestSQLAlchemyAthena(unittest.TestCase):
             schema=SCHEMA,
             index=False,
             if_exists="replace",
-            method="multi",
+            # TODO Python 3.4: TypeError: to_sql() got an unexpected keyword argument 'method'
+            # method="multi",
         )
 
         table = Table(table_name, MetaData(bind=engine), autoload=True)
