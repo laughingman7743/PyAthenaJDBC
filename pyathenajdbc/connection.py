@@ -43,13 +43,12 @@ class Connection(object):
         self._driver_kwargs = driver_kwargs
         props = self._build_driver_args()
         jpype.JClass(ATHENA_DRIVER_CLASS_NAME)
-        self._jdbc_conn = jpype.java.sql.DriverManager.getConnection(
-            ATHENA_CONNECTION_STRING.format(
-                region=self._driver_kwargs.get("AwsRegion")
-            ),
-            props,
-        )
-
+        region = self._driver_kwargs.get("AwsRegion", os.getenv("AWS_DEFAULT_REGION"))
+        if region:
+            self._jdbc_conn = jpype.java.sql.DriverManager.getConnection(
+                ATHENA_CONNECTION_STRING.format(region=region), props)
+        else:
+            self._jdbc_conn = jpype.java.sql.DriverManager.getConnection()
         self._converter = converter if converter else JDBCTypeConverter()
         self._formatter = formatter if formatter else ParameterFormatter()
 
