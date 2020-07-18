@@ -46,16 +46,16 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     def create_engine(self):
         conn_str = (
-            "awsathena+jdbc://athena.{region_name}.amazonaws.com:443/"
-            + "{schema_name}?S3OutputLocation={s3_staging_dir}&S3Location={s3_dir}"
+            "awsathena+jdbc://athena.{AwsRegion}.amazonaws.com:443/"
+            + "{Schema}?S3OutputLocation={S3OutputLocation}&S3Location={S3Location}"
             + "&compression=snappy"
         )
         return create_engine(
             conn_str.format(
-                region_name=ENV.region_name,
-                schema_name=SCHEMA,
-                s3_staging_dir=quote_plus(ENV.s3_staging_dir),
-                s3_dir=quote_plus(ENV.s3_staging_dir),
+                AwsRegion=ENV.region_name,
+                Schema=SCHEMA,
+                S3OutputLocation=quote_plus(ENV.s3_staging_dir),
+                S3Location=quote_plus(ENV.s3_staging_dir),
             )
         )
 

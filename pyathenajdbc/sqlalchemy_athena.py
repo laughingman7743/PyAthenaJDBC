@@ -317,15 +317,15 @@ class AthenaDialect(DefaultDialect):
     def create_connect_args(self, url):
         # Connection string format:
         #   awsathena+jdbc://
-        #   {access_key}:{secret_key}@athena.{region_name}.amazonaws.com:443/
-        #   {schema_name}?s3_staging_dir={s3_staging_dir}&driver_path={driver_path}&...
+        #   {User}:{Password}@athena.{AwsRegion}.amazonaws.com:443/
+        #   {Schema}?S3OutputLocation={S3OutputLocation}&driver_path={driver_path}&...
         opts = {
-            "access_key": url.username if url.username else None,
-            "secret_key": url.password if url.password else None,
-            "region_name": re.sub(
+            "User": url.username if url.username else None,
+            "Password": url.password if url.password else None,
+            "AwsRegion": re.sub(
                 r"^athena\.([a-z0-9-]+)\.amazonaws\.(com|com.cn)$", r"\1", url.host
             ),
-            "schema_name": url.database if url.database else "default",
+            "Schema": url.database if url.database else "default",
         }
         opts.update(url.query)
         return [[], opts]
