@@ -242,7 +242,7 @@ class AthenaDDLCompiler(DDLCompiler):
         location = (
             raw_connection._driver_kwargs["S3Location"]
             if "S3Location" in raw_connection._driver_kwargs
-            else raw_connection._driver_kwargs.get('S3OutputLocation')
+            else raw_connection._driver_kwargs.get("S3OutputLocation")
         )
         if not location:
             raise exc.CompileError(

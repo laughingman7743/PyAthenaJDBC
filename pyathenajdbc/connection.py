@@ -45,7 +45,7 @@ class Connection(object):
         jpype.JClass(ATHENA_DRIVER_CLASS_NAME)
         self._jdbc_conn = jpype.java.sql.DriverManager.getConnection(
             ATHENA_CONNECTION_STRING.format(
-                region=self._driver_kwargs.get('AwsRegion')
+                region=self._driver_kwargs.get("AwsRegion")
             ),
             props,
         )
