@@ -237,7 +237,7 @@ The connection string has the following format:
 
     awsathena+jdbc://{User}:{Password}@athena.{AwsRegion}.amazonaws.com:443/{Schema}?S3OutputLocation={S3OutputLocation}&driver_path={driver_path}&...
 
-If you do not specify ``User`` (i.e. AccessKeyID) and ``Password`` (i.e. SecretAccessKey) using instance profile credentials or credential profiles file:
+If you do not specify ``User`` (i.e. AWSAccessKeyID) and ``Password`` (i.e. AWSSecretAccessKey) using instance profile credentials or credential profiles file:
 
 .. code:: text
 
