@@ -41,12 +41,12 @@ class Connection(object):
     ):
         self._start_jvm(jvm_path, jvm_options, driver_path, log4j_conf)
         self._driver_kwargs = driver_kwargs
-        self.work_group = self._driver_kwargs.get(
-            "Workgroup", os.getenv(self._ENV_WORK_GROUP, None)
+        self.region_name = self._driver_kwargs.get(
+            "AwsRegion", os.getenv("AWS_DEFAULT_REGION", None)
         )
         self.schema_name = self._driver_kwargs.get("Schema", "default")
-        self.region_name = self._driver_kwargs.get(
-            "AwsRegion", os.getenv("AWS_DEFAULT_REGION")
+        self.work_group = self._driver_kwargs.get(
+            "Workgroup", os.getenv(self._ENV_WORK_GROUP, None)
         )
         props = self._build_driver_args()
         jpype.JClass(ATHENA_DRIVER_CLASS_NAME)
@@ -111,9 +111,12 @@ class Connection(object):
         s3_output_location = os.getenv(self._ENV_S3_OUTPUT_LOCATION, None)
         if s3_output_location:
             props.setProperty("S3OutputLocation", s3_output_location)
-        work_group = os.getenv(self._ENV_WORK_GROUP, None)
-        if work_group:
-            props.setProperty("Workgroup", work_group)
+        if self.region_name:
+            props.setProperty("AwsRegion", self.region_name)
+        if self.schema_name:
+            props.setProperty("Schema", self.schema_name)
+        if self.work_group:
+            props.setProperty("Workgroup", self.work_group)
         for k, v in iteritems(self._driver_kwargs):
             if k and v:
                 props.setProperty(k, v)
