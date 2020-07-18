@@ -35,4 +35,4 @@ class WithConnect(object):
     def connect(self, work_group=None):
         from pyathenajdbc import connect
 
-        return connect(schema_name=SCHEMA, work_group=work_group)
+        return connect(Schema=SCHEMA, Workgroup=work_group)

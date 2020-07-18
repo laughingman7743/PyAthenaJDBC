@@ -240,13 +240,13 @@ class AthenaDDLCompiler(DDLCompiler):
         text = "STORED AS PARQUET\n"
 
         location = (
-            raw_connection._driver_kwargs["s3_dir"]
-            if "s3_dir" in raw_connection._driver_kwargs
-            else raw_connection.s3_staging_dir
+            raw_connection._driver_kwargs["S3Location"]
+            if "S3Location" in raw_connection._driver_kwargs
+            else raw_connection._driver_kwargs.get('S3OutputLocation')
         )
         if not location:
             raise exc.CompileError(
-                "`s3_dir` or `s3_staging_dir` parameter is required"
+                "`S3Location` or `S3OutputLocation` parameter is required"
                 " in the connection string."
             )
         schema = table.schema if table.schema else raw_connection.schema_name
