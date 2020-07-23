@@ -113,7 +113,7 @@ setup(
         ("", ["LICENSE"] + glob("*.rst") + glob("Pipfile*")),
         ("jdbc", glob("jdbc/*.txt")),
     ],
-    install_requires=["future", "jpype1>=0.6.0, <=0.7.0", "botocore>=1.0.0"],
+    install_requires=["future", "jpype1>=0.6.0, <=0.7.0"],
     extras_require={
         "Pandas": ["pandas>=0.19.0"],
         "SQLAlchemy": ["SQLAlchemy>=1.0.0, <2.0.0"],

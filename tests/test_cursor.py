@@ -345,7 +345,7 @@ class TestCursor(unittest.TestCase, WithConnect):
 
     def test_multiple_connection(self):
         def execute_other_thread():
-            with contextlib.closing(connect(schema_name=SCHEMA)) as conn:
+            with contextlib.closing(connect(Schema=SCHEMA)) as conn:
                 with conn.cursor() as cursor:
                     cursor.execute("SELECT * FROM one_row")
                     return cursor.fetchall()

@@ -73,8 +73,8 @@ Basic usage
 
     from pyathenajdbc import connect
 
-    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
-                   region_name='us-west-2')
+    conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
+                   AwsRegion='us-west-2')
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
@@ -92,8 +92,8 @@ Cursor iteration
 
     from pyathenajdbc import connect
 
-    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
-                   region_name='us-west-2')
+    conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
+                   AwsRegion='us-west-2')
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
@@ -114,8 +114,8 @@ Supported `DB API paramstyle`_ is only ``PyFormat``.
 
     from pyathenajdbc import connect
 
-    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
-                   region_name='us-west-2')
+    conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
+                   AwsRegion='us-west-2')
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
@@ -147,8 +147,8 @@ You can increase the JVM heap size like the following:
 
     from pyathenajdbc import connect
 
-    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
-                   region_name='us-west-2',
+    conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
+                   AwsRegion='us-west-2',
                    jvm_options=['-Xms1024m', '-Xmx4096m'])
     try:
         with conn.cursor() as cursor:
@@ -173,8 +173,8 @@ and specify the path of the downloaded JDBC driver as the argument ``driver_path
 
     from pyathenajdbc import connect
 
-    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
-                   region_name='us-west-2',
+    conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
+                   AwsRegion='us-west-2',
                    driver_path='/path/to/AthenaJDBC41_2.0.7.jar')
 
 JDBC driver configuration options
@@ -188,8 +188,8 @@ specify the option as a keyword argument in the connect method or connection obj
 
     from pyathenajdbc import connect
 
-    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
-                   region_name='us-west-2',
+    conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
+                   AwsRegion='us-west-2',
                    LogPath='/path/to/pyathenajdbc/log/',
                    LogLevel='6')
 
@@ -200,28 +200,6 @@ For details of the JDBC driver options refer to the official documentation.
 .. _`JDBC Driver Installation and Configuration Guide`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.7/docs/Simba+Athena+JDBC+Driver+Install+and+Configuration+Guide.pdf
 
 NOTE: Option names and values are case-sensitive. The option value is specified as a character string.
-
-Specify the Query Results
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If you want to specify where athena stores the ``txt``/``cxv`` and ``txt.metadata``/``csv.metadata`` files containing the result of each query, you can specify it as follows:
-
-.. code:: python
-
-    from pyathenajdbc import connect
-
-    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
-                   region_name='us-west-2',
-                   LogPath='/path/to/pyathenajdbc/log/',
-                   LogLevel='6',
-                   S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/query_results/')
-
-For details see the Athena Documentation:
-
-* `Athena Documentation on Query Results`_.
-
-.. _`Athena Documentation on Query Results`: https://docs.aws.amazon.com/athena/latest/ug/querying.html#default-location-query-results
-
 
 SQLAlchemy
 ~~~~~~~~~~
@@ -238,14 +216,14 @@ Supported SQLAlchemy is 1.0.0 or higher and less than 2.0.0.
     from sqlalchemy.sql.functions import func
     from sqlalchemy.sql.schema import Table, MetaData
 
-    conn_str = 'awsathena+jdbc://{access_key}:{secret_key}@athena.{region_name}.amazonaws.com:443/'\
-               '{schema_name}?s3_staging_dir={s3_staging_dir}'
+    conn_str = 'awsathena+jdbc://{User}:{Password}@athena.{AwsRegion}.amazonaws.com:443/'\
+               '{Schema}?S3OutputLocation={S3OutputLocation}'
     engine = create_engine(conn_str.format(
-        access_key=quote_plus('YOUR_ACCESS_KEY'),
-        secret_key=quote_plus('YOUR_SECRET_ACCESS_KEY'),
-        region_name='us-west-2',
-        schema_name='default',
-        s3_staging_dir=quote_plus('s3://YOUR_S3_BUCKET/path/to/')))
+        User=quote_plus('YOUR_ACCESS_KEY'),
+        Password=quote_plus('YOUR_SECRET_ACCESS_KEY'),
+        AwsRegion='us-west-2',
+        Schema='default',
+        S3OutputLocation=quote_plus('s3://YOUR_S3_BUCKET/path/to/')))
     try:
         with contextlib.closing(engine.connect()) as conn:
             many_rows = Table('many_rows', MetaData(bind=engine), autoload=True)
@@ -257,15 +235,15 @@ The connection string has the following format:
 
 .. code:: text
 
-    awsathena+jdbc://{access_key}:{secret_key}@athena.{region_name}.amazonaws.com:443/{schema_name}?s3_staging_dir={s3_staging_dir}&driver_path={driver_path}&...
+    awsathena+jdbc://{User}:{Password}@athena.{AwsRegion}.amazonaws.com:443/{Schema}?S3OutputLocation={S3OutputLocation}&driver_path={driver_path}&...
 
-If you do not specify ``access_key`` and ``secret_key`` using instance profile or boto3 configuration file:
+If you do not specify ``User`` (i.e. AWSAccessKeyID) and ``Password`` (i.e. AWSSecretAccessKey) using instance profile credentials or credential profiles file:
 
 .. code:: text
 
-    awsathena+jdbc://:@athena.{region_name}.amazonaws.com:443/{schema_name}?s3_staging_dir={s3_staging_dir}&driver_path={driver_path}&...
+    awsathena+jdbc://:@athena.{Region}.amazonaws.com:443/{Schema}?S3OutputLocation={S3OutputLocation}&driver_path={driver_path}&...
 
-NOTE: ``s3_staging_dir`` requires quote. If ``access_key``, ``secret_key`` and other parameter contain special characters, quote is also required.
+NOTE: ``S3OutputLocation`` requires quote. If ``User``, ``Password`` and other parameter contain special characters, quote is also required.
 
 Pandas
 ~~~~~~
@@ -280,11 +258,11 @@ You can use the `pandas.read_sql`_ to handle the query results as a `DataFrame o
     from pyathenajdbc import connect
     import pandas as pd
 
-    conn = connect(access_key='YOUR_ACCESS_KEY_ID',
-                   secret_key='YOUR_SECRET_ACCESS_KEY',
-                   s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
-                   region_name='us-west-2',
-                   jvm_path='/path/to/jvm')  # optional, as used by JPype
+    conn = connect(User='YOUR_ACCESS_KEY_ID',
+                   Password='YOUR_SECRET_ACCESS_KEY',
+                   S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
+                   AwsRegion='us-west-2',
+                   jvm_path='/path/to/jvm')
     df = pd.read_sql("SELECT * FROM many_rows LIMIT 10", conn)
 
 The ``pyathena.util`` package also has helper methods.
@@ -296,8 +274,8 @@ The ``pyathena.util`` package also has helper methods.
     from pyathenajdbc.util import as_pandas
 
     with contextlib.closing(
-            connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/'
-                    region_name='us-west-2'))) as conn:
+            connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/'
+                    AwsRegion='us-west-2'))) as conn:
         with conn.cursor() as cursor:
             cursor.execute("""
             SELECT * FROM many_rows
@@ -319,22 +297,22 @@ You can use `pandas.DataFrame.to_sql`_ to write records stored in DataFrame to A
     import pandas as pd
     from urllib.parse import quote_plus
     from sqlalchemy import create_engine
-    conn_str = 'awsathena+jdbc://:@athena.{region_name}.amazonaws.com:443/'\
-               '{schema_name}?s3_staging_dir={s3_staging_dir}&s3_dir={s3_dir}&compression=snappy'
+    conn_str = 'awsathena+jdbc://:@athena.{AwsRegion}.amazonaws.com:443/'\
+               '{Schema}?S3OutputLocation={S3OutputLocation}&S3Location={S3Location}&compression=snappy'
     engine = create_engine(conn_str.format(
-        region_name='us-west-2',
-        schema_name='YOUR_SCHEMA',
-        s3_staging_dir=quote_plus('s3://YOUR_S3_BUCKET/path/to/'),
-        s3_dir=quote_plus('s3://YOUR_S3_BUCKET/path/to/')))
+        AwsRegion='us-west-2',
+        Schema_name='YOUR_SCHEMA',
+        S3OutputLocation=quote_plus('s3://YOUR_S3_BUCKET/path/to/'),
+        S3Location=quote_plus('s3://YOUR_S3_BUCKET/path/to/')))
     df = pd.DataFrame({'a': [1, 2, 3, 4, 5]})
     df.to_sql('YOUR_TABLE', engine, schema="YOUR_SCHEMA", index=False, if_exists='replace', method='multi')
 
-The location of the Amazon S3 table is specified by the ``s3_dir`` parameter in the connection string.
-If ``s3_dir`` is not specified, ``s3_staging_dir`` parameter will be used. The following rules apply.
+The location of the Amazon S3 table is specified by the ``S3Location`` parameter in the connection string.
+If ``S3Location`` is not specified, ``S3OutputLocation`` parameter will be used. The following rules apply.
 
 .. code:: text
 
-    s3://{s3_dir or s3_staging_dir}/{schema}/{table}/
+    s3://{S3Location or S3OutputLocation}/{schema}/{table}/
 
 The data format only supports Parquet. The compression format is specified by the ``compression`` parameter in the connection string.
 
@@ -342,71 +320,6 @@ The data format only supports Parquet. The compression format is specified by th
 
 Credential
 ----------
-
-Support `AWS CLI credentials`_, `Properties file credentials`_ and `AWS credentials provider chain`_.
-
-.. _`AWS CLI credentials`: http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
-.. _`Properties file credentials`: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/PropertiesFileCredentialsProvider.html
-.. _`AWS credentials provider chain`: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/DefaultAWSCredentialsProviderChain.html
-
-Credential files
-~~~~~~~~~~~~~~~~
-
-~/.aws/credentials
-
-.. code:: cfg
-
-    [default]
-    aws_access_key_id=YOUR_ACCESS_KEY_ID
-    aws_secret_access_key=YOUR_SECRET_ACCESS_KEY
-
-~/.aws/config
-
-.. code:: cfg
-
-    [default]
-    region=us-west-2
-    output=json
-
-Environment variables
-~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: bash
-
-    $ export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
-    $ export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY
-    $ export AWS_DEFAULT_REGION=us-west-2
-
-Additional environment variable:
-
-.. code:: bash
-
-    $ export AWS_ATHENA_S3_STAGING_DIR=s3://YOUR_S3_BUCKET/path/to/
-    $ export AWS_ATHENA_WORK_GROUP=YOUR_WORK_GROUP
-
-Properties file credentials
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Create a property file of the following format.
-
-/path/to/AWSCredentials.properties
-
-.. code:: properties
-
-    accessKeyId:YOUR_ACCESS_KEY_ID
-    secretKey:YOUR_SECRET_ACCESS_KEY
-
-Specify the property file path with ``credential_file`` of the connect method or connection object.
-
-.. code:: python
-
-    from pyathenajdbc import connect
-
-    conn = connect(credential_file='/path/to/AWSCredentials.properties',
-                   s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
-                   region_name='us-west-2')
-
-PyAthenaJDBC uses the property file to authenticate Amazon Athena.
 
 AWS credentials provider chain
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -421,16 +334,15 @@ See `AWS credentials provider chain`_
         * Credentials delivered through the Amazon EC2 container service if AWS_CONTAINER_CREDENTIALS_RELATIVE_URI" environment variable is set and security manager has permission to access the variable,
         * Instance profile credentials delivered through the Amazon EC2 metadata service
 
-In the connect method or connection object, you can connect by specifying at least ``s3_staging_dir`` and ``region_name``.
-It is not necessary to specify ``access_key`` and ``secret_key``.
+In the connect method or connection object, you can connect by specifying at least ``S3OutputLocation`` and ``AwsRegion``.
+It is not necessary to specify ``User`` and ``Password``.
 
 .. code:: python
 
     from pyathenajdbc import connect
 
-    conn = connect(s3_staging_dir='s3://YOUR_S3_BUCKET/path/to/',
-                   region_name='us-west-2')
-
+    conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
+                   AwsRegion='us-west-2')
 
 Testing
 -------
