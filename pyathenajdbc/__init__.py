@@ -6,7 +6,7 @@ import datetime
 from pyathenajdbc.error import *  # noqa
 
 __version__ = "2.0.9"
-__athena_driver_version__ = "2.0.9"
+__athena_driver_version__ = "2.0.13"
 
 # Globals https://www.python.org/dev/peps/pep-0249/#globals
 apilevel = "2.0"
