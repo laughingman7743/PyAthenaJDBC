@@ -19,7 +19,7 @@
 PyAthenaJDBC
 ============
 
-PyAthenaJDBC is a Python `DB API 2.0 (PEP 249)`_ compliant wrapper for `Amazon Athena JDBC driver`_.
+PyAthenaJDBC is an `Amazon Athena JDBC driver`_ wrapper for the Python `DB API 2.0 (PEP 249)`_.
 
 .. _`DB API 2.0 (PEP 249)`: https://www.python.org/dev/peps/pep-0249/
 .. _`Amazon Athena JDBC driver`: https://docs.aws.amazon.com/athena/latest/ug/connect-with-jdbc.html

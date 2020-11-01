@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "PyAthenaJDBC"
 version = "2.1.0"
-description = "Python DB API 2.0 (PEP 249) compliant wrapper for Amazon Athena JDBC driver"
+description = "Amazon Athena JDBC driver wrapper for the Python DB API 2.0 (PEP 249)"
 license = "MIT"
 classifiers = [
     "Development Status :: 4 - Beta",
