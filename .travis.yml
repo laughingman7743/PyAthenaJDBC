@@ -12,8 +12,6 @@ matrix:
   include:
     - python: 2.7
       env: TOXENV=py27
-    - python: 3.4
-      env: TOXENV=py34
     - python: 3.5
       env: TOXENV=py35
     - python: 3.6
@@ -21,11 +19,10 @@ matrix:
     - python: 3.7
       env: TOXENV=py37
 install:
-  - pip install tox codecov awscli
+  - pip install poetry tox awscli
 before_script:
   - ./scripts/test_data/upload_test_data.sh
 script:
   - tox
-after_success:
-  # - ./scripts/test_data/delete_test_data.sh
-  - codecov
+# after_success:
+#   - ./scripts/test_data/delete_test_data.sh
