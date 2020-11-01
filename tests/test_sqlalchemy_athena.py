@@ -102,7 +102,10 @@ class TestSQLAlchemyAthena(unittest.TestCase):
         )
         if version <= 1.2:
             engine.dialect.reflecttable(
-                conn, one_row_complex, include_columns=["col_int"], exclude_columns=[],
+                conn,
+                one_row_complex,
+                include_columns=["col_int"],
+                exclude_columns=[],
             )
         else:
             engine.dialect.reflecttable(
@@ -121,7 +124,8 @@ class TestSQLAlchemyAthena(unittest.TestCase):
         unicode_str = "密林"
         one_row = Table("one_row", MetaData(bind=engine))
         returned_str = sqlalchemy.select(
-            [expression.bindparam("あまぞん", unicode_str)], from_obj=one_row,
+            [expression.bindparam("あまぞん", unicode_str)],
+            from_obj=one_row,
         ).scalar()
         self.assertEqual(returned_str, unicode_str)
 
@@ -142,7 +146,8 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
         insp = sqlalchemy.inspect(engine)
         self.assertIn(
-            "many_rows", insp.get_table_names(schema=SCHEMA),
+            "many_rows",
+            insp.get_table_names(schema=SCHEMA),
         )
 
     @with_engine
