@@ -30,7 +30,6 @@ include = [
     { path = "pyathenajdbc/*.jar" },
     { path = "pyathenajdbc/*.properties" },
 ]
-# build = "build.py"
 
 [tool.poetry.dependencies]
 python = "~2.7 || ^3.5"
