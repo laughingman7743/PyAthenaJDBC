@@ -30,9 +30,23 @@ class DBAPITypeObject:
     """
 
     def __init__(self, *values):
+        """
+        Initialize the values.
+
+        Args:
+            self: (todo): write your description
+            values: (todo): write your description
+        """
         self.values = values
 
     def __cmp__(self, other):
+        """
+        Compares two values.
+
+        Args:
+            self: (todo): write your description
+            other: (todo): write your description
+        """
         if other in self.values:
             return 0
         if other < self.values:
@@ -41,6 +55,13 @@ class DBAPITypeObject:
             return -1
 
     def __eq__(self, other):
+        """
+        Determine if two values are equal.
+
+        Args:
+            self: (todo): write your description
+            other: (todo): write your description
+        """
         return other in self.values
 
 
@@ -77,6 +98,11 @@ Timestamp = datetime.datetime
 
 
 def connect(*args, **kwargs):
+    """
+    Establish a connection pool.
+
+    Args:
+    """
     from pyathenajdbc.connection import Connection
 
     return Connection(*args, **kwargs)

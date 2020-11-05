@@ -17,6 +17,15 @@ class Cursor(object):
     DEFAULT_FETCH_SIZE = 1000
 
     def __init__(self, connection, converter, formatter):
+        """
+        Initialize the database.
+
+        Args:
+            self: (todo): write your description
+            connection: (todo): write your description
+            converter: (list): write your description
+            formatter: (todo): write your description
+        """
         self._connection = connection
         self._converter = converter
         self._formatter = formatter
@@ -32,14 +41,33 @@ class Cursor(object):
 
     @property
     def connection(self):
+        """
+        Get a connection object.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._connection
 
     @property
     def arraysize(self):
+        """
+        A 2d arrays.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._arraysize
 
     @arraysize.setter
     def arraysize(self, value):
+        """
+        Set arr arrays.
+
+        Args:
+            self: (todo): write your description
+            value: (todo): write your description
+        """
         if value <= 0 or value > self.DEFAULT_FETCH_SIZE:
             raise ProgrammingError(
                 "MaxResults is more than maximum allowed length {0}.".format(
@@ -50,6 +78,12 @@ class Cursor(object):
 
     @property
     def rownumber(self):
+        """
+        Return a list of all of the values.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._rownumber
 
     @property
@@ -60,11 +94,23 @@ class Cursor(object):
     @property
     @attach_thread_to_jvm
     def has_result_set(self):
+        """
+        Return true if the result has a result set.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._result_set and self._meta_data and not self._result_set.isClosed()
 
     @property
     @attach_thread_to_jvm
     def description(self):
+        """
+        Returns the description of the column.
+
+        Args:
+            self: (todo): write your description
+        """
         if self._description:
             return self._description
         if not self.has_result_set:
@@ -86,6 +132,12 @@ class Cursor(object):
     @attach_thread_to_jvm
     @synchronized
     def close(self):
+        """
+        Close the connection.
+
+        Args:
+            self: (todo): write your description
+        """
         self._meta_data = None
         if self._result_set and not self._result_set.isClosed():
             self._result_set.close()
@@ -98,9 +150,21 @@ class Cursor(object):
 
     @property
     def is_closed(self):
+        """
+        Returns true if the connection is closed.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._connection is None
 
     def _reset_state(self):
+        """
+        Reset the state of the run.
+
+        Args:
+            self: (todo): write your description
+        """
         self._description = None
         self._result_set = None
         self._meta_data = None
@@ -109,6 +173,14 @@ class Cursor(object):
     @attach_thread_to_jvm
     @synchronized
     def execute(self, operation, parameters=None):
+        """
+        Execute the query.
+
+        Args:
+            self: (todo): write your description
+            operation: (str): write your description
+            parameters: (todo): write your description
+        """
         if self.is_closed:
             raise ProgrammingError("Connection is closed.")
 
@@ -129,6 +201,14 @@ class Cursor(object):
             raise_from(DatabaseError(e), e)
 
     def executemany(self, operation, seq_of_parameters):
+        """
+        Execute an operation operations.
+
+        Args:
+            self: (todo): write your description
+            operation: (str): write your description
+            seq_of_parameters: (str): write your description
+        """
         for parameters in seq_of_parameters:
             self.execute(operation, parameters)
         # Operations that have result sets are not allowed with executemany.
@@ -137,12 +217,24 @@ class Cursor(object):
     @attach_thread_to_jvm
     @synchronized
     def cancel(self):
+        """
+        Cancel the cursor.
+
+        Args:
+            self: (todo): write your description
+        """
         if self.is_closed:
             raise ProgrammingError("Connection is closed.")
         self._statement.cancel()
 
     @attach_thread_to_jvm
     def _fetch(self):
+        """
+        Executes the query result set.
+
+        Args:
+            self: (todo): write your description
+        """
         if self.is_closed:
             raise ProgrammingError("Connection is closed.")
         if not self.has_result_set:
@@ -162,10 +254,23 @@ class Cursor(object):
 
     @synchronized
     def fetchone(self):
+        """
+        Fetch one row.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._fetch()
 
     @synchronized
     def fetchmany(self, size=None):
+        """
+        Fetch multiple rows.
+
+        Args:
+            self: (todo): write your description
+            size: (int): write your description
+        """
         if not size or size <= 0:
             size = self._arraysize
         rows = []
@@ -179,6 +284,12 @@ class Cursor(object):
 
     @synchronized
     def fetchall(self):
+        """
+        Fetch all rows.
+
+        Args:
+            self: (todo): write your description
+        """
         rows = []
         while True:
             row = self._fetch()
@@ -197,12 +308,33 @@ class Cursor(object):
         pass
 
     def __enter__(self):
+        """
+        Decor function.
+
+        Args:
+            self: (todo): write your description
+        """
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        Called when an exception is raised.
+
+        Args:
+            self: (todo): write your description
+            exc_type: (todo): write your description
+            exc_val: (todo): write your description
+            exc_tb: (todo): write your description
+        """
         self.close()
 
     def __next__(self):
+        """
+        Fetches next row.
+
+        Args:
+            self: (todo): write your description
+        """
         row = self.fetchone()
         if row is None:
             raise StopIteration
@@ -212,4 +344,10 @@ class Cursor(object):
     next = __next__
 
     def __iter__(self):
+        """
+        Returns an iterator over the iterable.
+
+        Args:
+            self: (todo): write your description
+        """
         return self

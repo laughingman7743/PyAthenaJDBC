@@ -39,6 +39,19 @@ class Connection(object):
         log4j_conf=None,
         **driver_kwargs
     ):
+        """
+        Initialize the jvm instance.
+
+        Args:
+            self: (todo): write your description
+            jvm_path: (str): write your description
+            jvm_options: (list): write your description
+            converter: (list): write your description
+            formatter: (todo): write your description
+            driver_path: (str): write your description
+            log4j_conf: (todo): write your description
+            driver_kwargs: (dict): write your description
+        """
         self._start_jvm(jvm_path, jvm_options, driver_path, log4j_conf)
         self._driver_kwargs = driver_kwargs
         self.region_name = self._driver_kwargs.get(
@@ -62,6 +75,16 @@ class Connection(object):
     @classmethod
     @synchronized
     def _start_jvm(cls, jvm_path, jvm_options, driver_path, log4j_conf):
+        """
+        Starts the instance.
+
+        Args:
+            cls: (todo): write your description
+            jvm_path: (str): write your description
+            jvm_options: (list): write your description
+            driver_path: (str): write your description
+            log4j_conf: (todo): write your description
+        """
         if jvm_path is None:
             jvm_path = jpype.get_default_jvm_path()
         if driver_path is None:
@@ -100,6 +123,12 @@ class Connection(object):
             jpype.java.lang.Thread.currentThread().setContextClassLoader(class_loader)
 
     def _build_driver_args(self):
+        """
+        Build command line arguments for the driver.
+
+        Args:
+            self: (todo): write your description
+        """
         props = jpype.java.util.Properties()
         props.setProperty(
             "AwsCredentialsProviderClass",
@@ -123,13 +152,34 @@ class Connection(object):
         return props
 
     def __enter__(self):
+        """
+        Decor function.
+
+        Args:
+            self: (todo): write your description
+        """
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        Called when an exception is raised.
+
+        Args:
+            self: (todo): write your description
+            exc_type: (todo): write your description
+            exc_val: (todo): write your description
+            exc_tb: (todo): write your description
+        """
         self.close()
 
     @attach_thread_to_jvm
     def cursor(self):
+        """
+        Returns the cursor.
+
+        Args:
+            self: (todo): write your description
+        """
         if self.is_closed:
             raise ProgrammingError("Connection is closed.")
         return Cursor(self._jdbc_conn, self._converter, self._formatter)
@@ -137,6 +187,12 @@ class Connection(object):
     @attach_thread_to_jvm
     @synchronized
     def close(self):
+        """
+        Closes the connection.
+
+        Args:
+            self: (todo): write your description
+        """
         if not self.is_closed:
             self._jdbc_conn.close()
             self._jdbc_conn = None
@@ -144,6 +200,12 @@ class Connection(object):
     @property
     @attach_thread_to_jvm
     def is_closed(self):
+        """
+        Returns true if the connection is closed.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._jdbc_conn is None or self._jdbc_conn.isClosed()
 
     def commit(self):
@@ -151,6 +213,12 @@ class Connection(object):
         pass
 
     def rollback(self):
+        """
+        Roll back back a signal.
+
+        Args:
+            self: (todo): write your description
+        """
         raise NotSupportedError(
             "Athena JDBC connection is only supported for auto-commit mode."
         )

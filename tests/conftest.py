@@ -14,6 +14,12 @@ from tests.util import read_query
 
 @pytest.fixture(scope="session", autouse=True)
 def _setup_session(request):
+    """
+    Setup the table.
+
+    Args:
+        request: (todo): write your description
+    """
     request.addfinalizer(_teardown_session)
     with contextlib.closing(connect()) as conn:
         with conn.cursor() as cursor:
@@ -22,22 +28,45 @@ def _setup_session(request):
 
 
 def _teardown_session():
+    """
+    Return a connection.
+
+    Args:
+    """
     with contextlib.closing(connect()) as conn:
         with conn.cursor() as cursor:
             _drop_database(cursor)
 
 
 def _create_database(cursor):
+    """
+    Create a database.
+
+    Args:
+        cursor: (todo): write your description
+    """
     for q in read_query(os.path.join(BASE_PATH, "sql", "create_database.sql")):
         cursor.execute(q.format(schema=SCHEMA))
 
 
 def _drop_database(cursor):
+    """
+    Drop a database.
+
+    Args:
+        cursor: (todo): write your description
+    """
     for q in read_query(os.path.join(BASE_PATH, "sql", "drop_database.sql")):
         cursor.execute(q.format(schema=SCHEMA))
 
 
 def _create_table(cursor):
+    """
+    Create the table.
+
+    Args:
+        cursor: (todo): write your description
+    """
     location_one_row = "{0}{1}/{2}/".format(ENV.s3_staging_dir, S3_PREFIX, "one_row")
     location_many_rows = "{0}{1}/{2}/".format(
         ENV.s3_staging_dir, S3_PREFIX, "many_rows"

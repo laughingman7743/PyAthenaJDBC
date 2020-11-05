@@ -45,6 +45,12 @@ class TestSQLAlchemyAthena(unittest.TestCase):
     """
 
     def create_engine(self):
+        """
+        Create an engine
+
+        Args:
+            self: (todo): write your description
+        """
         conn_str = (
             "awsathena+jdbc://athena.{AwsRegion}.amazonaws.com:443/"
             + "{Schema}?S3OutputLocation={S3OutputLocation}&S3Location={S3Location}"
@@ -61,6 +67,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_basic_query(self, engine, conn):
+        """
+        Executes a sql query.
+
+        Args:
+            self: (todo): write your description
+            engine: (todo): write your description
+            conn: (todo): write your description
+        """
         rows = conn.execute("SELECT * FROM one_row").fetchall()
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0].number_of_rows, 1)
@@ -68,6 +82,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_reflect_no_such_table(self, engine, conn):
+        """
+        Test if the database table.
+
+        Args:
+            self: (todo): write your description
+            engine: (todo): write your description
+            conn: (todo): write your description
+        """
         self.assertRaises(
             NoSuchTableError,
             lambda: Table("this_does_not_exist", MetaData(bind=engine), autoload=True),
@@ -84,18 +106,42 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_reflect_table(self, engine, conn):
+        """
+        Test if the database exists.
+
+        Args:
+            self: (todo): write your description
+            engine: (str): write your description
+            conn: (todo): write your description
+        """
         one_row = Table("one_row", MetaData(bind=engine), autoload=True)
         self.assertEqual(len(one_row.c), 1)
         self.assertIsNotNone(one_row.c.number_of_rows)
 
     @with_engine
     def test_reflect_table_with_schema(self, engine, conn):
+        """
+        Test if the table exists.
+
+        Args:
+            self: (todo): write your description
+            engine: (todo): write your description
+            conn: (todo): write your description
+        """
         one_row = Table("one_row", MetaData(bind=engine), schema=SCHEMA, autoload=True)
         self.assertEqual(len(one_row.c), 1)
         self.assertIsNotNone(one_row.c.number_of_rows)
 
     @with_engine
     def test_reflect_table_include_columns(self, engine, conn):
+        """
+        Reads the table table.
+
+        Args:
+            self: (todo): write your description
+            engine: (todo): write your description
+            conn: (todo): write your description
+        """
         one_row_complex = Table("one_row_complex", MetaData(bind=engine))
         version = float(
             re.search(r"^([\d]+\.[\d]+)\..+", sqlalchemy.__version__).group(1)
@@ -121,6 +167,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_unicode(self, engine, conn):
+        """
+        Test if a unicode string is unicode.
+
+        Args:
+            self: (todo): write your description
+            engine: (todo): write your description
+            conn: (todo): write your description
+        """
         unicode_str = "密林"
         one_row = Table("one_row", MetaData(bind=engine))
         returned_str = sqlalchemy.select(
@@ -131,6 +185,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_reflect_schemas(self, engine, conn):
+        """
+        Test if the schema exists.
+
+        Args:
+            self: (todo): write your description
+            engine: (todo): write your description
+            conn: (todo): write your description
+        """
         insp = sqlalchemy.inspect(engine)
         schemas = insp.get_schema_names()
         self.assertIn(SCHEMA, schemas)
@@ -138,6 +200,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_get_table_names(self, engine, conn):
+        """
+        Returns table names
+
+        Args:
+            self: (todo): write your description
+            engine: (todo): write your description
+            conn: (todo): write your description
+        """
         meta = MetaData()
         meta.reflect(bind=engine)
         print(meta.tables)
@@ -152,6 +222,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_has_table(self, engine, conn):
+        """
+        Determine if the table exists.
+
+        Args:
+            self: (todo): write your description
+            engine: (todo): write your description
+            conn: (todo): write your description
+        """
         self.assertTrue(Table("one_row", MetaData(bind=engine)).exists())
         self.assertFalse(
             Table("this_table_does_not_exist", MetaData(bind=engine)).exists()
@@ -159,6 +237,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_get_columns(self, engine, conn):
+        """
+        Get column columns.
+
+        Args:
+            self: (todo): write your description
+            engine: (todo): write your description
+            conn: (todo): write your description
+        """
         insp = sqlalchemy.inspect(engine)
         actual = insp.get_columns(table_name="one_row", schema=SCHEMA)[0]
         self.assertEqual(actual["name"], "number_of_rows")
@@ -170,6 +256,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_char_length(self, engine, conn):
+        """
+        Test for the length of a database.
+
+        Args:
+            self: (todo): write your description
+            engine: (todo): write your description
+            conn: (todo): write your description
+        """
         one_row_complex = Table("one_row_complex", MetaData(bind=engine), autoload=True)
         result = (
             sqlalchemy.select(
@@ -182,6 +276,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_reflect_select(self, engine, conn):
+        """
+        Perform a select query.
+
+        Args:
+            self: (todo): write your description
+            engine: (str): write your description
+            conn: (todo): write your description
+        """
         one_row_complex = Table("one_row_complex", MetaData(bind=engine), autoload=True)
         self.assertEqual(len(one_row_complex.c), 15)
         self.assertIsInstance(one_row_complex.c.col_string, Column)
@@ -237,6 +339,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_get_column_type(self, engine, conn):
+        """
+        Get the sql column type.
+
+        Args:
+            self: (todo): write your description
+            engine: (todo): write your description
+            conn: (todo): write your description
+        """
         dialect = engine.dialect
         self.assertEqual(dialect._get_column_type("boolean"), "boolean")
         self.assertEqual(dialect._get_column_type("tinyint"), "tinyint")
@@ -256,6 +366,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_contain_percents_character_query(self, engine, conn):
+        """
+        : param engine query on the specified query.
+
+        Args:
+            self: (todo): write your description
+            engine: (todo): write your description
+            conn: (todo): write your description
+        """
         query = sqlalchemy.sql.text(
             """
             SELECT date_parse('20191030', '%Y%m%d')
@@ -266,6 +384,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_query_with_parameter(self, engine, conn):
+        """
+        Run a query results query.
+
+        Args:
+            self: (todo): write your description
+            engine: (todo): write your description
+            conn: (todo): write your description
+        """
         query = sqlalchemy.sql.text(
             """
             SELECT :word
@@ -276,6 +402,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_contain_percents_character_query_with_parameter(self, engine, conn):
+        """
+        : param sqlalchemy query parameters : param sql query.
+
+        Args:
+            self: (todo): write your description
+            engine: (todo): write your description
+            conn: (todo): write your description
+        """
         query = sqlalchemy.sql.text(
             """
             SELECT date_parse('20191030', '%Y%m%d'), :word
@@ -295,6 +429,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_to_sql(self, engine, conn):
+        """
+        Dump sql database to database *
+
+        Args:
+            self: (todo): write your description
+            engine: (todo): write your description
+            conn: (todo): write your description
+        """
         # TODO Add binary column (After dropping support for Python 2.7)
         table_name = "to_sql_{0}".format(str(uuid.uuid4()).replace("-", ""))
         df = pd.DataFrame(
