@@ -17,9 +17,23 @@ class TestParameterFormatter(unittest.TestCase):
     FORMATTER = ParameterFormatter()
 
     def format(self, operation, parameters=None):
+        """
+        Formats operation.
+
+        Args:
+            self: (todo): write your description
+            operation: (str): write your description
+            parameters: (todo): write your description
+        """
         return self.FORMATTER.format(operation, parameters)
 
     def test_add_partition(self):
+        """
+        Add test test test.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             ALTER TABLE test_table
@@ -39,6 +53,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_drop_partition(self):
+        """
+        Test if the test.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             ALTER TABLE test_table
@@ -58,6 +78,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_none(self):
+        """
+        Assigns the first element of the expected value.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -79,6 +105,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_datetime(self):
+        """
+        Format datetime hashed.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -105,6 +137,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_date(self):
+        """
+        Format the date of the date.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -126,6 +164,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_int(self):
+        """
+        Format the intwrap.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -147,6 +191,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_float(self):
+        """
+        Format the float as a float.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -168,6 +218,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_decimal(self):
+        """
+        Format the decimal and decimal.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -189,6 +245,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_bool(self):
+        """
+        Format the test text.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -210,6 +272,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_str(self):
+        """
+        Format the test string as a string.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -231,6 +299,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_unicode(self):
+        """
+        Format the test text.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -252,6 +326,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_none_list(self):
+        """
+        Ensure that the last element of the list.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -273,6 +353,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_datetime_list(self):
+        """
+        Convert datetime.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -296,6 +382,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_date_list(self):
+        """
+        Format the date ascii format. datetime.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -317,6 +409,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_int_list(self):
+        """
+        Convert the int intwrap.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -338,6 +436,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_float_list(self):
+        """
+        Takes a float to float.
+
+        Args:
+            self: (todo): write your description
+        """
         # default precision is 6
         expected = textwrap.dedent(
             """
@@ -360,6 +464,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_decimal_list(self):
+        """
+        Takes a list of decimal strings.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -381,6 +491,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_bool_list(self):
+        """
+        Takes a list of strings.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -402,6 +518,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_str_list(self):
+        """
+        Format a list of strings as a string.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -423,6 +545,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_unicode_list(self):
+        """
+        Format a comma - separated list.
+
+        Args:
+            self: (todo): write your description
+        """
         expected = textwrap.dedent(
             """
             SELECT *
@@ -444,6 +572,12 @@ class TestParameterFormatter(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_format_bad_parameter(self):
+        """
+        Format bad bad bad bad parameter is set.
+
+        Args:
+            self: (todo): write your description
+        """
         self.assertRaises(
             ProgrammingError,
             lambda: self.format(

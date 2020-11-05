@@ -36,6 +36,13 @@ class UniversalSet(object):
     https://github.com/dropbox/PyHive/blob/master/pyhive/common.py"""
 
     def __contains__(self, item):
+        """
+        Determine if item is contained in the list.
+
+        Args:
+            self: (todo): write your description
+            item: (str): write your description
+        """
         return True
 
 
@@ -57,6 +64,18 @@ class AthenaDDLIdentifierPreparer(IdentifierPreparer):
         quote_case_sensitive_collations=True,
         omit_schema=False,
     ):
+        """
+        Initialize the table.
+
+        Args:
+            self: (todo): write your description
+            dialect: (str): write your description
+            initial_quote: (todo): write your description
+            final_quote: (todo): write your description
+            escape_quote: (str): write your description
+            quote_case_sensitive_collations: (todo): write your description
+            omit_schema: (todo): write your description
+        """
         super(AthenaDDLIdentifierPreparer, self).__init__(
             dialect=dialect,
             initial_quote=initial_quote,
@@ -72,10 +91,32 @@ class AthenaStatementCompiler(SQLCompiler):
     https://github.com/dropbox/PyHive/blob/master/pyhive/sqlalchemy_presto.py"""
 
     def visit_char_length_func(self, fn, **kw):
+        """
+        Returns a function length for a function.
+
+        Args:
+            self: (todo): write your description
+            fn: (todo): write your description
+            kw: (todo): write your description
+        """
         return "length{0}".format(self.function_argspec(fn, **kw))
 
     def visit_textclause(self, textclause, **kw):
+        """
+        Create a new query
+
+        Args:
+            self: (todo): write your description
+            textclause: (str): write your description
+            kw: (todo): write your description
+        """
         def do_bindparam(m):
+            """
+            Bind a new query to the given string.
+
+            Args:
+                m: (todo): write your description
+            """
             name = m.group(1)
             if name in textclause._bindparams:
                 return self.process(textclause._bindparams[name], **kw)
@@ -98,15 +139,47 @@ class AthenaStatementCompiler(SQLCompiler):
 
 class AthenaTypeCompiler(GenericTypeCompiler):
     def visit_FLOAT(self, type_, **kw):
+        """
+        Convenience for the given type.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         return self.visit_REAL(type_, **kw)
 
     def visit_REAL(self, type_, **kw):
+        """
+        Return a string representation.
+
+        Args:
+            self: (todo): write your description
+            type_: (str): write your description
+            kw: (str): write your description
+        """
         return "DOUBLE"
 
     def visit_NUMERIC(self, type_, **kw):
+        """
+        Handles visitor.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         return self.visit_DECIMAL(type_, **kw)
 
     def visit_DECIMAL(self, type_, **kw):
+        """
+        Return a string representation of the type.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         if type_.precision is None:
             return "DECIMAL"
         elif type_.scale is None:
@@ -118,67 +191,224 @@ class AthenaTypeCompiler(GenericTypeCompiler):
             }
 
     def visit_INTEGER(self, type_, **kw):
+        """
+        Return an astroid. string type.
+
+        Args:
+            self: (todo): write your description
+            type_: (str): write your description
+            kw: (todo): write your description
+        """
         return "INTEGER"
 
     def visit_SMALLINT(self, type_, **kw):
+        """
+        Return a string.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         return "SMALLINT"
 
     def visit_BIGINT(self, type_, **kw):
+        """
+        Return a string for a : pyobject.
+
+        Args:
+            self: (todo): write your description
+            type_: (str): write your description
+            kw: (todo): write your description
+        """
         return "BIGINT"
 
     def visit_TIMESTAMP(self, type_, **kw):
+        """
+        R
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         return "TIMESTAMP"
 
     def visit_DATETIME(self, type_, **kw):
+        """
+        Handles a type_T.
+
+        Args:
+            self: (todo): write your description
+            type_: (str): write your description
+            kw: (todo): write your description
+        """
         return self.visit_TIMESTAMP(type_, **kw)
 
     def visit_DATE(self, type_, **kw):
+        """
+        Dynamically formatted string representation of the dATE type.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         return "DATE"
 
     def visit_TIME(self, type_, **kw):
+        """
+        Raise an exception if the type.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         raise exc.CompileError("Data type `{0}` is not supported".format(type_))
 
     def visit_CLOB(self, type_, **kw):
+        """
+        Return an astroid.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         return self.visit_BINARY(type_, **kw)
 
     def visit_NCLOB(self, type_, **kw):
+        """
+        Returns a numpy array.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         return self.visit_BINARY(type_, **kw)
 
     def visit_CHAR(self, type_, **kw):
+        """
+        Return a string representation of the specified type.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         return self._render_string_type(type_, "CHAR")
 
     def visit_NCHAR(self, type_, **kw):
+        """
+        Return a string representing the nCHAR.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         return self._render_string_type(type_, "CHAR")
 
     def visit_VARCHAR(self, type_, **kw):
+        """
+        Return a string representing the string type.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         return self._render_string_type(type_, "VARCHAR")
 
     def visit_NVARCHAR(self, type_, **kw):
+        """
+        : param type_type type_type_type.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         return self._render_string_type(type_, "VARCHAR")
 
     def visit_TEXT(self, type_, **kw):
+        """
+        Return a type_id
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         return "STRING"
 
     def visit_BLOB(self, type_, **kw):
+        """
+        Return an astroid.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         return self.visit_BINARY(type_, **kw)
 
     def visit_BINARY(self, type_, **kw):
+        """
+        Return an astroid for the given type.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         return "BINARY"
 
     def visit_VARBINARY(self, type_, **kw):
+        """
+        Check if vARB type.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            kw: (todo): write your description
+        """
         return self.visit_BINARY(type_, **kw)
 
     def visit_BOOLEAN(self, type_, **kw):
+        """
+        Return an astroid.
+
+        Args:
+            self: (todo): write your description
+            type_: (str): write your description
+            kw: (todo): write your description
+        """
         return "BOOLEAN"
 
 
 class AthenaDDLCompiler(DDLCompiler):
     @property
     def preparer(self):
+        """
+        Prepare the stream.
+
+        Args:
+            self: (todo): write your description
+        """
         return self._preparer
 
     @preparer.setter
     def preparer(self, value):
+        """
+        Prepares the given value.
+
+        Args:
+            self: (todo): write your description
+            value: (todo): write your description
+        """
         pass
 
     def __init__(
@@ -189,6 +419,19 @@ class AthenaDDLCompiler(DDLCompiler):
         schema_translate_map=None,
         compile_kwargs=util.immutabledict(),
     ):
+        """
+        Initialize the sql statement.
+
+        Args:
+            self: (todo): write your description
+            dialect: (str): write your description
+            statement: (todo): write your description
+            bind: (int): write your description
+            schema_translate_map: (todo): write your description
+            compile_kwargs: (dict): write your description
+            util: (todo): write your description
+            immutabledict: (dict): write your description
+        """
         self._preparer = AthenaDDLIdentifierPreparer(dialect)
         super(AthenaDDLCompiler, self).__init__(
             dialect=dialect,
@@ -199,6 +442,13 @@ class AthenaDDLCompiler(DDLCompiler):
         )
 
     def visit_create_table(self, create):
+        """
+        Return a table statement.
+
+        Args:
+            self: (todo): write your description
+            create: (bool): write your description
+        """
         table = create.element
         preparer = self.preparer
 
@@ -235,6 +485,13 @@ class AthenaDDLCompiler(DDLCompiler):
         return text
 
     def post_create_table(self, table):
+        """
+        Post - table.
+
+        Args:
+            self: (todo): write your description
+            table: (str): write your description
+        """
         raw_connection = table.bind.raw_connection()
         # TODO Supports orc, avro, json, csv or tsv format
         text = "STORED AS PARQUET\n"
@@ -307,14 +564,34 @@ class AthenaDialect(DefaultDialect):
 
     @classmethod
     def dbapi(cls):
+        """
+        Return an instance of the sqlalchemy.
+
+        Args:
+            cls: (todo): write your description
+        """
         return pyathenajdbc
 
     def _raw_connection(self, connection):
+        """
+        Return a raw raw connection.
+
+        Args:
+            self: (todo): write your description
+            connection: (todo): write your description
+        """
         if isinstance(connection, Engine):
             return connection.raw_connection()
         return connection.connection
 
     def create_connect_args(self, url):
+        """
+        Create a database connection arguments.
+
+        Args:
+            self: (todo): write your description
+            url: (str): write your description
+        """
         # Connection string format:
         #   awsathena+jdbc://
         #   {User}:{Password}@athena.{AwsRegion}.amazonaws.com:443/
@@ -332,6 +609,14 @@ class AthenaDialect(DefaultDialect):
 
     @reflection.cache
     def get_schema_names(self, connection, **kw):
+        """
+        Returns a list of schema
+
+        Args:
+            self: (todo): write your description
+            connection: (todo): write your description
+            kw: (str): write your description
+        """
         query = """
                 SELECT schema_name
                 FROM information_schema.schemata
@@ -341,6 +626,15 @@ class AthenaDialect(DefaultDialect):
 
     @reflection.cache
     def get_table_names(self, connection, schema=None, **kw):
+        """
+        Returns all table names.
+
+        Args:
+            self: (todo): write your description
+            connection: (todo): write your description
+            schema: (todo): write your description
+            kw: (todo): write your description
+        """
         raw_connection = self._raw_connection(connection)
         schema = schema if schema else raw_connection.schema_name
         query = """
@@ -353,6 +647,15 @@ class AthenaDialect(DefaultDialect):
         return [row.table_name for row in connection.execute(query).fetchall()]
 
     def has_table(self, connection, table_name, schema=None):
+        """
+        Returns true if schema exists.
+
+        Args:
+            self: (todo): write your description
+            connection: (todo): write your description
+            table_name: (str): write your description
+            schema: (str): write your description
+        """
         table_names = self.get_table_names(connection, schema)
         if table_name in table_names:
             return True
@@ -360,6 +663,16 @@ class AthenaDialect(DefaultDialect):
 
     @reflection.cache
     def get_columns(self, connection, table_name, schema=None, **kw):
+        """
+        Return a list of column names.
+
+        Args:
+            self: (todo): write your description
+            connection: (todo): write your description
+            table_name: (str): write your description
+            schema: (todo): write your description
+            kw: (todo): write your description
+        """
         raw_connection = self._raw_connection(connection)
         schema = schema if schema else raw_connection.schema_name
         query = """
@@ -393,28 +706,87 @@ class AthenaDialect(DefaultDialect):
         ]
 
     def _get_column_type(self, type_):
+        """
+        Return the column type.
+
+        Args:
+            self: (todo): write your description
+            type_: (str): write your description
+        """
         return self._pattern_column_type.sub(r"\1", type_)
 
     def get_foreign_keys(self, connection, table_name, schema=None, **kw):
+        """
+        Returns a list of foreign keys.
+
+        Args:
+            self: (todo): write your description
+            connection: (todo): write your description
+            table_name: (str): write your description
+            schema: (todo): write your description
+            kw: (todo): write your description
+        """
         # Athena has no support for foreign keys.
         return []
 
     def get_pk_constraint(self, connection, table_name, schema=None, **kw):
+        """
+        Gets pk constraint.
+
+        Args:
+            self: (todo): write your description
+            connection: (todo): write your description
+            table_name: (str): write your description
+            schema: (todo): write your description
+            kw: (todo): write your description
+        """
         # Athena has no support for primary keys.
         return []
 
     def get_indexes(self, connection, table_name, schema=None, **kw):
+        """
+        Returns all indexes for a table.
+
+        Args:
+            self: (todo): write your description
+            connection: (todo): write your description
+            table_name: (str): write your description
+            schema: (str): write your description
+            kw: (str): write your description
+        """
         # Athena has no support for indexes.
         return []
 
     def do_rollback(self, dbapi_connection):
+        """
+        Rollback a rollback.
+
+        Args:
+            self: (todo): write your description
+            dbapi_connection: (todo): write your description
+        """
         # No transactions for Athena
         pass
 
     def _check_unicode_returns(self, connection, additional_tests=None):
+        """
+        Check if the connection is valid.
+
+        Args:
+            self: (todo): write your description
+            connection: (todo): write your description
+            additional_tests: (todo): write your description
+        """
         # Requests gives back Unicode strings
         return True
 
     def _check_unicode_description(self, connection):
+        """
+        Check if the given connection is valid.
+
+        Args:
+            self: (todo): write your description
+            connection: (todo): write your description
+        """
         # Requests gives back Unicode strings
         return True

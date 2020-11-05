@@ -17,6 +17,13 @@ from tests.util import with_cursor
 class TestUtil(unittest.TestCase, WithConnect):
     @with_cursor
     def test_as_pandas(self, cursor):
+        """
+        Analogous ascii_pandas_pand_pand_pand_pand.
+
+        Args:
+            self: (todo): write your description
+            cursor: (todo): write your description
+        """
         cursor.execute(
             """
         SELECT
@@ -84,6 +91,13 @@ class TestUtil(unittest.TestCase, WithConnect):
 
     @with_cursor
     def test_as_pandas_integer_na_values(self, cursor):
+        """
+        Return a pandas_as_as_values values.
+
+        Args:
+            self: (todo): write your description
+            cursor: (todo): write your description
+        """
         cursor.execute(
             """
             SELECT * FROM integer_na_values
@@ -102,6 +116,13 @@ class TestUtil(unittest.TestCase, WithConnect):
 
     @with_cursor
     def test_as_pandas_boolean_na_values(self, cursor):
+        """
+        Test if the main dataframe as a pandas.
+
+        Args:
+            self: (todo): write your description
+            cursor: (todo): write your description
+        """
         cursor.execute(
             """
             SELECT * FROM boolean_na_values

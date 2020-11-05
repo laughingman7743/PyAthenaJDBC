@@ -17,6 +17,11 @@ _BASE_PATH = os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
 
 
 def download():
+    """
+    Download a file from google drive.
+
+    Args:
+    """
     dest = os.path.join(_BASE_PATH, _PACKAGE_DIR, pyathenajdbc.ATHENA_JAR)
     if os.path.exists(dest):
         print("The jdbc driver already exists: {0}".format(dest))

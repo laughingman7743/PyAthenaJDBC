@@ -18,6 +18,12 @@ SCHEMA = "test_pyathena_jdbc_" + "".join(
 
 class Env(object):
     def __init__(self):
+        """
+        Initialize s3 env.
+
+        Args:
+            self: (todo): write your description
+        """
         self.region_name = os.getenv("AWS_DEFAULT_REGION", None)
         assert (
             self.region_name
@@ -33,6 +39,13 @@ ENV = Env()
 
 class WithConnect(object):
     def connect(self, work_group=None):
+        """
+        Connects a connection pool.
+
+        Args:
+            self: (todo): write your description
+            work_group: (str): write your description
+        """
         from pyathenajdbc import connect
 
         return connect(Schema=SCHEMA, Workgroup=work_group)

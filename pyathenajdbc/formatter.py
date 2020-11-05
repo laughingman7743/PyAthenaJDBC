@@ -34,30 +34,86 @@ def _escape_hive(val):
 
 
 def _format_none(formatter, escaper, val):
+    """
+    Format the given formatter.
+
+    Args:
+        formatter: (todo): write your description
+        escaper: (todo): write your description
+        val: (float): write your description
+    """
     return "null"
 
 
 def _format_default(formatter, escaper, val):
+    """
+    Format the default value for a formatter.
+
+    Args:
+        formatter: (todo): write your description
+        escaper: (todo): write your description
+        val: (float): write your description
+    """
     return val
 
 
 def _format_date(formatter, escaper, val):
+    """
+    Formats a date.
+
+    Args:
+        formatter: (todo): write your description
+        escaper: (todo): write your description
+        val: (todo): write your description
+    """
     return "DATE '{0}'".format(val.strftime("%Y-%m-%d"))
 
 
 def _format_datetime(formatter, escaper, val):
+    """
+    Formats a datetime.
+
+    Args:
+        formatter: (todo): write your description
+        escaper: (todo): write your description
+        val: (todo): write your description
+    """
     return "TIMESTAMP '{0}'".format(val.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3])
 
 
 def _format_bool(formatter, escaper, val):
+    """
+    Format a boolean value.
+
+    Args:
+        formatter: (todo): write your description
+        escaper: (str): write your description
+        val: (float): write your description
+    """
     return str(val)
 
 
 def _format_str(formatter, escaper, val):
+    """
+    Format a string with the given formatter.
+
+    Args:
+        formatter: (todo): write your description
+        escaper: (str): write your description
+        val: (float): write your description
+    """
     return escaper(val)
 
 
 def _format_seq(formatter, escaper, val):
+    """
+    Formats a sequence of results.
+
+    Args:
+        formatter: (todo): write your description
+        escaper: (str): write your description
+        val: (int): write your description
+    """
     results = []
     for v in val:
         func = formatter.get_formatter(v)
@@ -85,20 +141,49 @@ def _format_seq(formatter, escaper, val):
 
 
 def _format_decimal(formatter, escaper, val):
+    """
+    Format a decimal value.
+
+    Args:
+        formatter: (todo): write your description
+        escaper: (list): write your description
+        val: (float): write your description
+    """
     return "DECIMAL {0}".format(escaper("{0:f}".format(val)))
 
 
 class ParameterFormatter(object):
     def __init__(self):
+        """
+        Initialize mappings.
+
+        Args:
+            self: (todo): write your description
+        """
         self.mappings = _DEFAULT_FORMATTERS
 
     def get_formatter(self, val):
+        """
+        Return the formatter for the given value.
+
+        Args:
+            self: (str): write your description
+            val: (str): write your description
+        """
         func = self.mappings.get(type(val), None)
         if not func:
             raise TypeError("{0} is not defined formatter.".format(type(val)))
         return func
 
     def format(self, operation, parameters=None):
+        """
+        Formats an operation.
+
+        Args:
+            self: (todo): write your description
+            operation: (str): write your description
+            parameters: (todo): write your description
+        """
         if not operation or not operation.strip():
             raise ProgrammingError("Query is none or empty.")
         operation = operation.strip()
@@ -125,6 +210,14 @@ class ParameterFormatter(object):
         return (operation % kwargs).strip() if kwargs else operation.strip()
 
     def register_formatter(self, type_, formatter):
+        """
+        Registers a formatter.
+
+        Args:
+            self: (todo): write your description
+            type_: (todo): write your description
+            formatter: (todo): write your description
+        """
         self.mappings[type_] = formatter
 
 
