@@ -1,8 +1,8 @@
 .. image:: https://img.shields.io/pypi/pyversions/PyAthenaJDBC.svg
     :target: https://pypi.org/project/PyAthenaJDBC/
 
-.. image:: https://travis-ci.com/laughingman7743/PyAthenaJDBC.svg?branch=master
-    :target: https://travis-ci.com/laughingman7743/PyAthenaJDBC
+.. image:: https://github.com/laughingman7743/PyAthenaJDBC/workflows/test/badge.svg
+    :target: https://github.com/laughingman7743/PyAthenaJDBC/actions
 
 .. image:: https://codecov.io/gh/laughingman7743/PyAthenaJDBC/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/laughingman7743/PyAthenaJDBC
@@ -11,7 +11,7 @@
     :target: https://github.com/laughingman7743/PyAthenaJDBC/blob/master/LICENSE
 
 .. image:: https://pepy.tech/badge/pyathenajdbc/month
-    :target: https://pepy.tech/project/pyathenajdbc/month
+    :target: https://pepy.tech/project/pyathenajdbc
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
