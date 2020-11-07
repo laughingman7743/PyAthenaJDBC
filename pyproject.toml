@@ -27,7 +27,7 @@ packages = [
 ]
 include = [
     { path = "jdbc" },
-    { path = "pyathenajdbc/*.jar" },
+    { path = "pyathenajdbc/*.jar", format = "wheel" },
     { path = "pyathenajdbc/*.properties" },
 ]
 
