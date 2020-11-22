@@ -32,10 +32,10 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "~2.7 || ^3.5"
-future = "*"
-jpype1 = "<=0.7.0,>=0.6.0"
-pandas = {version = ">=0.19.0", optional = true}
+# https://github.com/pandas-dev/pandas/pull/29212#issuecomment-551370118
+python = "^3.6.1"
+jpype1 = "<2.0.0,>=1.1.0"
+pandas = {version = ">=1.0.0", optional = true}
 sqlalchemy = {version = "<2.0.0,>=1.0.0", optional = true}
 
 [tool.poetry.dev-dependencies]
@@ -44,7 +44,7 @@ awscli = "*"
 tox = "*"
 wheel = "*"
 twine = "*"
-pandas = ">=0.19.0"
+pandas = ">=1.0.0"
 SQLAlchemy = ">=1.0.0, <2.0.0"
 pytest = ">=3.5"
 pytest-cov = "*"
