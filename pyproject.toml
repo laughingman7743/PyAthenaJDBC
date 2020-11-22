@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "PyAthenaJDBC"
-version = "2.1.0"
+version = "2.1.1"  # https://github.com/laughingman7743/PyAthenaJDBC/blob/master/pyathenajdbc/__init__.py#L8
 description = "Amazon Athena JDBC driver wrapper for the Python DB API 2.0 (PEP 249)"
 license = "MIT"
 classifiers = [
