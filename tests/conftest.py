@@ -24,6 +24,11 @@ def _teardown_session():
         with conn.cursor() as cursor:
             _drop_database(cursor)
 
+    import jpype
+
+    if jpype.isJVMStarted():
+        jpype.shutdownJVM()
+
 
 def _create_database(cursor):
     for q in read_query(os.path.join(BASE_PATH, "sql", "create_database.sql")):
