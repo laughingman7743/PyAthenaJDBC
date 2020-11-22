@@ -78,7 +78,7 @@ def _to_array_str(result_set, index):
     was_null = result_set.wasNull()
     if was_null:
         return None
-    return _to_string(val.toString())
+    return _to_string(val.toString(), index)
 
 
 def _to_binary(result_set, index):
