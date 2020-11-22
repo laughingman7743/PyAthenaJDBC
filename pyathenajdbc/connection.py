@@ -81,8 +81,8 @@ class Connection(object):
             cls.class_loader = (
                 jpype.java.lang.Thread.currentThread().getContextClassLoader()
             )
-        if not jpype.isThreadAttachedToJVM():
-            jpype.attachThreadToJVM()
+        if not jpype.java.lang.Thread.isAttached():
+            jpype.java.lang.Thread.attach()
             if not cls.class_loader:
                 cls.class_loader = (
                     jpype.java.lang.Thread.currentThread().getContextClassLoader()
