@@ -3,7 +3,6 @@ import os
 import random
 import string
 
-from past.builtins.misc import xrange
 from sqlalchemy.dialects import registry
 
 registry.register("awsathena.jdbc", "pyathenajdbc.sqlalchemy_athena", "AthenaDialect")
@@ -12,7 +11,7 @@ BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 S3_PREFIX = "test_pyathena_jdbc"
 WORK_GROUP = "test-pyathena-jdbc"
 SCHEMA = "test_pyathena_jdbc_" + "".join(
-    [random.choice(string.ascii_lowercase + string.digits) for i in xrange(10)]
+    [random.choice(string.ascii_lowercase + string.digits) for i in range(10)]
 )
 
 

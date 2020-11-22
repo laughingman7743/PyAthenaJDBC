@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import logging
 import os
 
 import jpype
-from future.utils import iteritems
 
 from pyathenajdbc import (
     ATHENA_CONNECTION_STRING,
@@ -117,7 +114,7 @@ class Connection(object):
             props.setProperty("Schema", self.schema_name)
         if self.work_group:
             props.setProperty("Workgroup", self.work_group)
-        for k, v in iteritems(self._driver_kwargs):
+        for k, v in self._driver_kwargs.items():
             if k and v:
                 props.setProperty(k, v)
         return props

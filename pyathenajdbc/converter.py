@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import binascii
 import logging
 from datetime import datetime
 from decimal import Decimal
 
 import jpype
-from future.utils import iteritems
-from past.types import unicode
 
 _logger = logging.getLogger(__name__)
 
@@ -17,15 +13,13 @@ def _to_none(result_set, index):
     return None
 
 
-def _to_unicode(result_set, index):
+def _to_string(result_set, index):
     val = result_set.getString(index)
     was_null = result_set.wasNull()
     if was_null:
         return None
-    elif isinstance(val, unicode):
-        return val
     else:
-        return unicode(val)
+        return val
 
 
 def _to_date(result_set, index):
@@ -84,7 +78,7 @@ def _to_array_str(result_set, index):
     was_null = result_set.wasNull()
     if was_null:
         return None
-    return unicode(val.toString())
+    return _to_string(val.toString())
 
 
 def _to_binary(result_set, index):
@@ -118,7 +112,7 @@ class JDBCTypeConverter(object):
                 self._jdbc_type_code_mappings[attr] = name
         _logger.debug(self._jdbc_type_name_mappings)
         self._converter_mappings = dict()
-        for k, v in iteritems(_DEFAULT_CONVERTERS):
+        for k, v in _DEFAULT_CONVERTERS.items():
             type_code = self._jdbc_type_name_mappings.get(k, None)
             if type_code is not None:
                 self._converter_mappings[type_code] = v
@@ -153,12 +147,12 @@ _DEFAULT_CONVERTERS = {
     "REAL": _to_float,
     "DOUBLE": _to_float,
     "FLOAT": _to_float,
-    "CHAR": _to_unicode,
-    "NCHAR": _to_unicode,
-    "VARCHAR": _to_unicode,
-    "NVARCHAR": _to_unicode,
-    "LONGVARCHAR": _to_unicode,
-    "LONGNVARCHAR": _to_unicode,
+    "CHAR": _to_string,
+    "NCHAR": _to_string,
+    "VARCHAR": _to_string,
+    "NVARCHAR": _to_string,
+    "LONGVARCHAR": _to_string,
+    "LONGNVARCHAR": _to_string,
     "DATE": _to_date,
     "TIMESTAMP": _to_datetime,
     "TIMESTAMP_WITH_TIMEZONE": _to_datetime,
@@ -168,7 +162,7 @@ _DEFAULT_CONVERTERS = {
     "BINARY": _to_binary,
     "VARBINARY": _to_binary,
     "LONGVARBINARY": _to_binary,
-    "JAVA_OBJECT": _to_unicode,
+    "JAVA_OBJECT": _to_string,
     # TODO Converter impl
     # 'TIME': ???,
     # 'BIT': ???,

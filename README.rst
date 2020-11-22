@@ -29,7 +29,7 @@ Requirements
 
 * Python
 
-  - CPython 2,7, 3.5, 3.6, 3.7
+  - CPython 3.6, 3.7, 3.8, 3.9
 
 * Java
 
@@ -58,7 +58,7 @@ Extra packages:
 +---------------+------------------------------------------+-----------------+
 | Package       | Install command                          | Version         |
 +===============+==========================================+=================+
-| Pandas        | ``pip install PyAthenaJDBC[Pandas]``     | >=0.19.0        |
+| Pandas        | ``pip install PyAthenaJDBC[Pandas]``     | >=1.0.0         |
 +---------------+------------------------------------------+-----------------+
 | SQLAlchemy    | ``pip install PyAthenaJDBC[SQLAlchemy]`` | >=1.0.0, <2.0.0 |
 +---------------+------------------------------------------+-----------------+
@@ -210,7 +210,7 @@ Supported SQLAlchemy is 1.0.0 or higher and less than 2.0.0.
 .. code:: python
 
     import contextlib
-    from urllib.parse import quote_plus  # PY2: from urllib import quote_plus
+    from urllib.parse import quote_plus
     from sqlalchemy.engine import create_engine
     from sqlalchemy.sql.expression import select
     from sqlalchemy.sql.functions import func
@@ -377,7 +377,7 @@ Run test multiple Python versions
     $ pip install poetry
     $ poetry install -v
     $ poetry run scripts/test_data/upload_test_data.sh
-    $ pyenv local 3.7.2 3.6.8 3.5.7 2.7.16
+    $ pyenv local 3.9.0 3.8.6 3.7.9 3.6.12
     $ poetry run tox
     $ poetry run scripts/test_data/delete_test_data.sh
 
@@ -420,7 +420,7 @@ For the license of JDBC driver, please check the following link.
 * `JDBC driver notices`_
 * `JDBC driver third-party licenses`_
 
-.. _`JDBC driver release notes`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.7/docs/release-notes.txt
-.. _`JDBC driver License`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.7/docs/LICENSE.txt
-.. _`JDBC driver notices`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.7/docs/NOTICES.txt
-.. _`JDBC driver third-party licenses`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.7/docs/third-party-licenses.txt
+.. _`JDBC driver release notes`: jdbc/release-notes.txt
+.. _`JDBC driver License`: jdbc/LICENSE.txt
+.. _`JDBC driver notices`: jdbc/NOTICES.txt
+.. _`JDBC driver third-party licenses`: jdbc/third-party-licenses.txt

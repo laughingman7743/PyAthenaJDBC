@@ -1,16 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-
 import os
-import sys
+from urllib.request import urlretrieve
 
 import pyathenajdbc
-
-if sys.version_info[0] == 2:
-    from urllib import urlretrieve
-else:
-    from urllib.request import urlretrieve
 
 _PACKAGE_DIR = "pyathenajdbc"
 _BASE_PATH = os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
