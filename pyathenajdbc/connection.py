@@ -60,7 +60,7 @@ class Connection(object):
     @synchronized
     def _start_jvm(cls, jvm_path, jvm_options, driver_path, log4j_conf):
         if jvm_path is None:
-            jvm_path = jpype.get_default_jvm_path()
+            jvm_path = jpype.getDefaultJVMPath()
         if driver_path is None:
             driver_path = os.path.join(cls._BASE_PATH, ATHENA_JAR)
         if log4j_conf is None:
