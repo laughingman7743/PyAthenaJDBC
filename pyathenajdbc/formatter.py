@@ -57,13 +57,7 @@ def _format_seq(formatter, escaper, val):
     for v in val:
         func = formatter.get_formatter(v)
         formatted = func(formatter, escaper, v)
-        if not isinstance(
-            formatted,
-            (
-                str,
-                unicode,
-            ),
-        ):
+        if not isinstance(formatted, str):
             # force string format
             if isinstance(
                 formatted,
