@@ -3,25 +3,41 @@ Simba Athena JDBC Driver with SQL Connector Release Notes
 ==============================================================================
 
 The release notes provide details of enhancements, features, known issues, and
-workflow changes in Simba Athena JDBC Driver 2.0.13, as well as the 
-version history. 
+workflow changes in Simba Athena JDBC Driver 2.0.14, as well as the version 
+history. 
 
 
-2.0.13 =======================================================================
+2.0.14 =======================================================================
 
-Released 2020-06-09
+Released 2020-09-25
 
 Enhancements & New Features
 
- * [AJ-245] Updated Java client SDK library
+ * [AJ-308] Retrieving SAML Credentials from Lake Formation service
+ 
+   The driver can now retrieve SAML credentials from Lake Formation service.
+   To do this, set the new LakeFormationEnabled property to true. For more 
+   information, see the Installation and Configuration Guide.
 
-   The driver has been updated to use the public aws-java-sdk version 
-   1.11.793.
 
+Resolved Issues
+The following issue has been resolved in Simba Athena JDBC Driver 
+2.0.14. 
 
+ * [AJ-304] The driver detects an XML External Entity (XXE) security threat. 
+ 
+ 
 Workflow Changes =============================================================
 
 The following changes may disrupt established workflows for the driver. 
+
+2.0.13 -----------------------------------------------------------------------
+
+ * [AJ-314] Updated MetadataRetrievalMethod property 
+
+   The default value for the MetadataRetrievalMethod property has been changed
+   to Auto. Previously, the default value was ProxyAPI. For more information,
+   see the Installation and Configuration Guide.
 
 
 2.0.2 ------------------------------------------------------------------------
@@ -53,7 +69,19 @@ The following changes may disrupt established workflows for the driver.
 
 Version History ==============================================================
 
-2.0.12 =======================================================================
+2.0.13 -----------------------------------------------------------------------
+
+Released 2020-09-02
+
+Enhancements & New Features
+
+ * [AJ-245] Updated Java client SDK library
+
+   The driver has been updated to use the public aws-java-sdk version 
+   1.11.793.
+
+
+2.0.12 -----------------------------------------------------------------------
 
 Released 2020-03-02
 
@@ -83,7 +111,7 @@ The following issue has been resolved in Simba Athena JDBC Driver 2.0.12.
    set streaming API.
 
 
-2.0.11 (Preview) -------------------------------------------------------------
+2.0.11 -----------------------------------------------------------------------
 
 Released 2019-11-26
 
@@ -302,20 +330,5 @@ Enhancements & New Features
    toggled on or off with the UseResultsetStreaming configuration option.
    See the Installation and Configuration Guide for details.  
    
-
-2.0.3 ------------------------------------------------------------------------
-
-Released 2018-06-15
-
-Resolved Issues
-The following issues were resolved in Simba Athena JDBC Driver 2.0.3.
-
- * [AJ-129] When returning the results of a DatabaseMetadata.getColumns() API
-   call, the driver does not return partition column names.
-   
- * [AJ-136] The driver does not return the VIRTUAL_VIEW table type when
-   getTableTypes() is called, and as a result some applications cannot query 
-   tables of this type.
-  
 
 ==============================================================================
