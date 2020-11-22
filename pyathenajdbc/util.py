@@ -31,8 +31,8 @@ def attach_thread_to_jvm(wrapped):
     def _wrapper(*args, **kwargs):
         import jpype
 
-        if not jpype.isThreadAttachedToJVM():
-            jpype.attachThreadToJVM()
+        if not jpype.java.lang.Thread.isAttached():
+            jpype.java.lang.Thread.attach()
         return wrapped(*args, **kwargs)
 
     return _wrapper
