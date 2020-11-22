@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import logging
 from datetime import date, datetime
 from decimal import Decimal
-
-from future.utils import iteritems
-from past.types import long, unicode
 
 from pyathenajdbc.error import ProgrammingError
 
@@ -113,7 +108,7 @@ class ParameterFormatter(object):
         kwargs = dict()
         if parameters:
             if isinstance(parameters, dict):
-                for k, v in iteritems(parameters):
+                for k, v in parameters.items():
                     func = self.get_formatter(v)
                     kwargs.update({k: func(self, escaper, v)})
             else:
@@ -134,11 +129,9 @@ _DEFAULT_FORMATTERS = {
     datetime: _format_datetime,
     int: _format_default,
     float: _format_default,
-    long: _format_default,
     Decimal: _format_decimal,
     bool: _format_bool,
     str: _format_str,
-    unicode: _format_str,
     list: _format_seq,
     set: _format_seq,
     tuple: _format_seq,

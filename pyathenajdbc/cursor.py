@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import logging
-
-from future.utils import raise_from
-from past.builtins.misc import xrange
 
 from pyathenajdbc.error import DatabaseError, ProgrammingError
 from pyathenajdbc.util import attach_thread_to_jvm, synchronized
@@ -79,7 +74,7 @@ class Cursor(object):
                 self._meta_data.getScale(i),
                 self._meta_data.isNullable(i),
             )
-            for i in xrange(1, self._meta_data.getColumnCount() + 1)
+            for i in range(1, self._meta_data.getColumnCount() + 1)
         ]
         return self._description
 
@@ -126,7 +121,7 @@ class Cursor(object):
                 self._update_count = self._statement.getUpdateCount()
         except Exception as e:
             _logger.exception("Failed to execute query.")
-            raise_from(DatabaseError(e), e)
+            raise DatabaseError(*e.args) from e
 
     def executemany(self, operation, seq_of_parameters):
         for parameters in seq_of_parameters:
@@ -156,7 +151,7 @@ class Cursor(object):
                 self._converter.convert(
                     self._meta_data.getColumnType(i), self._result_set, i
                 )
-                for i in xrange(1, self._meta_data.getColumnCount() + 1)
+                for i in range(1, self._meta_data.getColumnCount() + 1)
             ]
         )
 
@@ -169,7 +164,7 @@ class Cursor(object):
         if not size or size <= 0:
             size = self._arraysize
         rows = []
-        for i in xrange(size):
+        for i in range(size):
             row = self._fetch()
             if row:
                 rows.append(row)
