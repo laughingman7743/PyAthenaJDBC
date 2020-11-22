@@ -330,8 +330,11 @@ class TestCursor(unittest.TestCase, WithConnect):
     @with_cursor
     def test_cancel(self, cursor):
         def cancel(c):
+            import jpype
+
             time.sleep(randint(1, 5))
             c.cancel()
+            jpype.java.lang.Thread.detach()
 
         with ThreadPoolExecutor(max_workers=1) as executor:
             executor.submit(cancel, cursor)
@@ -349,10 +352,14 @@ class TestCursor(unittest.TestCase, WithConnect):
 
     def test_multiple_connection(self):
         def execute_other_thread():
+            import jpype
+
             with contextlib.closing(connect(Schema=SCHEMA)) as conn:
                 with conn.cursor() as cursor:
                     cursor.execute("SELECT * FROM one_row")
-                    return cursor.fetchall()
+                    result = cursor.fetchall()
+            jpype.java.lang.Thread.detach()
+            return result
 
         with ThreadPoolExecutor(max_workers=2) as executor:
             fs = [executor.submit(execute_other_thread) for _ in range(2)]
