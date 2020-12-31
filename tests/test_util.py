@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import unittest
 from datetime import date
 from decimal import Decimal
@@ -15,7 +13,7 @@ from tests.util import with_cursor
 
 
 class TestUtil(unittest.TestCase, WithConnect):
-    @with_cursor
+    @with_cursor()
     def test_as_pandas(self, cursor):
         cursor.execute(
             """
@@ -82,7 +80,7 @@ class TestUtil(unittest.TestCase, WithConnect):
         ]
         self.assertEqual(rows, expected)
 
-    @with_cursor
+    @with_cursor()
     def test_as_pandas_integer_na_values(self, cursor):
         cursor.execute(
             """
@@ -100,7 +98,7 @@ class TestUtil(unittest.TestCase, WithConnect):
         # ])
         np.testing.assert_array_equal(rows, [(1, 2), (1, np.nan), (np.nan, np.nan)])
 
-    @with_cursor
+    @with_cursor()
     def test_as_pandas_boolean_na_values(self, cursor):
         cursor.execute(
             """

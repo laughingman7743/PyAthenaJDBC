@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import re
 import unittest
 import uuid
 from datetime import date, datetime
 from decimal import Decimal
+from urllib.parse import quote_plus
 
 import numpy as np
 import pandas as pd
 import sqlalchemy
-from future.utils import PY2
 from sqlalchemy.engine import create_engine
 from sqlalchemy.exc import NoSuchTableError
 from sqlalchemy.sql import expression
@@ -29,11 +27,6 @@ from sqlalchemy.sql.sqltypes import (
 
 from tests.conftest import ENV, SCHEMA
 from tests.util import with_engine
-
-if PY2:
-    from urllib import quote_plus
-else:
-    from urllib.parse import quote_plus
 
 
 class TestSQLAlchemyAthena(unittest.TestCase):
@@ -59,14 +52,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
             )
         )
 
-    @with_engine
+    @with_engine()
     def test_basic_query(self, engine, conn):
         rows = conn.execute("SELECT * FROM one_row").fetchall()
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0].number_of_rows, 1)
         self.assertEqual(len(rows[0]), 1)
 
-    @with_engine
+    @with_engine()
     def test_reflect_no_such_table(self, engine, conn):
         self.assertRaises(
             NoSuchTableError,
@@ -82,19 +75,19 @@ class TestSQLAlchemyAthena(unittest.TestCase):
             ),
         )
 
-    @with_engine
+    @with_engine()
     def test_reflect_table(self, engine, conn):
         one_row = Table("one_row", MetaData(bind=engine), autoload=True)
         self.assertEqual(len(one_row.c), 1)
         self.assertIsNotNone(one_row.c.number_of_rows)
 
-    @with_engine
+    @with_engine()
     def test_reflect_table_with_schema(self, engine, conn):
         one_row = Table("one_row", MetaData(bind=engine), schema=SCHEMA, autoload=True)
         self.assertEqual(len(one_row.c), 1)
         self.assertIsNotNone(one_row.c.number_of_rows)
 
-    @with_engine
+    @with_engine()
     def test_reflect_table_include_columns(self, engine, conn):
         one_row_complex = Table("one_row_complex", MetaData(bind=engine))
         version = float(
@@ -119,7 +112,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
         self.assertIsNotNone(one_row_complex.c.col_int)
         self.assertRaises(AttributeError, lambda: one_row_complex.c.col_tinyint)
 
-    @with_engine
+    @with_engine()
     def test_unicode(self, engine, conn):
         unicode_str = "密林"
         one_row = Table("one_row", MetaData(bind=engine))
@@ -129,14 +122,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
         ).scalar()
         self.assertEqual(returned_str, unicode_str)
 
-    @with_engine
+    @with_engine()
     def test_reflect_schemas(self, engine, conn):
         insp = sqlalchemy.inspect(engine)
         schemas = insp.get_schema_names()
         self.assertIn(SCHEMA, schemas)
         self.assertIn("default", schemas)
 
-    @with_engine
+    @with_engine()
     def test_get_table_names(self, engine, conn):
         meta = MetaData()
         meta.reflect(bind=engine)
@@ -150,14 +143,14 @@ class TestSQLAlchemyAthena(unittest.TestCase):
             insp.get_table_names(schema=SCHEMA),
         )
 
-    @with_engine
+    @with_engine()
     def test_has_table(self, engine, conn):
         self.assertTrue(Table("one_row", MetaData(bind=engine)).exists())
         self.assertFalse(
             Table("this_table_does_not_exist", MetaData(bind=engine)).exists()
         )
 
-    @with_engine
+    @with_engine()
     def test_get_columns(self, engine, conn):
         insp = sqlalchemy.inspect(engine)
         actual = insp.get_columns(table_name="one_row", schema=SCHEMA)[0]
@@ -168,7 +161,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
         self.assertEqual(actual["ordinal_position"], 1)
         self.assertIsNone(actual["comment"])
 
-    @with_engine
+    @with_engine()
     def test_char_length(self, engine, conn):
         one_row_complex = Table("one_row_complex", MetaData(bind=engine), autoload=True)
         result = (
@@ -180,7 +173,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
         )
         self.assertEqual(result, len("a string"))
 
-    @with_engine
+    @with_engine()
     def test_reflect_select(self, engine, conn):
         one_row_complex = Table("one_row_complex", MetaData(bind=engine), autoload=True)
         self.assertEqual(len(one_row_complex.c), 15)
@@ -223,7 +216,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
         self.assertIsInstance(one_row_complex.c.col_struct.type, type(STRINGTYPE))
         self.assertIsInstance(one_row_complex.c.col_decimal.type, DECIMAL)
 
-    @with_engine
+    @with_engine()
     def test_reserved_words(self, engine, conn):
         """Presto uses double quotes, not backticks"""
         fake_table = Table(
@@ -235,7 +228,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
         self.assertNotIn("`select`", query)
         self.assertNotIn("`current_timestamp`", query)
 
-    @with_engine
+    @with_engine()
     def test_get_column_type(self, engine, conn):
         dialect = engine.dialect
         self.assertEqual(dialect._get_column_type("boolean"), "boolean")
@@ -254,46 +247,84 @@ class TestSQLAlchemyAthena(unittest.TestCase):
         self.assertEqual(dialect._get_column_type("row(a integer, b integer)"), "row")
         self.assertEqual(dialect._get_column_type("decimal(10,1)"), "decimal")
 
-    @with_engine
+    @with_engine()
     def test_contain_percents_character_query(self, engine, conn):
-        query = sqlalchemy.sql.text(
+        select = sqlalchemy.sql.text(
             """
             SELECT date_parse('20191030', '%Y%m%d')
             """
         )
+        table_expression = sqlalchemy.sql.selectable.TextAsFrom(select, []).cte()
+
+        query = sqlalchemy.select(["*"]).select_from(table_expression)
         result = engine.execute(query)
         self.assertEqual(result.fetchall(), [(datetime(2019, 10, 30),)])
 
-    @with_engine
+        query_with_limit = (
+            sqlalchemy.sql.select(["*"]).select_from(table_expression).limit(1)
+        )
+        result_with_limit = engine.execute(query_with_limit)
+        self.assertEqual(result_with_limit.fetchall(), [(datetime(2019, 10, 30),)])
+
+    @with_engine()
     def test_query_with_parameter(self, engine, conn):
-        query = sqlalchemy.sql.text(
+        select = sqlalchemy.sql.text(
             """
             SELECT :word
             """
         )
+        table_expression = sqlalchemy.sql.selectable.TextAsFrom(select, []).cte()
+
+        query = sqlalchemy.select(["*"]).select_from(table_expression)
         result = engine.execute(query, word="cat")
         self.assertEqual(result.fetchall(), [("cat",)])
 
-    @with_engine
+        query_with_limit = (
+            sqlalchemy.select(["*"]).select_from(table_expression).limit(1)
+        )
+        result_with_limit = engine.execute(query_with_limit, word="cat")
+        self.assertEqual(result_with_limit.fetchall(), [("cat",)])
+
+    @with_engine()
     def test_contain_percents_character_query_with_parameter(self, engine, conn):
-        query = sqlalchemy.sql.text(
+        select1 = sqlalchemy.sql.text(
             """
             SELECT date_parse('20191030', '%Y%m%d'), :word
             """
         )
-        result = engine.execute(query, word="cat")
-        self.assertEqual(result.fetchall(), [(datetime(2019, 10, 30), "cat")])
+        table_expression1 = sqlalchemy.sql.selectable.TextAsFrom(select1, []).cte()
 
-        query = sqlalchemy.sql.text(
+        query1 = sqlalchemy.select(["*"]).select_from(table_expression1)
+        result1 = engine.execute(query1, word="cat")
+        self.assertEqual(result1.fetchall(), [(datetime(2019, 10, 30), "cat")])
+
+        query_with_limit1 = (
+            sqlalchemy.select(["*"]).select_from(table_expression1).limit(1)
+        )
+        result_with_limit1 = engine.execute(query_with_limit1, word="cat")
+        self.assertEqual(
+            result_with_limit1.fetchall(), [(datetime(2019, 10, 30), "cat")]
+        )
+
+        select2 = sqlalchemy.sql.text(
             """
-            SELECT col_string FROM one_row_complex
+            SELECT col_string, :param FROM one_row_complex
             WHERE col_string LIKE 'a%' OR col_string LIKE :param
             """
         )
-        result = engine.execute(query, param="b%")
-        self.assertEqual(result.fetchall(), [("a string",)])
+        table_expression2 = sqlalchemy.sql.selectable.TextAsFrom(select2, []).cte()
 
-    @with_engine
+        query2 = sqlalchemy.select(["*"]).select_from(table_expression2)
+        result2 = engine.execute(query2, param="b%")
+        self.assertEqual(result2.fetchall(), [("a string", "b%")])
+
+        query_with_limit2 = (
+            sqlalchemy.select(["*"]).select_from(table_expression2).limit(1)
+        )
+        result_with_limit2 = engine.execute(query_with_limit2, param="b%")
+        self.assertEqual(result_with_limit2.fetchall(), [("a string", "b%")])
+
+    @with_engine()
     def test_to_sql(self, engine, conn):
         # TODO Add binary column (After dropping support for Python 2.7)
         table_name = "to_sql_{0}".format(str(uuid.uuid4()).replace("-", ""))
@@ -307,6 +338,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
                 "col_boolean": np.bool_([True]),
                 "col_timestamp": [datetime(2020, 1, 1, 0, 0, 0)],
                 "col_date": [date(2020, 12, 31)],
+                # "col_binary": "foobar".encode(),
             }
         )
         # Explicitly specify column order
@@ -320,6 +352,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
                 "col_boolean",
                 "col_timestamp",
                 "col_date",
+                # "col_binary",
             ]
         ]
         df.to_sql(
@@ -344,6 +377,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
                     True,
                     datetime(2020, 1, 1, 0, 0, 0),
                     date(2020, 12, 31),
+                    # "foobar".encode(),
                 )
             ],
         )

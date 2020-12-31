@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import textwrap
 import unittest
 from datetime import date, datetime
 from decimal import Decimal
 
 from pyathenajdbc.error import ProgrammingError
-from pyathenajdbc.formatter import ParameterFormatter
+from pyathenajdbc.formatter import DefaultParameterFormatter
 
 
-class TestParameterFormatter(unittest.TestCase):
+class TestDefaultParameterFormatter(unittest.TestCase):
 
     # TODO More DDL statement test case & Complex parameter format test case
 
-    FORMATTER = ParameterFormatter()
+    FORMATTER = DefaultParameterFormatter()
 
     def format(self, operation, parameters=None):
         return self.FORMATTER.format(operation, parameters)

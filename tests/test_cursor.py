@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import contextlib
 import time
 import unittest
@@ -9,8 +7,6 @@ from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import date, datetime
 from decimal import Decimal
 from random import randint
-
-from past.builtins.misc import xrange
 
 from pyathenajdbc import BINARY, BOOLEAN, DATE, DATETIME, NUMBER, STRING, connect
 from pyathenajdbc.cursor import Cursor
@@ -27,7 +23,7 @@ class TestCursor(unittest.TestCase, WithConnect):
     https://github.com/dropbox/PyHive/blob/master/pyhive/tests/test_presto.py
     """
 
-    @with_cursor
+    @with_cursor()
     def test_fetchone(self, cursor):
         cursor.execute("SELECT * FROM one_row")
         self.assertEqual(cursor.rownumber, 0)
@@ -35,29 +31,29 @@ class TestCursor(unittest.TestCase, WithConnect):
         self.assertEqual(cursor.rownumber, 1)
         self.assertEqual(cursor.fetchone(), None)
 
-    @with_cursor
+    @with_cursor()
     def test_fetchall(self, cursor):
         cursor.execute("SELECT * FROM one_row")
         self.assertEqual(cursor.fetchall(), [(1,)])
         cursor.execute("SELECT a FROM many_rows ORDER BY a")
-        self.assertEqual(cursor.fetchall(), [(i,) for i in xrange(10000)])
+        self.assertEqual(cursor.fetchall(), [(i,) for i in range(10000)])
 
-    @with_cursor
+    @with_cursor()
     def test_null_param(self, cursor):
         cursor.execute("SELECT %(param)s FROM one_row", {"param": None})
         self.assertEqual(cursor.fetchall(), [(None,)])
 
-    @with_cursor
+    @with_cursor()
     def test_iterator(self, cursor):
         cursor.execute("SELECT * FROM one_row")
         self.assertEqual(list(cursor), [(1,)])
         self.assertRaises(StopIteration, cursor.__next__)
 
-    @with_cursor
+    @with_cursor()
     def test_description_initial(self, cursor):
         self.assertEqual(cursor.description, None)
 
-    @with_cursor
+    @with_cursor()
     def test_description_failed(self, cursor):
         try:
             cursor.execute("blah_blah")
@@ -65,7 +61,7 @@ class TestCursor(unittest.TestCase, WithConnect):
             pass
         self.assertEqual(cursor.description, None)
 
-    @with_cursor
+    @with_cursor()
     def test_bad_query(self, cursor):
         def run():
             cursor.execute("SELECT does_not_exist FROM this_really_does_not_exist")
@@ -73,34 +69,34 @@ class TestCursor(unittest.TestCase, WithConnect):
 
         self.assertRaises(DatabaseError, run)
 
-    @with_cursor
+    @with_cursor()
     def test_fetchone_no_data(self, cursor):
         self.assertRaises(ProgrammingError, cursor.fetchone)
 
-    @with_cursor
+    @with_cursor()
     def test_fetchmany(self, cursor):
         cursor.execute("SELECT * FROM many_rows LIMIT 15")
         self.assertEqual(len(cursor.fetchmany(10)), 10)
         self.assertEqual(len(cursor.fetchmany(10)), 5)
 
-    @with_cursor
+    @with_cursor()
     def test_arraysize(self, cursor):
         cursor.arraysize = 5
         cursor.execute("SELECT * FROM many_rows LIMIT 20")
         self.assertEqual(len(cursor.fetchmany()), 5)
 
-    @with_cursor
+    @with_cursor()
     def test_arraysize_default(self, cursor):
         self.assertEqual(cursor.arraysize, Cursor.DEFAULT_FETCH_SIZE)
 
-    @with_cursor
+    @with_cursor()
     def test_invalid_arraysize(self, cursor):
         with self.assertRaises(ProgrammingError):
             cursor.arraysize = 10000
         with self.assertRaises(ProgrammingError):
             cursor.arraysize = -1
 
-    @with_cursor
+    @with_cursor()
     def test_no_params(self, cursor):
         self.assertRaises(
             DatabaseError, lambda: cursor.execute("SELECT %(param)s FROM one_row")
@@ -109,7 +105,7 @@ class TestCursor(unittest.TestCase, WithConnect):
             KeyError, lambda: cursor.execute("SELECT %(param)s FROM one_row", {"a": 1})
         )
 
-    @with_cursor
+    @with_cursor()
     def test_contain_special_character_query(self, cursor):
         cursor.execute(
             """
@@ -140,7 +136,7 @@ class TestCursor(unittest.TestCase, WithConnect):
         )
         self.assertEqual(cursor.fetchall(), [("a string", "%%")])
 
-    @with_cursor
+    @with_cursor()
     def test_contain_special_character_query_with_parameter(self, cursor):
         self.assertRaises(
             TypeError,
@@ -183,7 +179,7 @@ class TestCursor(unittest.TestCase, WithConnect):
         bad_str = """`~!@#$%^&*()_+-={}[]|\\;:'",./<>?\n\r\t """
         self.run_escape_case(bad_str)
 
-    @with_cursor
+    @with_cursor()
     def run_escape_case(self, cursor, bad_str):
         cursor.execute("SELECT %(a)d, %(b)s FROM one_row", {"a": 1, "b": bad_str})
         self.assertEqual(
@@ -196,12 +192,12 @@ class TestCursor(unittest.TestCase, WithConnect):
             ],
         )
 
-    @with_cursor
+    @with_cursor()
     def test_none_empty_query(self, cursor):
         self.assertRaises(ProgrammingError, lambda: cursor.execute(None))
         self.assertRaises(ProgrammingError, lambda: cursor.execute(""))
 
-    @with_cursor
+    @with_cursor()
     def test_invalid_params(self, cursor):
         self.assertRaises(
             TypeError,
@@ -215,27 +211,27 @@ class TestCursor(unittest.TestCase, WithConnect):
             with conn.cursor():
                 pass
 
-    @with_cursor
+    @with_cursor()
     def test_unicode(self, cursor):
         unicode_str = "王兢"
         cursor.execute("SELECT %(param)s FROM one_row", {"param": unicode_str})
         self.assertEqual(cursor.fetchall(), [(unicode_str,)])
 
-    @with_cursor
+    @with_cursor()
     def test_decimal(self, cursor):
         cursor.execute("SELECT %(decimal)s", {"decimal": Decimal("0.00000000001")})
         self.assertEqual(cursor.fetchall(), [(Decimal("0.00000000001"),)])
 
-    @with_cursor
+    @with_cursor()
     def test_null(self, cursor):
         cursor.execute("SELECT null FROM many_rows")
         self.assertEqual(cursor.fetchall(), [(None,)] * 10000)
         cursor.execute("SELECT IF(a % 11 = 0, null, a) FROM many_rows")
         self.assertEqual(
-            cursor.fetchall(), [(None if a % 11 == 0 else a,) for a in xrange(10000)]
+            cursor.fetchall(), [(None if a % 11 == 0 else a,) for a in range(10000)]
         )
 
-    @with_cursor
+    @with_cursor()
     def test_description(self, cursor):
         cursor.execute("SELECT 1 AS foobar FROM one_row")
         expected = [("foobar", "INTEGER", 11, None, 10, 0, 1)]
@@ -243,7 +239,7 @@ class TestCursor(unittest.TestCase, WithConnect):
         # description cache
         self.assertEqual(cursor.description, expected)
 
-    @with_cursor
+    @with_cursor()
     def test_complex(self, cursor):
         cursor.execute(
             """
@@ -331,11 +327,14 @@ class TestCursor(unittest.TestCase, WithConnect):
             ],
         )
 
-    @with_cursor
+    @with_cursor()
     def test_cancel(self, cursor):
         def cancel(c):
+            import jpype
+
             time.sleep(randint(1, 5))
             c.cancel()
+            jpype.java.lang.Thread.detach()
 
         with ThreadPoolExecutor(max_workers=1) as executor:
             executor.submit(cancel, cursor)
@@ -353,10 +352,14 @@ class TestCursor(unittest.TestCase, WithConnect):
 
     def test_multiple_connection(self):
         def execute_other_thread():
+            import jpype
+
             with contextlib.closing(connect(Schema=SCHEMA)) as conn:
                 with conn.cursor() as cursor:
                     cursor.execute("SELECT * FROM one_row")
-                    return cursor.fetchall()
+                    result = cursor.fetchall()
+            jpype.java.lang.Thread.detach()
+            return result
 
         with ThreadPoolExecutor(max_workers=2) as executor:
             fs = [executor.submit(execute_other_thread) for _ in range(2)]
@@ -409,21 +412,21 @@ class TestCursor(unittest.TestCase, WithConnect):
     #     ])
 
     def test_workgroup(self):
-        with contextlib.closing(self.connect(work_group=WORK_GROUP)) as conn:
+        with contextlib.closing(self.connect(Workgroup=WORK_GROUP)) as conn:
             with conn.cursor() as cursor:
                 cursor.execute("SELECT * FROM one_row")
             self.assertEqual(conn.work_group, WORK_GROUP)
 
-    @with_cursor
+    @with_cursor()
     def test_executemany(self, cursor):
         cursor.executemany(
             "INSERT INTO execute_many (a) VALUES (%(a)s)",
-            [{"a": i} for i in xrange(1, 3)],
+            [{"a": i} for i in range(1, 3)],
         )
         cursor.execute("SELECT * FROM execute_many")
-        self.assertEqual(sorted(cursor.fetchall()), [(i,) for i in xrange(1, 3)])
+        self.assertEqual(sorted(cursor.fetchall()), [(i,) for i in range(1, 3)])
 
-    @with_cursor
+    @with_cursor()
     def test_executemany_fetch(self, cursor):
         cursor.executemany("SELECT %(x)d FROM one_row", [{"x": i} for i in range(1, 2)])
         # Operations that have result sets are not allowed with executemany.

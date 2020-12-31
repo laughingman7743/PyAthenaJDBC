@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import contextlib
 import os
 import uuid
@@ -25,6 +23,11 @@ def _teardown_session():
     with contextlib.closing(connect()) as conn:
         with conn.cursor() as cursor:
             _drop_database(cursor)
+
+    import jpype
+
+    if jpype.isJVMStarted():
+        jpype.shutdownJVM()
 
 
 def _create_database(cursor):
