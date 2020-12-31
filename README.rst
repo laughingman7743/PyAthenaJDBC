@@ -420,7 +420,7 @@ For the license of JDBC driver, please check the following link.
 * `JDBC driver notices`_
 * `JDBC driver third-party licenses`_
 
-.. _`JDBC driver release notes`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.7/docs/release-notes.txt
-.. _`JDBC driver License`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.7/docs/LICENSE.txt
-.. _`JDBC driver notices`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.7/docs/NOTICES.txt
-.. _`JDBC driver third-party licenses`: https://s3.amazonaws.com/athena-downloads/drivers/JDBC/SimbaAthenaJDBC_2.0.7/docs/third-party-licenses.txt
+.. _`JDBC driver release notes`: jdbc/release-notes.txt
+.. _`JDBC driver License`: jdbc/LICENSE.txt
+.. _`JDBC driver notices`: jdbc/NOTICES.txt
+.. _`JDBC driver third-party licenses`: jdbc/third-party-licenses.txt
