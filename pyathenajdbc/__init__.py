@@ -8,17 +8,17 @@ if TYPE_CHECKING:
     from pyathenajdbc.connection import Connection
 
 __version__: str = "2.1.1"
-__athena_driver_version__: str = "2.0.14"
+__athena_driver_version__: str = "2.0.15.1000"
 
 # Globals https://www.python.org/dev/peps/pep-0249/#globals
 apilevel: str = "2.0"
 threadsafety: int = 3
 paramstyle: str = "pyformat"
 
-ATHENA_JAR: str = "AthenaJDBC42_{0}.jar".format(__athena_driver_version__)
+ATHENA_JAR: str = "AthenaJDBC42.jar"
 ATHENA_DRIVER_DOWNLOAD_URL: str = (
     "https://s3.amazonaws.com/athena-downloads/drivers/JDBC/"
-    + "SimbaAthenaJDBC_{0}/{1}".format(__athena_driver_version__, ATHENA_JAR)
+    + "SimbaAthenaJDBC-{0}/{1}".format(__athena_driver_version__, ATHENA_JAR)
 )
 ATHENA_DRIVER_CLASS_NAME: str = "com.simba.athena.jdbc.Driver"
 ATHENA_CONNECTION_STRING: str = "jdbc:awsathena://AwsRegion={region};"
