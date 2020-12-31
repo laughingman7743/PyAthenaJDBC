@@ -31,7 +31,7 @@ ENV = Env()
 
 
 class WithConnect(object):
-    def connect(self, work_group=None):
+    def connect(self, **opts):
         from pyathenajdbc import connect
 
-        return connect(Schema=SCHEMA, Workgroup=work_group)
+        return connect(Schema=SCHEMA, **opts)
