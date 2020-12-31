@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from pyathenajdbc.connection import Connection
 
 __version__: str = "3.0.0"
-__athena_driver_version__: str = "2.0.15.1000"
+__athena_driver_version__: str = "2.0.16.1000"
 
 # Globals https://www.python.org/dev/peps/pep-0249/#globals
 apilevel: str = "2.0"
