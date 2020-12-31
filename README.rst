@@ -347,7 +347,7 @@ In the connect method or connection object, you can connect by specifying at lea
     conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
                    AwsRegion='us-west-2')
 
-.. _`Supplying and retrieving AWS credentials `: https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html
+.. _`Supplying and retrieving AWS credentials`: https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html
 
 Testing
 -------
