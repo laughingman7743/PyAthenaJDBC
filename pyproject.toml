@@ -10,12 +10,11 @@ classifiers = [
     "Operating System :: OS Independent",
     "Topic :: Database :: Front-Ends",
     "Programming Language :: Java",
-    "Programming Language :: Python :: 2",
-    "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7"
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9"
 ]
 homepage = "https://github.com/laughingman7743/PyAthenaJDBC/"
 authors = [
