@@ -249,46 +249,83 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine
     def test_contain_percents_character_query(self, engine, conn):
-        query = sqlalchemy.sql.text(
+        select = sqlalchemy.sql.text(
             """
             SELECT date_parse('20191030', '%Y%m%d')
             """
         )
+        table_expression = sqlalchemy.sql.selectable.TextAsFrom(select, []).cte()
+
+        query = sqlalchemy.select(["*"]).select_from(table_expression)
         result = engine.execute(query)
         self.assertEqual(result.fetchall(), [(datetime(2019, 10, 30),)])
 
+        query_with_limit = (
+            sqlalchemy.sql.select(["*"]).select_from(table_expression).limit(1)
+        )
+        result_with_limit = engine.execute(query_with_limit)
+        self.assertEqual(result_with_limit.fetchall(), [(datetime(2019, 10, 30),)])
+
     @with_engine
     def test_query_with_parameter(self, engine, conn):
-        query = sqlalchemy.sql.text(
+        select = sqlalchemy.sql.text(
             """
             SELECT :word
             """
         )
+        table_expression = sqlalchemy.sql.selectable.TextAsFrom(select, []).cte()
+
+        query = sqlalchemy.select(["*"]).select_from(table_expression)
         result = engine.execute(query, word="cat")
         self.assertEqual(result.fetchall(), [("cat",)])
 
+        query_with_limit = (
+            sqlalchemy.select(["*"]).select_from(table_expression).limit(1)
+        )
+        result_with_limit = engine.execute(query_with_limit, word="cat")
+        self.assertEqual(result_with_limit.fetchall(), [("cat",)])
+
     @with_engine
     def test_contain_percents_character_query_with_parameter(self, engine, conn):
-        query = sqlalchemy.sql.text(
+        select1 = sqlalchemy.sql.text(
             """
             SELECT date_parse('20191030', '%Y%m%d'), :word
             """
         )
-        result = engine.execute(query, word="cat")
-        self.assertEqual(result.fetchall(), [(datetime(2019, 10, 30), "cat")])
+        table_expression1 = sqlalchemy.sql.selectable.TextAsFrom(select1, []).cte()
 
-        query = sqlalchemy.sql.text(
+        query1 = sqlalchemy.select(["*"]).select_from(table_expression1)
+        result1 = engine.execute(query1, word="cat")
+        self.assertEqual(result1.fetchall(), [(datetime(2019, 10, 30), "cat")])
+
+        query_with_limit1 = (
+            sqlalchemy.select(["*"]).select_from(table_expression1).limit(1)
+        )
+        result_with_limit1 = engine.execute(query_with_limit1, word="cat")
+        self.assertEqual(
+            result_with_limit1.fetchall(), [(datetime(2019, 10, 30), "cat")]
+        )
+
+        select2 = sqlalchemy.sql.text(
             """
-            SELECT col_string FROM one_row_complex
+            SELECT col_string, :param FROM one_row_complex
             WHERE col_string LIKE 'a%' OR col_string LIKE :param
             """
         )
-        result = engine.execute(query, param="b%")
-        self.assertEqual(result.fetchall(), [("a string",)])
+        table_expression2 = sqlalchemy.sql.selectable.TextAsFrom(select2, []).cte()
+
+        query2 = sqlalchemy.select(["*"]).select_from(table_expression2)
+        result2 = engine.execute(query2, param="b%")
+        self.assertEqual(result2.fetchall(), [("a string", "b%")])
+
+        query_with_limit2 = (
+            sqlalchemy.select(["*"]).select_from(table_expression2).limit(1)
+        )
+        result_with_limit2 = engine.execute(query_with_limit2, param="b%")
+        self.assertEqual(result_with_limit2.fetchall(), [("a string", "b%")])
 
     @with_engine
     def test_to_sql(self, engine, conn):
-        # TODO Add binary column (After dropping support for Python 2.7)
         table_name = "to_sql_{0}".format(str(uuid.uuid4()).replace("-", ""))
         df = pd.DataFrame(
             {
@@ -300,6 +337,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
                 "col_boolean": np.bool_([True]),
                 "col_timestamp": [datetime(2020, 1, 1, 0, 0, 0)],
                 "col_date": [date(2020, 12, 31)],
+                "col_binary": "foobar".encode(),
             }
         )
         # Explicitly specify column order
@@ -313,6 +351,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
                 "col_boolean",
                 "col_timestamp",
                 "col_date",
+                "col_binary",
             ]
         ]
         df.to_sql(
@@ -337,6 +376,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
                     True,
                     datetime(2020, 1, 1, 0, 0, 0),
                     date(2020, 12, 31),
+                    "foobar".encode(),
                 )
             ],
         )
