@@ -45,7 +45,7 @@ tox = "*"
 wheel = "*"
 twine = "*"
 pandas = ">=0.19.0"
-SQLAlchemy = ">=1.0.0, <2.0.0"
+sqlalchemy = ">=1.0.0, <2.0.0"
 pytest = ">=3.5"
 pytest-cov = "*"
 pytest-flake8 = ">=1.0.1"
@@ -55,8 +55,8 @@ pytest-xdist = "*"
 codecov = "*"
 
 [tool.poetry.extras]
-Pandas = ["pandas"]
-SQLAlchemy = ["sqlalchemy"]
+pandas = ["pandas"]
+sqlalchemy = ["sqlalchemy"]
 
 [tool.poetry.plugins."sqlalchemy.dialects"]
 "awsathena.jdbc" = "pyathenajdbc.sqlalchemy_athena:AthenaDialect"
