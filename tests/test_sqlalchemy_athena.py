@@ -326,6 +326,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
 
     @with_engine()
     def test_to_sql(self, engine, conn):
+        # TODO Add binary column (After dropping support for Python 2.7)
         table_name = "to_sql_{0}".format(str(uuid.uuid4()).replace("-", ""))
         df = pd.DataFrame(
             {
@@ -337,7 +338,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
                 "col_boolean": np.bool_([True]),
                 "col_timestamp": [datetime(2020, 1, 1, 0, 0, 0)],
                 "col_date": [date(2020, 12, 31)],
-                "col_binary": "foobar".encode(),
+                # "col_binary": "foobar".encode(),
             }
         )
         # Explicitly specify column order
@@ -351,7 +352,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
                 "col_boolean",
                 "col_timestamp",
                 "col_date",
-                "col_binary",
+                # "col_binary",
             ]
         ]
         df.to_sql(
@@ -376,7 +377,7 @@ class TestSQLAlchemyAthena(unittest.TestCase):
                     True,
                     datetime(2020, 1, 1, 0, 0, 0),
                     date(2020, 12, 31),
-                    "foobar".encode(),
+                    # "foobar".encode(),
                 )
             ],
         )
