@@ -324,18 +324,21 @@ Credential
 AWS credentials provider chain
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-See `AWS credentials provider chain`_
+See `Supplying and retrieving AWS credentials`_
+
+    https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/DefaultAWSCredentialsProviderChain.html
 
     AWS credentials provider chain that looks for credentials in this order:
 
         * Environment Variables - AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY (RECOMMENDED since they are recognized by all the AWS SDKs and CLI except for .NET), or AWS_ACCESS_KEY and AWS_SECRET_KEY (only recognized by Java SDK)
         * Java System Properties - aws.accessKeyId and aws.secretKey
+        * Web Identity Token credentials from the environment or container
         * Credential profiles file at the default location (~/.aws/credentials) shared by all AWS SDKs and the AWS CLI
         * Credentials delivered through the Amazon EC2 container service if AWS_CONTAINER_CREDENTIALS_RELATIVE_URI" environment variable is set and security manager has permission to access the variable,
         * Instance profile credentials delivered through the Amazon EC2 metadata service
 
 In the connect method or connection object, you can connect by specifying at least ``S3OutputLocation`` and ``AwsRegion``.
-It is not necessary to specify ``User`` and ``Password``.
+``User`` and ``Password`` are not required if environment variables, credential files, or instance profiles have been set.
 
 .. code:: python
 
@@ -343,6 +346,8 @@ It is not necessary to specify ``User`` and ``Password``.
 
     conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
                    AwsRegion='us-west-2')
+
+.. _`Supplying and retrieving AWS credentials `: https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html
 
 Testing
 -------
