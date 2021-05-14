@@ -52,7 +52,6 @@ pytest-black = "*"
 pytest-isort = "*"
 pytest-xdist = "*"
 pytest-mypy = "*"
-codecov = "*"
 
 [tool.poetry.extras]
 pandas = ["pandas"]
