@@ -4,9 +4,6 @@
 .. image:: https://github.com/laughingman7743/PyAthenaJDBC/workflows/test/badge.svg
     :target: https://github.com/laughingman7743/PyAthenaJDBC/actions
 
-.. image:: https://codecov.io/gh/laughingman7743/PyAthenaJDBC/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/laughingman7743/PyAthenaJDBC
-
 .. image:: https://img.shields.io/pypi/l/PyAthenaJDBC.svg
     :target: https://github.com/laughingman7743/PyAthenaJDBC/blob/master/LICENSE
 
