@@ -70,8 +70,8 @@ Basic usage
 
     from pyathenajdbc import connect
 
-    conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
-                   AwsRegion='us-west-2')
+    conn = connect(S3OutputLocation="s3://YOUR_S3_BUCKET/path/to/",
+                   AwsRegion="us-west-2")
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
@@ -89,8 +89,8 @@ Cursor iteration
 
     from pyathenajdbc import connect
 
-    conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
-                   AwsRegion='us-west-2')
+    conn = connect(S3OutputLocation="s3://YOUR_S3_BUCKET/path/to/",
+                   AwsRegion="us-west-2")
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
@@ -111,14 +111,14 @@ Supported `DB API paramstyle`_ is only ``PyFormat``.
 
     from pyathenajdbc import connect
 
-    conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
-                   AwsRegion='us-west-2')
+    conn = connect(S3OutputLocation="s3://YOUR_S3_BUCKET/path/to/",
+                   AwsRegion="us-west-2")
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
             SELECT col_string FROM one_row_complex
             WHERE col_string = %(param)s
-            """, {'param': 'a string'})
+            """, {"param": "a string"})
             print(cursor.fetchall())
     finally:
         conn.close()
@@ -144,9 +144,9 @@ You can increase the JVM heap size like the following:
 
     from pyathenajdbc import connect
 
-    conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
-                   AwsRegion='us-west-2',
-                   jvm_options=['-Xms1024m', '-Xmx4096m'])
+    conn = connect(S3OutputLocation="s3://YOUR_S3_BUCKET/path/to/",
+                   AwsRegion="us-west-2",
+                   jvm_options=["-Xms1024m", "-Xmx4096m"])
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
@@ -170,9 +170,9 @@ and specify the path of the downloaded JDBC driver as the argument ``driver_path
 
     from pyathenajdbc import connect
 
-    conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
-                   AwsRegion='us-west-2',
-                   driver_path='/path/to/AthenaJDBC41_2.0.7.jar')
+    conn = connect(S3OutputLocation="s3://YOUR_S3_BUCKET/path/to/",
+                   AwsRegion="us-west-2",
+                   driver_path="/path/to/AthenaJDBC41_2.0.7.jar")
 
 JDBC driver configuration options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -185,10 +185,10 @@ specify the option as a keyword argument in the connect method or connection obj
 
     from pyathenajdbc import connect
 
-    conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
-                   AwsRegion='us-west-2',
-                   LogPath='/path/to/pyathenajdbc/log/',
-                   LogLevel='6')
+    conn = connect(S3OutputLocation="s3://YOUR_S3_BUCKET/path/to/",
+                   AwsRegion="us-west-2",
+                   LogPath="/path/to/pyathenajdbc/log/",
+                   LogLevel="6")
 
 For details of the JDBC driver options refer to the official documentation.
 
@@ -213,18 +213,18 @@ Supported SQLAlchemy is 1.0.0 or higher and less than 2.0.0.
     from sqlalchemy.sql.functions import func
     from sqlalchemy.sql.schema import Table, MetaData
 
-    conn_str = 'awsathena+jdbc://{User}:{Password}@athena.{AwsRegion}.amazonaws.com:443/'\
-               '{Schema}?S3OutputLocation={S3OutputLocation}'
+    conn_str = "awsathena+jdbc://{User}:{Password}@athena.{AwsRegion}.amazonaws.com:443/"\
+               "{Schema}?S3OutputLocation={S3OutputLocation}"
     engine = create_engine(conn_str.format(
-        User=quote_plus('YOUR_ACCESS_KEY'),
-        Password=quote_plus('YOUR_SECRET_ACCESS_KEY'),
-        AwsRegion='us-west-2',
-        Schema='default',
-        S3OutputLocation=quote_plus('s3://YOUR_S3_BUCKET/path/to/')))
+        User=quote_plus("YOUR_ACCESS_KEY"),
+        Password=quote_plus("YOUR_SECRET_ACCESS_KEY"),
+        AwsRegion="us-west-2",
+        Schema="default",
+        S3OutputLocation=quote_plus("s3://YOUR_S3_BUCKET/path/to/")))
     try:
         with contextlib.closing(engine.connect()) as conn:
-            many_rows = Table('many_rows', MetaData(bind=engine), autoload=True)
-            print(select([func.count('*')], from_obj=many_rows).scalar())
+            many_rows = Table("many_rows", MetaData(bind=engine), autoload=True)
+            print(select([func.count("*")], from_obj=many_rows).scalar())
     finally:
         engine.dispose()
 
@@ -255,11 +255,11 @@ You can use the `pandas.read_sql`_ to handle the query results as a `DataFrame o
     from pyathenajdbc import connect
     import pandas as pd
 
-    conn = connect(User='YOUR_ACCESS_KEY_ID',
-                   Password='YOUR_SECRET_ACCESS_KEY',
-                   S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
-                   AwsRegion='us-west-2',
-                   jvm_path='/path/to/jvm')
+    conn = connect(User="YOUR_ACCESS_KEY_ID",
+                   Password="YOUR_SECRET_ACCESS_KEY",
+                   S3OutputLocation="s3://YOUR_S3_BUCKET/path/to/",
+                   AwsRegion="us-west-2",
+                   jvm_path="/path/to/jvm")
     df = pd.read_sql("SELECT * FROM many_rows LIMIT 10", conn)
 
 The ``pyathena.util`` package also has helper methods.
@@ -271,8 +271,8 @@ The ``pyathena.util`` package also has helper methods.
     from pyathenajdbc.util import as_pandas
 
     with contextlib.closing(
-            connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/'
-                    AwsRegion='us-west-2'))) as conn:
+            connect(S3OutputLocation="s3://YOUR_S3_BUCKET/path/to/"
+                    AwsRegion="us-west-2"))) as conn:
         with conn.cursor() as cursor:
             cursor.execute("""
             SELECT * FROM many_rows
@@ -294,15 +294,15 @@ You can use `pandas.DataFrame.to_sql`_ to write records stored in DataFrame to A
     import pandas as pd
     from urllib.parse import quote_plus
     from sqlalchemy import create_engine
-    conn_str = 'awsathena+jdbc://:@athena.{AwsRegion}.amazonaws.com:443/'\
-               '{Schema}?S3OutputLocation={S3OutputLocation}&S3Location={S3Location}&compression=snappy'
+    conn_str = "awsathena+jdbc://:@athena.{AwsRegion}.amazonaws.com:443/"\
+               "{Schema}?S3OutputLocation={S3OutputLocation}&S3Location={S3Location}&compression=snappy"
     engine = create_engine(conn_str.format(
-        AwsRegion='us-west-2',
-        Schema_name='YOUR_SCHEMA',
-        S3OutputLocation=quote_plus('s3://YOUR_S3_BUCKET/path/to/'),
-        S3Location=quote_plus('s3://YOUR_S3_BUCKET/path/to/')))
-    df = pd.DataFrame({'a': [1, 2, 3, 4, 5]})
-    df.to_sql('YOUR_TABLE', engine, schema="YOUR_SCHEMA", index=False, if_exists='replace', method='multi')
+        AwsRegion="us-west-2",
+        Schema_name="YOUR_SCHEMA",
+        S3OutputLocation=quote_plus("s3://YOUR_S3_BUCKET/path/to/"),
+        S3Location=quote_plus("s3://YOUR_S3_BUCKET/path/to/")))
+    df = pd.DataFrame({"a": [1, 2, 3, 4, 5]})
+    df.to_sql("YOUR_TABLE", engine, schema="YOUR_SCHEMA", index=False, if_exists="replace", method="multi")
 
 The location of the Amazon S3 table is specified by the ``S3Location`` parameter in the connection string.
 If ``S3Location`` is not specified, ``S3OutputLocation`` parameter will be used. The following rules apply.
@@ -341,8 +341,8 @@ In the connect method or connection object, you can connect by specifying at lea
 
     from pyathenajdbc import connect
 
-    conn = connect(S3OutputLocation='s3://YOUR_S3_BUCKET/path/to/',
-                   AwsRegion='us-west-2')
+    conn = connect(S3OutputLocation="s3://YOUR_S3_BUCKET/path/to/",
+                   AwsRegion="us-west-2")
 
 .. _`Supplying and retrieving AWS credentials`: https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html
 

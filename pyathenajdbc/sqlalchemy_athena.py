@@ -160,7 +160,6 @@ class AthenaDDLCompiler(DDLCompiler):
         self,
         dialect,
         statement,
-        bind=None,
         schema_translate_map=None,
         compile_kwargs=util.immutabledict(),
     ):
@@ -168,7 +167,6 @@ class AthenaDDLCompiler(DDLCompiler):
         super(AthenaDDLCompiler, self).__init__(
             dialect=dialect,
             statement=statement,
-            bind=bind,
             schema_translate_map=schema_translate_map,
             compile_kwargs=compile_kwargs,
         )
@@ -271,11 +269,12 @@ class AthenaDialect(DefaultDialect):
     supports_default_values = False
     supports_empty_insert = False
     supports_multivalues_insert = True
+    supports_native_decimal = True
+    supports_native_boolean = True
     supports_unicode_statements = True
     supports_unicode_binds = True
     returns_unicode_strings = True
     description_encoding = None
-    supports_native_boolean = True
     postfetch_lastrowid = False
 
     _pattern_column_type = re.compile(r"^([a-zA-Z]+)($|\(.+\)$)")
