@@ -160,7 +160,6 @@ class AthenaDDLCompiler(DDLCompiler):
         self,
         dialect,
         statement,
-        bind=None,
         schema_translate_map=None,
         compile_kwargs=util.immutabledict(),
     ):
@@ -168,7 +167,6 @@ class AthenaDDLCompiler(DDLCompiler):
         super(AthenaDDLCompiler, self).__init__(
             dialect=dialect,
             statement=statement,
-            bind=bind,
             schema_translate_map=schema_translate_map,
             compile_kwargs=compile_kwargs,
         )
