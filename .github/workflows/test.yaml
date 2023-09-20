@@ -2,8 +2,8 @@ name: test
 
 on:
   push:
-  schedule:
-    - cron:  "0 0 * * *"
+  #schedule:
+  #  - cron:  "0 0 * * *"
 
 jobs:
   tox:

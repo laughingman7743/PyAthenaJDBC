@@ -1,3 +1,9 @@
+======================================================
+This library is unmaintained, use `PyAthena`_ instead.
+======================================================
+
+.. _`PyAthena`: https://github.com/laughingman7743/PyAthena
+
 .. image:: https://img.shields.io/pypi/pyversions/PyAthenaJDBC.svg
     :target: https://pypi.org/project/PyAthenaJDBC/
 
